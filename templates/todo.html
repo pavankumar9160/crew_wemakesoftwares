@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 500px; /* Increased width for better visibility */
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        li {
+            margin: 10px 0;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li strong {
+            font-size: 1.2em;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .logout-button {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        #todoForm {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px;
+        }
+
+        #todoTitle, #todoDescription {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .todo-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        #addButton, #saveButton {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #addButton:hover, #saveButton:hover {
+            background-color: #218838;
+        }
+
+        #saveButton {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>To-Do List</h1>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <form id="todoForm">
+        <input type="text" name="title" id="todoTitle" placeholder="Add a title" required>
+        <textarea name="description" id="todoDescription" placeholder="Add a description" required></textarea>
+        <div>
+            <button type="submit" id="addButton">Add</button>
+            <button type="button" id="saveButton">Save</button>
+        </div>
+    </form>
+
+    <!-- To-Do List -->
+    <ul id="todoList">
+        {% for todo in todos %}
+            <li id="todo-{{ todo.id }}">
+                <strong>{{ todo.title }}</strong>
+                <p class="todo-description">{{ todo.description }}</p>
+                <div class="actions">
+                    <button onclick="editTodo({{ todo.id }}, '{{ todo.title }}', '{{ todo.description }}')">Edit</button>
+                    <button onclick="deleteTodo({{ todo.id }})">Delete</button>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <form id="logoutForm" method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
+</div>
+
+<script>
+    let currentEditingId = null;
+
+    $('#addButton').on('click', function(event) {
+        event.preventDefault();
+        const title = $('#todoTitle').val();
+        const description = $('#todoDescription').val();
+        
+        createTodo(title, description);
+    });
+
+    $('#saveButton').on('click', function() {
+        const title = $('#todoTitle').val();
+        const description = $('#todoDescription').val();
+    
+        if (currentEditingId) {
+            updateTodo(currentEditingId, title, description);
+        }
+    });
+    
+    function createTodo(title, description) {
+        $.ajax({
+            url: '{% url "todo_list" %}',
+            type: 'POST',
+            data: {
+                title: title,
+                description: description,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                $('#todoList').append(`
+                    <li id="todo-${response.id}">
+                        <strong>${response.title}</strong>
+                        <p class="todo-description">${response.description}</p>
+                        <div class="actions">
+                            <button onclick="editTodo(${response.id}, '${response.title}', '${response.description}')">Edit</button>
+                            <button onclick="deleteTodo(${response.id})">Delete</button>
+                        </div>
+                    </li>
+                `);
+                resetForm();
+                toastr.success('Todo added successfully!');
+            },
+            error: function(xhr) {
+                toastr.error(xhr.responseJSON.error);
+            }
+        });
+    }
+
+    function updateTodo(id, title, description) {
+        $.ajax({
+            url: `/todos/update/${id}/`,
+            type: 'POST',
+            data: {
+                title: title,
+                description: description,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                $(`#todo-${id}`).html(`
+                    <strong>${response.title}</strong>
+                    <p class="todo-description">${response.description}</p>
+                    <div class="actions">
+                        <button onclick="editTodo(${response.id}, '${response.title}', '${response.description}')">Edit</button>
+                        <button onclick="deleteTodo(${response.id})">Delete</button>
+                    </div>
+                `);
+                resetForm();
+                toastr.success('Todo updated successfully!');
+            },
+            error: function(xhr) {
+                toastr.error(xhr.responseJSON.error);
+            }
+        });
+    }
+
+    function editTodo(id, title, description) {
+        $('#todoTitle').val(title);
+        $('#todoDescription').val(description);
+        $('#addButton').hide();
+        $('#saveButton').show();
+        currentEditingId = id;
+    }
+
+    function resetForm() {
+        $('#todoTitle').val('');
+        $('#todoDescription').val('');
+        $('#addButton').show();
+        $('#saveButton').hide();
+        currentEditingId = null;
+    }
+
+    function deleteTodo(id) {
+        if (confirm('Are you sure you want to delete this todo?')) {
+            $.ajax({
+                url: `/todos/delete/${id}/`,
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                headers: {
+                    'X-HTTP-Method-Override': 'DELETE'
+                },
+                success: function() {
+                    $(`#todo-${id}`).remove();
+                    toastr.success('Todo deleted successfully!');
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON.detail);
+                }
+            });
+        }
+    }
+
+    $(document).ready(function(){
+        $.ajax({
+            url: '{% url "fetch_todos" %}',
+            type: 'GET',
+            success: function(todos) {
+                $('#todoList').empty();
+                todos.forEach(function(todo) {
+                    $('#todoList').append(`
+                        <li id="todo-${todo.id}">
+                            <strong>${todo.title}</strong>
+                            <p class="todo-description">${todo.description}</p>
+                            <div class="actions">
+                                <button onclick="editTodo(${todo.id}, '${todo.title}', '${todo.description}')">Edit</button>
+                                <button onclick="deleteTodo(${todo.id})">Delete</button>
+                            </div>
+                        </li>
+                    `);
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
