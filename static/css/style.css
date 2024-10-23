@@ -1,0 +1,128 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+img {
+    max-width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.container {
+    width: 50%;
+    /* Increased width for better visibility */
+    height: 50%;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+li {
+    margin: 10px 0;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: center;
+}
+
+li strong {
+    font-size: 1.2em;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.logout-button {
+    background-color: #dc3545;
+    margin: 30px;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+#todoForm {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+#todoTitle,
+#todoDescription {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.todo-description {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+#addButton,
+#saveButton {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addButton:hover,
+#saveButton:hover {
+    background-color: #218838;
+}
+
+#saveButton {
+    display: none;
+}

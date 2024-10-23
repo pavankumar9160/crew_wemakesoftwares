@@ -164,6 +164,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required
+
 def todo_list(request):
     if request.method == 'GET':
         todos = TodoList.objects.filter(user=request.user)
@@ -172,12 +173,28 @@ def todo_list(request):
     elif request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
+        uploaded_image = request.FILES.get('uploadedimage') 
 
-        if title and description:
-           
-            todo = TodoList.objects.create(user=request.user, title=title, description=description)
-            return JsonResponse({'id': todo.id, 'title': todo.title, 'description': todo.description}, status=201)
-        return JsonResponse({'error': 'Title and description are required'}, status=400)
+        print(f'Title: {title}, Description: {description}, Uploaded Image: {uploaded_image}')
+
+        if title and description and uploaded_image:
+
+            todo = TodoList.objects.create(
+                user=request.user,
+                title=title,
+                description=description,
+                uploadedimage=uploaded_image
+            )
+
+            return JsonResponse({
+                'id': todo.id,
+                'title': todo.title,
+                'description': todo.description,
+                'uploadedimage': todo.uploadedimage.url if todo.uploadedimage else None,  
+            }, status=201)
+
+        return JsonResponse({'error': 'Title, description, and image are required'}, status=400)
+
 
 @login_required
 def fetch_todos(request):
@@ -185,7 +202,7 @@ def fetch_todos(request):
      
         todos = TodoList.objects.filter(user=request.user)
        
-        todos_data = [{'id': todo.id, 'title': todo.title, 'description': todo.description} for todo in todos]
+        todos_data = [{'id': todo.id, 'title': todo.title, 'description': todo.description,'uploadedimage':todo.uploadedimage.url if todo.uploadedimage else None} for todo in todos]
         return JsonResponse(todos_data, safe=False)
 
 @login_required
@@ -198,13 +215,15 @@ def update_todo(request, pk):
 
         title = request.POST.get('title')
         description = request.POST.get('description')
+        uploadedimage=request.FILES.get('uploadedimage')
 
-        if title and description:
+        if title and description and uploadedimage:
            
             todo.title = title
             todo.description = description
+            todo.uploadedimage = uploadedimage
             todo.save()
-            return JsonResponse({'id': todo.id, 'title': todo.title, 'description': todo.description}, status=200)
+            return JsonResponse({'id': todo.id, 'title': todo.title, 'description': todo.description,'uploadedimage':todo.uploadedimage.url if todo.uploadedimage else None}, status=200)
         return JsonResponse({'error': 'Title and description are required'}, status=400)
 
 @login_required

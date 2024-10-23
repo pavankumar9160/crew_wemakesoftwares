@@ -67,6 +67,7 @@ from django.contrib.auth.models import User
 class TodoList(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500,default="NA")
+    uploadedimage = models.ImageField(upload_to='attachments/',null=True,blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,default=1) 
 
     def __str__(self):
