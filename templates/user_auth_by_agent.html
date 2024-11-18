@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+    <style>
+       
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+       /* body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        } */
+        .table-container {
+            width: 100%;
+            margin: auto;
+            overflow-x: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* Toggle switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e74c3c;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #27ae60;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Status Text Styling */
+        .status-text {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+            color: #e74c3c;
+        }
+        .status-text.active {
+            color: #27ae60;
+        }
+    /* Navbar styling */
+ .navbar {
+    background-color: #3498db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 6rem;
+}
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 600;
+}
+.navbar-brand:hover, .nav-link:hover {
+    color: #eaf6fd !important;
+}
+.dropdown-item:hover {
+    background-color: #2a7fb8;
+    color: white !important;
+}
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.navbar .container-fluid {
+    display: flex;
+    justify-content: space-between; /* Space between links and profile */
+}
+main {
+    margin-top: 1.5rem; /* Small gap between navbar and main content */
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'agent_dashboard' %}">Agent Dashboard</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'onlychat_agent' %}">Only Chat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"href="#">Server Status</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_auth_by_agent' %}">User Activation</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button 
+                    class="btn d-flex align-items-center" 
+                    type="button" 
+                    id="userMenu" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false" 
+                    style="padding: 0; border: none; background-color: transparent;">
+                    {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+                    <!-- Profile Picture -->
+                    <img 
+                        src="{{ profile_picture }}" 
+                        alt="{{ user.name }}" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                    
+                    <!-- User's Name -->
+                    
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item" href="#">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        </nav>
+ <main>
+    <div class="table-container">
+        <h2>User Registration Data</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Aadhar Card (Front)</th>
+                    <th>Aadhar Card (Back)</th>
+                    <th>PAN Card</th>
+                    <th>Date of Birth</th>
+                    <th>Current Photo</th>
+                    <th>Occupation</th>
+                    <th>Company/College</th>
+                    <th>Email ID</th>
+                    <th>Contact Number</th>
+                    <th>Alternative Contact</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id ="table-body">
+               
+            </tbody>
+        </table>
+    </div>
+</main>
+<!-- Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body  d-flex justify-content-center align-items-center" style="max-height: 300px; overflow-y: auto;">
+                <img src="" alt="Image" class="img-fluid" style="max-height: 200px;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- Bootstrap JS -->
+ <!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Event handler for view-image buttons
+    $(document).on("click", ".view-image", function() {
+        const imageUrl = $(this).data("image");
+        $("#imageModal .modal-body img").attr("src", imageUrl);
+        $('#imageModal').modal('show'); // Ensure modal is shown
+    });
+
+      // Toggle status function to switch between Active and Inactive
+function toggleStatus(checkbox, userId) {
+    const statusText = checkbox.closest('label').querySelector('.status-text'); // Targeting the span with class 'status-text'
+    const isActive = checkbox.checked;
+
+    // Update the UI status text and styles
+    if (isActive) {
+        statusText.textContent = 'Active';
+        statusText.classList.remove('inactive');
+        statusText.classList.add('active');
+    } else {
+        statusText.textContent = 'Inactive';
+        statusText.classList.remove('active');
+        statusText.classList.add('inactive');
+    }
+
+    // Send the new status to the server
+    fetch(`/toggle-status/${userId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Ensure CSRF token for Django
+        },
+        body: JSON.stringify({ is_active: isActive })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert("Failed to update status");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// CSRF token helper function
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+} 
+
+$(document).ready(function() {
+    $.ajax({
+        url: '/get_registered_users_info/',
+        type: "GET",
+        success: function(response) {
+            console.log(response.users);
+            const users = response.users;
+
+            $("#table-body").empty(); // Clear existing table rows
+
+            users.forEach((user) => {
+                console.log(user);
+
+                if(user.occupation == "1"){
+
+                    user.occupation ="Student"
+                }
+                else if(user.occupation == "2"){
+
+                    user.occupation ="Salaried"
+                }else if(user.occupation == "3"){
+
+                    user.occupation ="Self-Employeed"
+                }else if(user.occupation == "4"){
+
+                    user.occupation ="Others"
+                }
+                else{
+                    user.occupation ="NA"
+                }
+                if(user.company="undefined"){
+                    user.company ="NA"
+                }
+
+
+                const row = `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>
+                                ${user.aadhar_front ? 
+                                    `<button class="btn btn-primary view-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${user.aadhar_front}">View</button>` 
+                                    : 'No Image'}
+                            </td>
+                       <td>
+                                ${user.aadhar_back ? 
+                                    `<button class="btn btn-primary view-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${user.aadhar_back}">View</button>` 
+                                    : 'No Image'}
+                            </td>
+                         <td>
+                                ${user.pan_card ? 
+                                    `<button class="btn btn-primary view-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${user.pan_card}">View</button>` 
+                                    : 'No Image'}
+                            </td>
+                        <td>${user.date_of_birth}</td>
+                        <td>
+                                ${user.profile_photo ? 
+                                    `<button class="btn btn-primary view-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${user.profile_photo}">View</button>` 
+                                    : 'No Image'}
+                            </td>
+                        <td>${user.occupation}</td>
+                        <td>${user.company}</td>
+                        <td>${user.email}</td>
+                        <td>${user.contact_number}</td>
+                        <td>${user.alternate_contact_number}</td>
+                       
+                        <td>
+                            <label>
+                                <input type="checkbox" onchange="toggleStatus(this, ${user.id})" ${user.is_active ? 'checked' : ''}>
+                                <span class="status-text ${user.is_active ? 'active' : 'inactive'}">
+                                    ${user.is_active ? 'Active' : 'Inactive'}
+                                </span>
+                            </label>
+                        </td>
+                    </tr>`;
+
+                $("#table-body").append(row);
+            });
+           // Event handler for image buttons
+          
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
+
+$(".view-image").on("click", function() {
+    const imageUrl = $(this).data("image");
+    $("#imageModal .modal-body img").attr("src", imageUrl);
+});
+
+    </script>
+    
+
+</body>
+</html>

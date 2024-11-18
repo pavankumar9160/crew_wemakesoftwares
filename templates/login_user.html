@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+</head>
+
+<style>
+    body {
+        background-color: #f4f7fc;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 80vw;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 2.4, 1, 0.1);
+    }
+
+    h2 {
+        color: #052c65;
+        font-weight: 600;
+    }
+
+    .form-group label {
+        color: #052c65;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #052c65;
+        box-shadow: 0 0 0 0.2rem rgba(5, 44, 101, 0.25);
+    }
+
+    .invalid-feedback {
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+
+    .btn {
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        background-color: #052c65;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #003b5c;
+    }
+
+    .btn-outline-secondary {
+        border-color: #052c65;
+        color: #052c65;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #052c65;
+        color: white;
+    }
+
+    .text-center {
+        margin-top: 20px;
+    }
+
+    .d-grid {
+        margin-top: 20px;
+    }   
+
+    .form-group .invalid-feedback {
+        display: block;
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+
+    .card {
+        border: none; /* Remove the default border */
+        box-shadow: none; /* Remove any box shadow */
+    }
+</style>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Login To Your Account</h2>
+                        <form id="loginForm">
+                            {% csrf_token %}
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                            </div>
+    
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                            </div>
+    
+                            <!-- Login Button -->
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary">Log In</button>
+                            </div>
+                        </form>
+    
+                        <!-- Signup Button -->
+                        <div class="text-center mb-3">
+                            <p>Don't have an account?</p>
+                            <a href="{% url 'signup' %}" class="btn btn-outline-secondary">Sign Up</a>
+                        </div>
+    
+                        <!-- User Info Section -->
+                        <div id="userInfo" class="mt-4">
+                            <h5 class="text-center">User Information</h5>
+                            <p><strong>IP Address:</strong> <span id="userIP">Loading...</span></p>
+                            <p><strong>Geolocation:</strong> <span id="userLocation">Loading...</span></p>
+                            <p><strong>Device:</strong> <span id="userDevice">Loading...</span></p>
+                            <p><strong>Browser:</strong> <span id="browserInfo">Loading...</span></p>
+                            <p><strong>Screen Size:</strong> <span id="screenInfo">Loading...</span></p>
+                            <p><strong>Network Type:</strong> <span id="networkInfo">Loading...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+   
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    $(document).ready(function () {
+        $('#loginForm').on('submit', function (event) {
+            event.preventDefault(); 
+
+            var email = $('#email').val();
+            var password = $('#password').val();
+
+            $.ajax({
+                url: '/login/', 
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken 
+                },
+                data: {
+                    email: email,
+                    password: password
+                },
+                success: function (response) {
+                    console.log('Success:', response); 
+                    toastr.success('Login successful!','Success');
+                    window.location.href = response.redirect_url; // Redirect after successful login
+                   
+                },
+                error: function (xhr) {
+                    console.log('Error:', xhr.responseText); 
+                    var errors = xhr.responseJSON;
+                    var firstError = errors.error || 'Unknown error';
+                    toastr.error(firstError, 'Error');
+                    toastr.options = {
+                        "closeButton": true,
+                        "newestOnTop": true,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                    };
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        // Fetch IP address using external API
+        $.getJSON('https://api.ipify.org?format=json', function(data) {
+            $('#userIP').text(data.ip);
+        });
+
+        // Device and Browser Information
+        const userAgent = navigator.userAgent;
+        $('#userDevice').text(userAgent);
+        
+        // Extract browser name and version
+        const browserData = navigator.userAgentData || navigator.userAgent;
+        $('#browserInfo').text(`Browser: ${browserData}`);
+        
+        // Screen information
+        $('#screenInfo').text(`Width: ${screen.width}px, Height: ${screen.height}px, Color Depth: ${screen.colorDepth}-bit`);
+
+        // Network Information (limited support)
+        if (navigator.connection) {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            $('#networkInfo').text(`Type: ${connection.effectiveType}, Downlink: ${connection.downlink} Mbps`);
+        } else {
+            $('#networkInfo').text("Network info not available.");
+        }
+
+        // Geolocation
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    $('#userLocation').text(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}, Accuracy: ${position.coords.accuracy} meters`);
+                },
+                function(error) {
+                    $('#userLocation').text(`Error: ${error.message}`);
+                }
+            );
+        } else {
+            $('#userLocation').text("Geolocation is not supported by this browser.");
+        }
+    });
+</script>
+
+</body>
+</html>

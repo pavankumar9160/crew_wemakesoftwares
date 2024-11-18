@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Welcome Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0e0e0e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #ffffff;
+        }
+        .welcome-container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #1b1b1b;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            text-align: center;
+        }
+        .header {
+            font-size: 1.8em;
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .card {
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 10px;
+            padding: 20px;
+            width: 45%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        .card-description {
+            font-size: 0.9em;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+        .toggle-button {
+            background-color: #e74c3c;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle-button.on {
+            background-color: #27ae60;
+        }
+        .toggle-button:hover {
+            background-color: #c0392b;
+        }
+        .toggle-button.on:hover {
+            background-color: #229954;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="header">Welcome, Agent</div>
+        <p>Please select an option below to proceed:</p>
+
+        <div class="card-container">
+            <!-- Card for Agent Dashboard -->
+            <a href="{% url 'agent_dashboard' %}" class="card">
+                <div class="card-title">Agent Dashboard</div>
+                <div class="card-description">Access user details, status, and manage your dashboard.</div>
+            </a>
+
+            <!-- Card for Only Chat Page -->
+            <a href="{% url 'onlychat_agent' %}" class="card">
+                <div class="card-title">Only Chat</div>
+                <div class="card-description">Start and continue chats with users.</div>
+            </a>
+
+            <!-- Card for Set Server Status with Toggle Button -->
+            <div class="card">
+                <div class="card-title">Server Status</div>
+                <div class="card-description">Toggle server status for user access.</div>
+                <button id="toggleServerButton" class="toggle-button" onclick="toggleServerStatus()">Set Server Down</button>
+            </div>
+
+            <!-- Card for User Authentication Page -->
+            <a href="{% url 'user_auth_by_agent' %}" class="card">
+                <div class="card-title">User Activation</div>
+                <div class="card-description">Manage user activation status on the authentication page.</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle server status between "Server Down" and "Server Up"
+        function toggleServerStatus() {
+            const toggleButton = document.getElementById('toggleServerButton');
+            if (toggleButton.classList.contains('on')) {
+                toggleButton.classList.remove('on');
+                toggleButton.textContent = 'Set Server Down';
+                toggleButton.style.backgroundColor = '#e74c3c';
+                alert('Server status is now UP for users.');
+            } else {
+                toggleButton.classList.add('on');
+                toggleButton.textContent = 'Set Server Up';
+                toggleButton.style.backgroundColor = '#27ae60';
+                alert('Server status is now DOWN for users.');
+            }
+        }
+    </script>
+</body>
+</html>

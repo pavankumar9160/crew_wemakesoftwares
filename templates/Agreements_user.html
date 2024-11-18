@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent Agreement Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+    <style>
+          /* body {
+            background: #f4f7f9;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }*/
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden by default until permissions are granted */
+        }
+        h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .question {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .option-buttons {
+            display: flex;
+            justify-content: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .option-buttons label {
+            cursor: pointer;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .submit-btn {
+            background-color: #48bb78;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 1.5rem;
+        }
+        .submit-btn:hover {
+            background-color: #38a169;
+        }
+        .declaration {
+            color: #2d3748;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .checkbox-label input {
+            margin-right: 0.5rem;
+        }
+        .error-message {
+            color: #e53e3e;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+        }
+         /* Navbar styling */
+         .navbar {
+            background-color: #3498db;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 6rem;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #eaf6fd !important;
+        }
+        .dropdown-item:hover {
+            background-color: #2a7fb8;
+            color: white !important;
+        }
+        .navbar .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .navbar .container-fluid {
+            display: flex;
+            justify-content: space-between; /* Space between links and profile */
+        }
+        main {
+            margin-top: 1.5rem; /* Small gap between navbar and main content */
+        }
+    </style>
+    
+    <body>
+       <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Payment Assistance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"href="#">Loan Closure</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Legal and Compliance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Account Management</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button 
+                    class="btn d-flex align-items-center" 
+                    type="button" 
+                    id="userMenu" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false" 
+                    style="padding: 0; border: none; background-color: transparent;">
+                    {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+                    <!-- Profile Picture -->
+                    <img 
+                        src="{{ profile_picture }}" 
+                        alt="{{ user.name }}" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                    
+                    <!-- User's Name -->
+                    
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item" href="#">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+            
+        </div>
+    </nav>
+    
+<main> 
+    <div id="errorMessage" class="error-message"></div>
+
+    <div class="container" id="formContainer">
+        <h2>Consent Agreement Form</h2>
+
+        <!-- Agreement ID Display -->
+        <div class="text-gray-600 mb-4">
+            <strong>Agreement ID:</strong> <span id="agreementId"></span>
+        </div>
+
+        <!-- Consent Questions -->
+        <div class="question">
+            <p>1. I agree that all information provided is accurate.</p>
+            <div class="option-buttons">
+                <label><input type="radio" name="q1" value="Yes" required> Yes, I agree</label>
+                <label><input type="radio" name="q1" value="No"> No, I disagree</label>
+            </div>
+        </div>
+        
+        <div class="question">
+            <p>2. I agree I have not submitted any fake documents.</p>
+            <div class="option-buttons">
+                <label><input type="radio" name="q2" value="Yes" required> Yes, I agree</label>
+                <label><input type="radio" name="q2" value="No"> No, I disagree</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. I agree the captured photo is my own.</p>
+            <div class="option-buttons">
+                <label><input type="radio" name="q3" value="Yes" required> Yes, I agree</label>
+                <label><input type="radio" name="q3" value="No"> No, I disagree</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. I agree to pay dues on time; otherwise, legal action may be taken.</p>
+            <div class="option-buttons">
+                <label><input type="radio" name="q4" value="Yes" required> Yes, I agree</label>
+                <label><input type="radio" name="q4" value="No"> No, I disagree</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. I understand and agree to all terms and conditions provided.</p>
+            <div class="option-buttons">
+                <label><input type="radio" name="q5" value="Yes" required> Yes, I agree</label>
+                <label><input type="radio" name="q5" value="No"> No, I disagree</label>
+            </div>
+        </div>
+
+        <!-- Final Declaration -->
+        <div class="declaration">
+            <label class="checkbox-label">
+                <input type="checkbox" id="finalConsent" required>
+                I have agreed to all the above statements with my full consent. I confirm that no one has forced me to agree, and I understand each statement completely.
+            </label>
+        </div>
+
+        <!-- Language Selection for Video Declaration -->
+        <div class="mt-4">
+            <label for="languageSelect">Select Language for Video Declaration:</label>
+            <select id="languageSelect" class="w-full p-2 border border-gray-300 rounded mb-4" onchange="updateInstruction()">
+                <option value="english">English</option>
+                <option value="hindi">Hindi</option>
+                <option value="french">French</option>
+                <option value="spanish">Spanish</option>
+            </select>
+        </div>
+
+        <!-- Video Upload Instruction -->
+        <div id="videoInstruction" class="text-gray-600 mb-4">
+            <!-- This will be dynamically updated based on selected language -->
+        </div>
+
+        <!-- Video Upload Section -->
+        <label>Upload Video (in .mp4, .mov format):</label>
+        <input type="file" accept="video/mp4, video/mov" class="w-full p-2 border border-gray-300 rounded mb-4" required>
+
+        <button type="submit" class="submit-btn w-full p-3 mt-4" onclick="submitForm()">Submit Answers</button>
+    </div>
+
+    <!-- Hidden video element to trigger media permissions -->
+    <video id="hiddenVideo" style="display: none;" autoplay muted></video>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        // Generate a unique Agreement ID with a timestamp
+        const agreementId = `AGGRDC_${new Date().getTime()}`;
+        document.getElementById('agreementId').textContent = agreementId;
+
+        // Video instructions in different languages
+        const instructions = {
+            english: `Please say in your video: "I, [Your Full Name], agree to Agreement ID ${agreementId} on [Today's Date], acknowledging responsibility for all terms presented."`,
+            hindi: `कृपया अपने वीडियो में कहें: "मैं, [आपका पूरा नाम], समझौता ID ${agreementId} को [आज की तारीख] पर सहमति देता हूं, और प्रस्तुत सभी शर्तों की जिम्मेदारी स्वीकार करता हूं।"`,
+            french: `Veuillez dire dans votre vidéo : "Je, [Votre Nom Complet], accepte l'ID de l'accord ${agreementId} en date de [Date d'aujourd'hui], reconnaissant la responsabilité de toutes les conditions présentées."`,
+            spanish: `Por favor diga en su video: "Yo, [Su Nombre Completo], acepto el ID del acuerdo ${agreementId} en la fecha de [Fecha de Hoy], reconociendo la responsabilidad de todos los términos presentados."`
+        };
+
+        // Update video instructions based on language selection
+        function updateInstruction() {
+            const selectedLanguage = document.getElementById('languageSelect').value;
+            document.getElementById('videoInstruction').textContent = instructions[selectedLanguage];
+        }
+
+        // Set default instruction on page load
+        window.onload = requestPermissions;
+
+        // Request video and audio permissions on page load
+        async function requestPermissions() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('formContainer').style.display = 'block';
+                
+                // Access hidden video element and play stream to trigger permission request
+                const video = document.getElementById('hiddenVideo');
+                video.srcObject = stream;
+                video.onloadedmetadata = () => {
+                    stream.getTracks().forEach(track => track.stop()); // Stop stream once loaded
+                    video.srcObject = null;
+                };
+                updateInstruction(); // Update language-specific instruction after permission granted
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 
+                    "Please enable camera and microphone permissions to access this form.";
+            }
+        }
+
+        // Form submission validation
+        function submitForm() {
+            const allQuestionsAnswered = Array.from(document.querySelectorAll('input[type="radio"]')).every(input => input.checked || document.querySelector(`input[name="${input.name}"]:checked`));
+            const finalConsent = document.getElementById('finalConsent').checked;
+            const videoUploaded = document.querySelector('input[type="file"]').files.length > 0;
+
+            if (allQuestionsAnswered && finalConsent && videoUploaded) {
+                alert(`Thank you for completing the consent agreement!\nYour Agreement ID: ${agreementId}`);
+                // Process submission here
+            } else {
+                alert("Please answer all questions, check the declaration, and upload your video before submitting.");
+            }
+        }
+    </script>
+</body>
+</html>

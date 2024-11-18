@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+    <style>
+       /* body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+        } */
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+        .chat-history-container {
+            width: 90%;
+            max-width: 700px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            font-size: 1.8em;
+            color: #3498db;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .user-select {
+            font-size: 1em;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .refresh-button {
+            background-color: #e74c3c;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .refresh-button:hover {
+            background-color: #c0392b;
+        }
+        .chat-history {
+            flex: 1;
+            max-height: 300px;  
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f7f9fc;
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            font-weight: bold;
+        }
+        .user-message {
+            background-color: #e1eaf2;
+            color: #333;
+            align-self: flex-start;
+            text-align: left;
+        }
+        .agent-message {
+            background-color: #3498db;
+            color: #ffffff;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .chat-footer {
+            display: flex;
+            gap: 10px;
+        }
+        .input-box {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .send-button, .attachment-button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .send-button:hover, .attachment-button:hover {
+            background-color: #2980b9;
+        }
+        .file-input {
+            display: none;
+        }
+         /* Navbar styling */
+ .navbar {
+    background-color: #3498db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 6rem;
+}
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 600;
+}
+.navbar-brand:hover, .nav-link:hover {
+    color: #eaf6fd !important;
+}
+.dropdown-item:hover {
+    background-color: #2a7fb8;
+    color: white !important;
+}
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.navbar .container-fluid {
+    display: flex;
+    justify-content: space-between; /* Space between links and profile */
+}
+main {
+    margin-top: 1.5rem; /* Small gap between navbar and main content */
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'agent_dashboard' %}">Agent Dashboard</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'onlychat_agent' %}">Only Chat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"href="#">Server Status</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_auth_by_agent' %}">User Activation</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button 
+                    class="btn d-flex align-items-center" 
+                    type="button" 
+                    id="userMenu" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false" 
+                    style="padding: 0; border: none; background-color: transparent;">
+                    {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+                    <!-- Profile Picture -->
+                    <img 
+                        src="{{ profile_picture }}" 
+                        alt="{{ user.name }}" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                    
+                    <!-- User's Name -->
+                    
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item" href="#">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        </nav>
+        <main>
+    <div class="chat-history-container">
+        <div class="header">Chat History</div>
+
+        <!-- Controls Section with User Selection and Refresh Button -->
+        <div class="controls">
+            <select class="user-select" id="userSelect" onchange="loadChatHistory()">
+                <option value="" disabled selected>Select a User</option>
+                
+            </select>
+            <button class="refresh-button" onclick="refreshChatHistory()">Refresh</button>
+        </div>
+
+        <!-- Chat History Area -->
+        <div class="chat-history" id="chatHistory">
+            <!-- Messages will be displayed here -->
+        </div>
+
+        <!-- Chat Footer for New Messages and Attachment -->
+        <div class="chat-footer">
+            <input type="text" id="messageInput" class="input-box" placeholder="Type your message here...">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+            <button class="attachment-button" onclick="document.getElementById('fileInput').click()">Attach</button>
+            <input type="file" id="fileInput" class="file-input" onchange="sendAttachment()">
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        
+        let messageInterval;
+
+        // Function to start the interval for loading new messages
+        function startMessageInterval() {
+            const chatRequestId = document.getElementById('userSelect').value;
+
+            // Only start the interval if a user is selected
+            if (chatRequestId) {
+                clearInterval(messageInterval);  // Clear any previous interval
+                messageInterval = setInterval(function() {
+                    loadNewMessages(chatRequestId);
+                }, 2000);  // 5000 ms = 5 seconds
+            }
+        }
+
+        // Function to stop the interval when the user is in the chat history box
+        function stopMessageInterval() {
+            clearInterval(messageInterval);
+        }
+
+        // Function to load chat history based on selected user
+        function loadChatHistory() {
+            const chatRequestId = document.getElementById('userSelect').value;
+            
+                        $.ajax({
+
+                            url :`/get_user_chat_history/${chatRequestId}`,
+                            type: "GET",
+                            success:function(data){
+
+                            console.log(data.messages)
+
+                                updateChat(data.messages); 
+                            },
+                            error: function(xhr, status, error) {
+                                console.log('Error:', xhr.responseText); // Log error in case of failure
+                                var errors = xhr.responseJSON;
+                                console.log(errors);
+                                var firstKey = Object.keys(errors)[0];
+                                var firstError = errors[firstKey][0];
+                                console.log(firstError); // Log the error message from the response
+                            }
+
+                        })
+
+        }
+
+        function updateChat(messages){
+
+            const chatHistory = document.getElementById('chatHistory');
+            chatHistory.innerHTML ="";
+
+            messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', msg.is_csa ? 'agent-message' : 'user-message');
+                
+                // If there's no message, display the sender and the attachment link
+                if (msg.message) {
+                    messageElement.textContent = `${msg.sender}: ${msg.message}`;
+                } else if (msg.attachment) {
+                    // If no message, display the sender and the attachment link
+                    const attachmentLink = document.createElement('a');
+                    attachmentLink.href = msg.attachment; // Link to the attachment
+                    attachmentLink.target = "_blank"; // Open in a new tab
+                    attachmentLink.textContent = "view the attachment"; // Display text for the link
+                    messageElement.textContent = `${msg.sender}: `; // Add sender's name first
+                    messageElement.appendChild(attachmentLink); // Append the attachment link after the sender's name
+                }
+                
+                chatHistory.appendChild(messageElement);
+            });
+            
+            // Scroll to the bottom after adding new messages
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+
+
+
+
+
+
+
+        // Function to refresh chat history
+        function refreshChatHistory() {
+            loadChatHistory();
+        }
+
+       function sendMessage() {
+
+        const chatRequestId = document.getElementById('userSelect').value;
+        console.log(chatRequestId);
+            const userInput = document.getElementById('messageInput');
+            const userMessage = userInput.value.trim();
+            if (userMessage === "") {
+                return; // Prevent sending empty messages
+            }
+        
+        
+            $.ajax({
+                url: `/send_messages/${chatRequestId}`,
+                type: "POST",
+                data: {
+                    message: userMessage,
+                   
+                    
+                },
+                success: function(response) {
+
+                    userInput.value="";
+                    console.log(response); // Log the response to the console
+
+                    
+
+                
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', xhr.responseText); // Log error in case of failure
+                    var errors = xhr.responseJSON;
+                    console.log(errors);
+                    var firstKey = Object.keys(errors)[0];
+                    var firstError = errors[firstKey][0];
+                    console.log(firstError); // Log the error message from the response
+                }
+            });
+        }
+
+
+        // Function to handle attachment upload
+       // Function to send an attachment
+       function sendAttachment() {
+
+        const chatRequestId = document.getElementById('userSelect').value;
+        console.log(chatRequestId);
+
+        
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (file) {
+
+            const formData = new FormData();
+        formData.append('attachment', file);
+            $.ajax({
+                url: `/send_messages/${chatRequestId}`,  // Ensure this URL matches your view
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log(response) 
+                    
+                },
+                error: function(xhr) {
+                    console.error('Error uploading file:', xhr.responseText);
+                }
+            });
+    
+
+            // Clear the file input
+            fileInput.value = '';
+
+           
+           
+        }
+    }
+
+
+      $(document).ready(function(){
+
+            $.ajax({
+
+                url :'/get_users_info_and_messages/',
+                type:"GET",
+                success:function(response){
+                        console.log(response.users)
+                        const users_data = response.users
+                       
+
+                        users_data.forEach((data)=>{
+                                console.log("id is "+data.chat_request_ids)
+                            console.log(data.user_info.name)
+                            console.log(data.last_message.message)
+
+                            const options =`<option value="${data.chat_request_ids}">${data.user_info.name}</option>`
+                            $("#userSelect").append(options);
+                        })
+                       
+                       
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', xhr.responseText); // Log error in case of failure
+                    var errors = xhr.responseJSON;
+                    console.log(errors);
+                    var firstKey = Object.keys(errors)[0];
+                    var firstError = errors[firstKey][0];
+                    console.log(firstError); // Log the error message from the response
+                }
+            })
+
+            $('#chatHistory').on('mouseenter', function() {
+                stopMessageInterval();
+            });
+
+            // Resume the interval when the user leaves the chat history box
+            $('#chatHistory').on('mouseleave', function() {
+                if (document.getElementById('userSelect').value) {
+                    startMessageInterval();  // Start the interval again if a user is selected
+                }
+            });
+
+    })
+
+    function loadNewMessages() {
+        // Pass chat_request_id from Django context
+        const chatRequestId = document.getElementById('userSelect').value;
+        console.log(chatRequestId); 
+      
+      $.ajax({
+          url: `/load_messages/${chatRequestId}/`,  // Assume this URL endpoint returns messages
+          method: "GET",
+          success: function(response) {
+             
+              updateChat(response.messages)
+              
+          },
+          
+      });
+  }
+
+
+
+
+
+
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+    <style>
+       /* body {
+            background: #f4f7f9;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }*/
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .greeting {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        .progress-bar {
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            height: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress {
+            background-color: #3498db;
+            height: 100%;
+            border-radius: 8px;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            text-align: center;
+        }
+        .card-title {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        .ribbon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: #fff;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 4px;
+            text-transform: capitalize;
+        }
+        .ribbon.completed {
+            background-color: #4CAF50;
+        }
+        .ribbon.pending {
+            background-color: #FFC107;
+        }
+        .ribbon.not-available {
+            background-color: #ccc;
+        }
+        .section-progress-bar {
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .section-progress {
+            background-color: #3498db;
+            height: 100%;
+            border-radius: 8px;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #2c3e50;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .status-active {
+            background-color: #4CAF50;
+        }
+        .status-inactive {
+            background-color: #ccc;
+        }
+        .link-button {
+            margin-top: 1rem;
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .link-button:hover {
+            background-color: #2a7fb8;
+        }
+        /* Navbar styling */
+        .navbar {
+            background-color: #3498db;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 6rem;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #eaf6fd !important;
+        }
+        .dropdown-item:hover {
+            background-color: #2a7fb8;
+            color: white !important;
+        }
+        .navbar .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .navbar .container-fluid {
+            display: flex;
+            justify-content: space-between; /* Space between links and profile */
+        }
+        main {
+            margin-top: 1.5rem; /* Small gap between navbar and main content */
+        }
+    </style>
+    
+    <body>
+       <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Payment Assistance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"href="#">Loan Closure</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Legal and Compliance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Account Management</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button 
+                    class="btn d-flex align-items-center" 
+                    type="button" 
+                    id="userMenu" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false" 
+                    style="padding: 0; border: none; background-color: transparent;">
+                    {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+                    <!-- Profile Picture -->
+                    <img 
+                        src="{{ profile_picture }}" 
+                        alt="{{ user.name }}" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                    
+                    <!-- User's Name -->
+                    
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item" href = "{% url 'details_v2_user' %}">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+            
+            
+        </div>
+    </nav>
+    
+<main>    
+    <div class="container">
+        <div class="greeting" id="greetingMessage">Good Morning, {{user.name}}</div>
+        
+        <!-- Overall Progress Bar -->
+        <div class="progress-bar">
+            <div id="overallProgress" class="progress" style="width: 0%;"></div>
+        </div>
+        
+        <!-- Cards Section -->
+        <div class="card-container">
+            <div class="card">
+                <div class="ribbon pending">Pending</div>
+                <div class="card-title">Profile Update</div>
+                <div class="section-progress-bar">
+                    <div id="profileUpdateProgress" class="section-progress" style="width: 0%;"></div>
+                </div>
+                <a href="{% url 'details_v2_user' %}" class="link-button">Go to Profile Update</a>
+            </div>
+            <div class="card">
+                <div class="ribbon completed">Completed</div>
+                <div class="card-title">Agreements</div>
+                <div class="section-progress-bar">
+                    <div id="agreementsProgress" class="section-progress" style="width: 0%;"></div>
+                </div>
+                <a href="{% url 'agreements_user' %}" class="link-button">Go to Agreements</a>
+            </div>
+            <div class="card">
+                <div class="ribbon pending">Pending</div>
+                <div class="card-title">Loan Disbursal</div>
+                <div class="section-progress-bar">
+                    <div id="loanDisbursalProgress" class="section-progress" style="width: 0%;"></div>
+                </div>
+                <a href="#" class="link-button">Go to Loan Disbursal</a>
+            </div>
+            <div class="card">
+                <div class="ribbon completed">Completed</div>
+                <div class="card-title">Payments</div>
+                <div class="section-progress-bar">
+                    <div id="paymentsProgress" class="section-progress" style="width: 0%;"></div>
+                </div>
+                <a href="#" class="link-button">Go to Payments</a>
+            </div>
+            <div class="card">
+                <div class="card-title">Help and Support</div>
+                <div class="status-indicator" id="chatStatus">
+                    <div id="statusDot" class="status-dot status-inactive"></div>
+                    <span id="statusText">Chat Support: Inactive</span>
+                </div>
+                <a  href="{% url 'help_supp_user' %}" class="link-button">Go to Help & Support</a>
+            </div>
+        </div>
+    </div>
+</main> 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Set greeting message based on the time of day
+        function setGreeting(name) {
+            const greetingElement = document.getElementById("greetingMessage");
+            const hours = new Date().getHours();
+            let greeting = "Good Morning";
+
+            if (hours >= 12 && hours < 18) {
+                greeting = "Good Afternoon";
+            } else if (hours >= 18) {
+                greeting = "Good Evening";
+            }
+
+            greetingElement.textContent = `${greeting}, Mr. ${name}`;
+        }
+
+        // Update individual section progress bars and main progress dynamically
+        function updateSectionProgress(sectionId, progress) {
+            const sectionProgressElement = document.getElementById(sectionId);
+            sectionProgressElement.style.width = `${progress}%`;
+            updateOverallProgress();
+        }
+
+        function updateOverallProgress() {
+            const profileProgress = parseFloat(document.getElementById("profileUpdateProgress").style.width) || 0;
+            const agreementsProgress = parseFloat(document.getElementById("agreementsProgress").style.width) || 0;
+            const loanDisbursalProgress = parseFloat(document.getElementById("loanDisbursalProgress").style.width) || 0;
+            const paymentsProgress = parseFloat(document.getElementById("paymentsProgress").style.width) || 0;
+
+            const totalProgress = (
+                (profileProgress + agreementsProgress + loanDisbursalProgress + paymentsProgress) * 0.25
+            );
+
+            document.getElementById("overallProgress").style.width = `${totalProgress}%`;
+        }
+
+        // Toggle chat support status
+        function setChatSupportStatus(isActive) {
+            const statusDot = document.getElementById("statusDot");
+            const statusText = document.getElementById("statusText");
+
+            if (isActive) {
+                statusDot.classList.add("status-active");
+                statusDot.classList.remove("status-inactive");
+                statusText.textContent = "Chat Support: Active";
+            } else {
+                statusDot.classList.add("status-inactive");
+                statusDot.classList.remove("status-active");
+                statusText.textContent = "Chat Support: Inactive";
+            }
+        }
+      const userName = "{{ user.name }}"
+        // Initialize page
+        setGreeting(userName);
+
+        // Set progress for each section
+        updateSectionProgress("profileUpdateProgress", 50); // Example: 50% completed
+        updateSectionProgress("agreementsProgress", 100); // Example: 100% completed
+        updateSectionProgress("loanDisbursalProgress", 75); // Example: 75% completed
+        updateSectionProgress("paymentsProgress", 25); // Example: 25% completed
+
+        // Set chat support status (true for active, false for inactive)
+        setChatSupportStatus(true); // Example: Chat support is active
+    </script>
+</body>
+</html>

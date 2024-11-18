@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forum</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .forum-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            font-size: 2em;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        .question-form {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .question-form h3 {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .question-form textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        .post-button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .post-button:hover {
+            background-color: #2980b9;
+        }
+        .question-list {
+            margin-top: 20px;
+        }
+        .question {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .question h4 {
+            font-size: 1.1em;
+            margin: 0;
+            color: #3498db;
+        }
+        .question p {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+        .reply-section {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .reply {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .reply .user-name {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #3498db;
+        }
+        .reply-message {
+            background-color: #f7f9fc;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            width: 100%;
+        }
+        .reply-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .reply-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .reply-button {
+            background-color: #2ecc71;
+            color: #ffffff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .reply-button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="forum-container">
+        <div class="header">Community Forum</div>
+
+        <!-- Form to post a new question -->
+        <div class="question-form">
+            <h3>Ask a Question to the Community</h3>
+            <textarea id="questionInput" rows="4" placeholder="What's your question?"></textarea>
+            <button class="post-button" onclick="postQuestion()">Post Question</button>
+        </div>
+
+        <!-- List of community questions -->
+        <div class="question-list" id="questionList">
+            <!-- Sample question -->
+            <div class="question">
+                <h4>User 1: How do I calculate EMI for my loan?</h4>
+                <p>Posted on: 2024-11-13</p>
+                <div class="reply-section" id="replySection1">
+                    <!-- Sample replies -->
+                    <div class="reply">
+                        <span class="user-name">Agent Rey:</span>
+                        <div class="reply-message">You can calculate EMI by using the formula: EMI = [P x R x (1+R)^N] / [(1+R)^N-1]</div>
+                    </div>
+                    <div class="reply">
+                        <span class="user-name">User 2:</span>
+                        <div class="reply-message">I also found some EMI calculators online. You could try them!</div>
+                    </div>
+
+                    <!-- Reply input -->
+                    <div class="reply-input">
+                        <input type="text" placeholder="Write a reply..." id="replyInput1">
+                        <button class="reply-button" onclick="postReply('replySection1', 'replyInput1')">Reply</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Another Sample Question -->
+            <div class="question">
+                <h4>User 3: What's the maximum loan tenure available?</h4>
+                <p>Posted on: 2024-11-13</p>
+                <div class="reply-section" id="replySection2">
+                    <!-- Sample replies -->
+                    <div class="reply">
+                        <span class="user-name">Agent Mia:</span>
+                        <div class="reply-message">The maximum tenure depends on the loan type, but generally, it can go up to 30 years for home loans.</div>
+                    </div>
+                    <!-- Reply input -->
+                    <div class="reply-input">
+                        <input type="text" placeholder="Write a reply..." id="replyInput2">
+                        <button class="reply-button" onclick="postReply('replySection2', 'replyInput2')">Reply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to post a new question
+        function postQuestion() {
+            const questionInput = document.getElementById('questionInput');
+            const questionText = questionInput.value.trim();
+            if (questionText) {
+                const questionList = document.getElementById('questionList');
+                
+                const newQuestion = document.createElement('div');
+                newQuestion.classList.add('question');
+                newQuestion.innerHTML = `
+                    <h4>User: ${questionText}</h4>
+                    <p>Posted on: ${new Date().toISOString().split('T')[0]}</p>
+                    <div class="reply-section">
+                        <div class="reply-input">
+                            <input type="text" placeholder="Write a reply...">
+                            <button class="reply-button" onclick="postReply(this.parentElement.parentElement.id)">Reply</button>
+                        </div>
+                    </div>
+                `;
+                questionList.prepend(newQuestion); // Adds new question at the top
+                questionInput.value = ''; // Clear input after posting
+            }
+        }
+
+        // Function to post a reply
+        function postReply(replySectionId, replyInputId) {
+            const replySection = document.getElementById(replySectionId);
+            const replyInput = document.getElementById(replyInputId);
+            const replyText = replyInput.value.trim();
+            if (replyText) {
+                const newReply = document.createElement('div');
+                newReply.classList.add('reply');
+                newReply.innerHTML = `
+                    <span class="user-name">You:</span>
+                    <div class="reply-message">${replyText}</div>
+                `;
+                replySection.insertBefore(newReply, replySection.querySelector('.reply-input'));
+                replyInput.value = ''; // Clear input after posting
+            }
+        }
+    </script>
+</body>
+</html>

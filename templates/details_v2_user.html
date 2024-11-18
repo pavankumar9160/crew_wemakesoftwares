@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Signup Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #edf2f7;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden by default until permissions are granted */
+        }
+        h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input, textarea, button {
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #63b3ed;
+        }
+        button:hover {
+            background-color: #63b3ed;
+        }
+        button {
+            background-color: #3182ce;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .error-message {
+            color: #e53e3e;
+            font-weight: 600;
+            margin-top: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="errorMessage" class="error-message"></div>
+
+    <div class="container" id="formContainer">
+        <h2>Applicant Signup Form</h2>
+
+        <!-- 1. Applicant Personal Information -->
+        <div class="form-section">
+            <h2>1. Applicant Personal Information</h2>
+            <label>Full Name:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Full Name">
+            
+            <label>Date of Birth:</label>
+            <input type="date" class="w-full p-2 border border-gray-300 rounded mb-4">
+            
+            <label>Current Phone Number:</label>
+            <input type="tel" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Phone Number">
+            
+            <label>Email Address:</label>
+            <input type="email" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Email Address">
+            
+            <label>Current Residential Address:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Current Address"></textarea>
+            
+            <label>Permanent Residential Address:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Permanent Address"></textarea>
+            
+            <label>Social Media Handles:</label>
+            <div class="mb-4">
+                <input type="text" class="w-full p-2 border border-gray-300 rounded mb-2" placeholder="Facebook">
+                <input type="text" class="w-full p-2 border border-gray-300 rounded" placeholder="Instagram">
+            </div>
+        </div>
+
+        <!-- 2. Employment or Academic Details -->
+        <div class="form-section">
+            <h2>2. Employment or Academic Details</h2>
+            <label>Current Job Title/Occupation:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Job Title/Occupation">
+            
+            <label>Employer/Business Name:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Employer/Business Name">
+            
+            <label>Employer/Business Address:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Business Address"></textarea>
+            
+            <label>Work Contact Number:</label>
+            <input type="tel" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Work Contact Number">
+            
+            <label>Annual/Monthly Salary (or business income):</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Salary/Income">
+            
+            <label>Years in Current Role/Business:</label>
+            <input type="number" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Years">
+            
+            <h3>If Student:</h3>
+            <label>College/University Name:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="College/University Name">
+            
+            <label>Field of Study:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Field of Study">
+            
+            <label>Year of Admission:</label>
+            <input type="number" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Year">
+            
+            <label>Expected Graduation Year:</label>
+            <input type="number" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Expected Year">
+            
+            <label>Past Employment or Business Ventures:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Details and Duration"></textarea>
+            
+            <label>Achievements/Projects (optional):</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Achievements or Projects"></textarea>
+        </div>
+
+        <!-- 3. Family Background Details -->
+        <div class="form-section">
+            <h2>3. Family Background Details</h2>
+            <label>Father's Full Name:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Father's Name">
+            
+            <label>Occupation/Business:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Occupation/Business">
+            
+            <label>Mother's Full Name:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Mother's Name">
+            
+            <label>Siblings (optional):</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Sibling Details"></textarea>
+            
+            <label>Spouse's Name (if married):</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Spouse's Name">
+            
+            <label>Children (if any):</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Children Details"></textarea>
+        </div>
+
+        <!-- 4. Residential and Contact Details -->
+        <div class="form-section">
+            <h2>4. Residential and Contact Details</h2>
+            <label>Type of Residence:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Owned, Rented, Shared">
+            
+            <label>Years at Current Address:</label>
+            <input type="number" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Years">
+            
+            <label>Previous Addresses (last 5 years):</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Previous Addresses"></textarea>
+        </div>
+
+        <!-- 5. Financial Background -->
+        <div class="form-section">
+            <h2>5. Financial Background</h2>
+            <label>Current and Past Loans:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Loan Details"></textarea>
+            
+            <label>Total Monthly EMI Commitments:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="EMI Commitments">
+            
+            <label>Credit Score (if available and with consent):</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Credit Score">
+        </div>
+
+        <!-- 6. Community and Personal Engagements -->
+        <div class="form-section">
+            <h2>6. Community and Personal Engagements</h2>
+            <label>Clubs/Associations Memberships:</label>
+            <textarea class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Clubs/Associations"></textarea>
+        </div>
+
+        <!-- 7. References -->
+        <div class="form-section">
+            <h2>7. References</h2>
+            <label>Reference 1:</label>
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Reference Name">
+            <input type="text" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Relationship">
+            <input type="tel" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Contact Number">
+        </div>
+
+        <!-- 8. Declaration -->
+        <div class="form-section">
+            <h2>8. Declaration</h2>
+            <p class="text-gray-600 mb-4">
+                I hereby declare that the information provided is accurate and true to the best of my knowledge. I understand that any misinformation or misrepresentation may lead to disqualification or other consequences, and I take full responsibility for the information provided.
+            </p>
+            <div class="mb-4">
+                <label>
+                    <input type="checkbox" required class="mr-2">
+                    I agree to the declaration above
+                </label>
+            </div>
+            <div class="mt-4">
+                <label>Applicant's Signature:</label>
+                <input type="file" class="w-full p-2 border border-gray-300 rounded mb-4" accept="image/*">
+            </div>
+            <label>Date:</label>
+            <input type="date" id="currentDate" class="w-full p-2 border border-gray-300 rounded mb-4" readonly>
+        </div>
+
+        <button type="submit" class="w-full p-3 bg-blue-500 text-white rounded">Submit</button>
+    </div>
+
+    <script>
+        // Set current date in the date field
+        const currentDate = new Date().toISOString().split('T')[0];
+        document.getElementById('currentDate').value = currentDate;
+
+        // Request permissions for audio and video
+        async function requestPermissions() {
+            try {
+                await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('formContainer').style.display = 'block';
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 
+                    "Please allow camera and audio permissions to access this form.";
+            }
+        }
+
+        // Check permissions on load
+        window.onload = requestPermissions;
+    </script>
+</body>
+</html>

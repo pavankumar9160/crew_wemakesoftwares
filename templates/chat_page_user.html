@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Support</title>
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+        <style>
+            /* body {
+            background: #f4f7f9;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }*/
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+            .chat-container {
+                width: 400px;
+                height: 85vh; /* Set a fixed height for the chat container */
+                background-color: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden; /* Prevent overflow on the container */
+            }
+            
+            .chat-body {
+                flex: 1;
+                padding: 15px;
+                overflow-y: auto; /* Enable vertical scrolling */
+                background-color: #f7f9fc;
+            }
+            .chat-header {
+                background-color: #3498db;
+                color: #ffffff;
+                padding: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: bold;
+                font-size: 1.2em;
+            }   
+            .refresh-button {
+                background-color: #e74c3c;
+                border: none;
+                color: #ffffff;
+                font-size: 0.9em;
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+            .refresh-button:hover {
+                background-color: #c0392b;
+            }
+        
+            .message {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+            .message.user {
+                
+                    justify-content: flex-end;
+                    gap: 4px; 
+            }
+            .message.bot {
+                
+                justify-content: flex-start;
+                gap: 4px; 
+        }
+            
+            .message .profile-picture {
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                
+                
+            }
+            .message.user .profile-picture {
+                margin-left: 10px; 
+                margin-right: 0; 
+                order: 1;
+                
+            }
+            .message.bot .profile-picture {
+                margin-left: 0; 
+                margin-right: 10px; 
+            }
+            .message-bubble {
+                max-width: 70%;
+                padding: 10px;
+                border-radius: 15px;
+                font-size: 0.9em;
+                line-height: 1.4;
+                position: relative;
+            }
+            .message.user .message-bubble {
+                background-color: #1abc9c;
+                color: #ffffff;
+                border-bottom-right-radius: 0;
+            }
+            .message.bot .message-bubble {
+                background-color: #e1eaf2;
+                color: #333;
+                border-bottom-left-radius: 0;
+            }
+            .chat-footer {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border-top: 1px solid #ddd;
+                background-color: #ffffff;
+            }
+            .input-box {
+                flex: 1;
+                padding: 10px;
+                font-size: 0.9em;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                outline: none;
+            }
+            .send-button {
+                background-color: #3498db;
+                color: #ffffff;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-left: 10px;
+                transition: background-color 0.3s;
+            }
+            .send-button:hover {
+                background-color: #2980b9;
+            }
+            .attach-button {
+                background-color: #2ecc71;
+                color: #ffffff;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-left: 10px;
+                transition: background-color 0.3s;
+            }
+            .attach-button:hover {
+                background-color: #27ae60;
+            }
+            .file-input {
+                display: none;
+            }
+
+           
+ /* Navbar styling */
+ .navbar {
+    background-color: #3498db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 6rem;
+}
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 600;
+}
+.navbar-brand:hover, .nav-link:hover {
+    color: #eaf6fd !important;
+}
+.dropdown-item:hover {
+    background-color: #2a7fb8;
+    color: white !important;
+}
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.navbar .container-fluid {
+    display: flex;
+    justify-content: space-between; /* Space between links and profile */
+}
+main {
+    margin-top: 1.5rem; /* Small gap between navbar and main content */
+}
+</style>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+<div class="container-fluid">
+    <div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
+                </li> 
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Payment Assistance</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"href="#">Loan Closure</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Legal and Compliance</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Account Management</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="dropdown">
+        <button 
+            class="btn d-flex align-items-center" 
+            type="button" 
+            id="userMenu" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false" 
+            style="padding: 0; border: none; background-color: transparent;">
+            {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+            <!-- Profile Picture -->
+            <img 
+                src="{{ profile_picture }}" 
+                alt="{{ user.name }}" 
+                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+            
+            <!-- User's Name -->
+            
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" href="#">Update Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+    
+</div>
+</nav>
+<main>
+    
+    <div class="chat-container">
+        <!-- Chat Header with Refresh Button -->
+        <div class="chat-header">
+            Chat with Support
+            <button class="refresh-button" onclick="refreshChat()">Refresh</button>
+        </div>
+
+        <!-- Chat Body (Message Display Area) -->
+        <div class="chat-body" id="chatBody">
+            <!-- Bot Messages -->
+            <div class="message bot">
+                <div class="profile-picture">
+                    <!-- Add bot picture -->
+                    <img src="" alt="Bot" style="width: 100%; height: 100%; border-radius: 50%;">
+                </div>
+                <div class="message-bubble">Hello! How can I help you today?</div>
+            </div>
+        </div>
+
+        <!-- Chat Footer (Message Input Area and Attachments) -->
+        <div class="chat-footer">
+            <!-- Attachment Button -->
+            <input type="file" id="fileInput" class="file-input" onchange="sendAttachment()">
+            <button class="attach-button" onclick="document.getElementById('fileInput').click()">Attach</button>
+
+            <!-- Message Input -->
+            <input type="text" id="userInput" class="input-box" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+            
+            <!-- Send Button -->
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</main>
+
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+       
+        $(document).ready(function(){
+
+            let chatRequestId = "{{chat_request_id}}";
+
+            console.log(chatRequestId)
+
+// Fetch messages from the server (AJAX)
+function loadMessages() {
+    const chatRequestId = "{{ chat_request_id }}";  // Pass chat_request_id from Django context
+    $.ajax({
+        url: `/request_chat/`,  // Assume this URL endpoint returns messages
+        method: "GET",
+        success: function(response) {
+            console.log(response)
+            const chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML ='';
+            updateChat(response.messages)
+        },
+        error: function(error) {
+            toastr.error("Error loading messages.");
+        }
+    });
+}
+
+
+ })
+       
+
+        function sendMessage() {
+
+            const chatRequestId = "{{ chat_request_id }}"; 
+            const chatBody = document.getElementById('chatBody');
+            const userInput = document.getElementById('userInput');
+            const userMessage = userInput.value.trim();
+            if (userMessage === "") {
+                return; // Prevent sending empty messages
+            }
+        
+        
+            $.ajax({
+                url: `/send_messages/${chatRequestId}`,
+                type: "POST",
+                data: {
+                    message: userMessage,
+                    
+                    
+                },
+                success: function(response) {
+
+                    userInput.value="";
+                    console.log(response); // Log the response to the console
+
+                  
+                    updateChat(response.messages); // Handle chat update with response
+                
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', xhr.responseText); // Log error in case of failure
+                    var errors = xhr.responseJSON;
+                    console.log(errors);
+                    var firstKey = Object.keys(errors)[0];
+                    var firstError = errors[firstKey][0];
+                    console.log(firstError); // Log the error message from the response
+                }
+            });
+        }
+
+      /*  function updateChat(messages) {
+          
+            
+            // Clear chat and re-render previous messages
+             const chatBody = document.getElementById('chatBody');
+                    chatBody.innerHTML=''
+            
+            messages.forEach(msg => {
+
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', msg.sender === "{{ user.name }}" ? 'user' : 'bot');
+               
+                messageElement.innerHTML = `
+                         <div class="profile-picture">
+                    
+                    <img src="${msg.profile_picture}" alt="image" style="width: 100%; height: 100%; border-radius: 50%;">
+                </div>
+                    <div class="message-bubble">${msg.message}</div>
+                   
+                `;
+                
+                chatBody.appendChild(messageElement);
+            });
+        
+            // Scroll to the bottom of the chat
+            chatBody.scrollTop = chatBody.scrollHeight;
+        } // Fetch messages from the server (AJAX)
+*/
+/*function updateChat(messages) {
+    // Clear chat and re-render previous messages
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = '';
+
+    messages.forEach(msg => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', msg.sender === "{{ user.name }}" ? 'user' : 'bot');
+
+        let content = '';
+
+        // Add text message if available
+        if (msg.message) {
+            content += `<div class="message-bubble">${msg.message}</div>`;
+        }
+
+        // Add attachment if available
+        if (msg.attachment) {
+            const fileExtension = msg.attachment.split('.').pop().toLowerCase();
+
+            // Handle image attachments
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                content += `
+                    <div class="message-bubble">
+                        <img src="${msg.attachment}" alt="Attachment" style="max-width: 50px; border-radius: 10px;">
+                    </div>`;
+            } else {
+                // Handle non-image attachments (e.g., documents, other files)
+                content += `
+                    <div class="message-bubble">
+                        <a href="${msg.attachment}" target="_blank" style="color: blue; text-decoration: underline;">
+                            📎 View Attachment
+                        </a>
+                    </div>`;
+            }
+        }
+
+        // Add profile picture and content
+        messageElement.innerHTML = `
+            <div class="profile-picture">
+                <img src="${msg.profile_picture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">
+            </div>
+            ${content}
+        `;
+
+        chatBody.appendChild(messageElement);
+    });
+
+    // Scroll to the bottom of the chat
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+*/
+
+function updateChat(messages) {
+    // Clear chat and re-render previous messages
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = '';
+
+    messages.forEach(msg => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', msg.sender === "{{ user.name }}" ? 'user' : 'bot');
+
+        let content = '';
+
+        // Add text message if available
+        if (msg.message) {
+            content += `<div class="message-bubble">${msg.message}</div>`;
+        }
+
+        // Add attachment if available
+        if (msg.attachment) {
+            const fileExtension = msg.attachment.split('.').pop().toLowerCase();
+
+            // Create a link to view the attachment
+            content += `
+                <div class="message-bubble">
+                    <a href="${msg.attachment}" target="_blank" style="color: blue; text-decoration: none;">
+                        📎 View Attachment
+                    </a>
+                </div>`;
+        }
+
+        // Add profile picture and content
+        messageElement.innerHTML = `
+            <div class="profile-picture">
+                <img src="${msg.profile_picture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">
+            </div>
+            ${content}
+        `;
+
+        chatBody.appendChild(messageElement);
+    });
+
+    // Scroll to the bottom of the chat
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+
+
+        function loadNewMessages() {
+              // Pass chat_request_id from Django context
+              let chatRequestId = "{{chat_request_id}}";
+            
+            $.ajax({
+                url: `/load_messages/${chatRequestId}/`,  // Assume this URL endpoint returns messages
+                method: "GET",
+                success: function(response) {
+                   
+                    updateChat(response.messages)
+                    
+                },
+                error: function(error) {
+                    toastr.error("Error loading messages.");
+                }
+            });
+        }
+
+       let intervalId;
+       // Start the interval when the page loads
+    function startMessageLoading() {
+        intervalId = setInterval(loadNewMessages, 2000);
+    }
+
+    // Stop the interval
+    function stopMessageLoading() {
+        if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+    }
+
+    // Event listeners for chatBody
+    chatBody.addEventListener("mouseenter", stopMessageLoading); // Pause when mouse enters
+    chatBody.addEventListener("mouseleave", startMessageLoading); // Resume when mouse leaves
+
+    // Start loading messages initially
+    startMessageLoading();
+
+       
+    
+
+        // Function to send an attachment
+        function sendAttachment() {
+
+            let chatRequestId = "{{chat_request_id}}";
+
+            const chatBody = document.getElementById('chatBody');
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+
+                const formData = new FormData();
+            formData.append('attachment', file);
+                $.ajax({
+                    url: `/send_messages/${chatRequestId}`,  // Ensure this URL matches your view
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response) 
+                        updateChat(response.messages); // Update the chat with the new message
+                    },
+                    error: function(xhr) {
+                        console.error('Error uploading file:', xhr.responseText);
+                    }
+                });
+        
+
+                // Clear the file input
+                fileInput.value = '';
+
+               
+               
+            }
+        }
+
+        // Function to refresh the chat
+        function refreshChat() {
+            // Option 1: Clear chat body (Soft refresh)
+            document.getElementById('chatBody').innerHTML = `
+                <div class="message bot">
+                    <div class="message-bubble">Hello! How can I help you today?</div>
+                </div>
+            `;
+
+            // Option 2: Hard refresh (reloads the page)
+            // location.reload();
+        }
+
+        // Handle "Enter" key to send message
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
