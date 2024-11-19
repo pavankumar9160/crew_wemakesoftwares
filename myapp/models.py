@@ -35,8 +35,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     
-    
-    
     OCCUPATION_CHOICES=[
         (0,'select'),
         (1,'Student'),
@@ -46,7 +44,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
     
     id = models.IntegerField( primary_key=True, editable=False)  # Custom primary key
-
     name = models.CharField(max_length=100)
     contact_number = models.CharField(max_length=15)
     alternate_contact_number = models.CharField(max_length=15, blank=True, null=True)
@@ -68,7 +65,39 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_csa = models.BooleanField(default=False,null=True)
     is_logged_in = models.BooleanField(default=False)
     is_idle = models.BooleanField(default=True)
-
+    current_residential_address = models.CharField(max_length=500,blank=True, null=True)
+    permanent_residential_adddress = models.CharField(max_length=500,blank=True, null=True)
+    facebook_id = models.CharField(max_length=50,blank=True, null=True)
+    instagram_id = models.CharField(max_length=50,blank=True, null=True)
+    company_address =  models.CharField(max_length=500,blank=True, null=True)
+    work_contact_number =  models.CharField(max_length=50,blank=True, null=True)
+    salary =  models.CharField(max_length=50,blank=True, null=True)
+    years_in_current_role = models.CharField(max_length=50,blank=True, null=True)
+    year_of_admission =  models.CharField(max_length=10,blank=True, null=True)
+    expected_graduation_year = models.CharField(max_length=50,blank=True, null=True)
+    past_employement  =  models.CharField(max_length=500,blank=True, null=True)
+    achievements =  models.CharField(max_length=500,blank=True, null=True)
+    father_name = models.CharField(max_length=500,blank=True, null=True)
+    father_occupation =  models.CharField(max_length=500,blank=True, null=True)
+    mother_name = models.CharField(max_length=500,blank=True, null=True)
+    siblings =  models.CharField(max_length=500,blank=True, null=True)
+    spouse_name =  models.CharField(max_length=500,blank=True, null=True)
+    children_details = models.CharField(max_length=500,blank=True, null=True)
+    type_of_residence = models.CharField(max_length=500,blank=True, null=True)
+    years_at_current_address=  models.CharField(max_length=500,blank=True, null=True)
+    previous_address=  models.CharField(max_length=500,blank=True, null=True)
+    current_and_past_loans =  models.CharField(max_length=500,blank=True, null=True)
+    total_monthly_emi_commitments = models.CharField(max_length=500,blank=True, null=True)
+    credit_score = models.CharField(max_length=500,blank=True, null=True)
+    association_memberships = models.CharField(max_length=500,blank=True, null=True)
+    reference_name= models.CharField(max_length=500,blank=True, null=True)
+    reference_relationship =models.CharField(max_length=500,blank=True, null=True)
+    reference_contact_number =models.CharField(max_length=500,blank=True, null=True)
+    applicant_signature = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    date = models.DateField( blank=True, null=True)
+    
+    
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
@@ -91,5 +120,30 @@ class Message(models.Model):
     attachment = models.ImageField(upload_to='chat_images/',blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)       
     
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+
+class ConsentQuestion(models.Model):
+    question_text = models.CharField(max_length=255)
     
+    def __str__(self):
+        return self.question_text
+
+
+class ConsentOption(models.Model):
+    question = models.ForeignKey(ConsentQuestion, related_name='options', on_delete=models.CASCADE)
+    option_text = models.CharField(max_length=100)
     
+    def __str__(self):
+        return self.option_text
+
+
+class ConsentAnswer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(ConsentQuestion, on_delete=models.CASCADE)
+    selected_option = models.ForeignKey(ConsentOption, on_delete=models.CASCADE)
+    language = models.CharField(max_length=20)
+    video = models.FileField(upload_to='videos/', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.name}"

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consent Agreement Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
     <style>
@@ -190,9 +190,9 @@
         <div class="text-gray-600 mb-4">
             <strong>Agreement ID:</strong> <span id="agreementId"></span>
         </div>
-
+        <div id="questionsContainer"></div>
         <!-- Consent Questions -->
-        <div class="question">
+        {% comment %} <div class="question">
             <p>1. I agree that all information provided is accurate.</p>
             <div class="option-buttons">
                 <label><input type="radio" name="q1" value="Yes" required> Yes, I agree</label>
@@ -230,7 +230,7 @@
                 <label><input type="radio" name="q5" value="Yes" required> Yes, I agree</label>
                 <label><input type="radio" name="q5" value="No"> No, I disagree</label>
             </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- Final Declaration -->
         <div class="declaration">
@@ -258,7 +258,7 @@
 
         <!-- Video Upload Section -->
         <label>Upload Video (in .mp4, .mov format):</label>
-        <input type="file" accept="video/mp4, video/mov" class="w-full p-2 border border-gray-300 rounded mb-4" required>
+        <input type="file" id ="videoFile" accept="video/mp4, video/mov" class="w-full p-2 border border-gray-300 rounded mb-4" required>
 
         <button type="submit" class="submit-btn w-full p-3 mt-4" onclick="submitForm()">Submit Answers</button>
     </div>
@@ -319,14 +319,75 @@
             const allQuestionsAnswered = Array.from(document.querySelectorAll('input[type="radio"]')).every(input => input.checked || document.querySelector(`input[name="${input.name}"]:checked`));
             const finalConsent = document.getElementById('finalConsent').checked;
             const videoUploaded = document.querySelector('input[type="file"]').files.length > 0;
+            const language = $('#languageSelect').val();
 
-            if (allQuestionsAnswered && finalConsent && videoUploaded) {
-                alert(`Thank you for completing the consent agreement!\nYour Agreement ID: ${agreementId}`);
-                // Process submission here
-            } else {
-                alert("Please answer all questions, check the declaration, and upload your video before submitting.");
+           if (!allQuestionsAnswered || !finalConsent || !videoUploaded || !language) {
+            alert("Please answer all questions, check the declaration, and upload your video before submitting.");
+                return;
+            } 
+                const questions = [];
+                const options = [];
+                
+                $('#questionsContainer .question').each(function() {
+                    const questionId = $(this).data('id');
+                    const selectedOption = $(this).find('input[type="radio"]:checked').val();
+                    if (selectedOption) {
+                        questions.push(questionId);
+                        options.push(selectedOption);
+                    }
+                });
+            
+               
+                const videoFile = $('#videoFile')[0].files[0];
+                
+                const formData = new FormData();
+               
+                for (let i = 0; i < questions.length; i++) {
+                    formData.append('questions[]', questions[i]);
+                    formData.append('options[]', options[i]);
+                    
+                }
+                formData.append('language', language);
+                formData.append('video', videoFile);
+            
+                $.ajax({
+                    url: '/save-consent-answers/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert('Your responses have been saved successfully.');
+                            $('#questionsContainer .question input[type="radio"]').prop('checked', false); 
+                                $('#languageSelect').val(''); 
+                                $('#videoFile').val(''); 
+                                $('#finalConsent').prop('checked', false); 
+
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    }
+                });
             }
-        }
+        
+
+
+
+        $(document).ready(function() {
+            $.get('/get-consent-form/', function(response) {
+                const questionsContainer = $('#questionsContainer');
+                response.questions.forEach((question) => {
+                    let questionHtml = `<div class="question" data-id="${question.question_id}">
+                        <p>${question.question_id}. ${question.question}</p>
+                        <div class="option-buttons">
+                            ${question.options.map(option => `<label><input type="radio" name="q${question.question_id}" value="${option.id}" required> ${option.option_text}</label>`).join('')}
+                        </div>
+                    </div>`;
+                    questionsContainer.append(questionHtml);
+                });
+            });
+        });
     </script>
 </body>
 </html>

@@ -49,6 +49,9 @@ urlpatterns = [
    path('request_chat/', views.request_chat, name='request_chat'),
    path('chat_page_agent/<int:chatRequestId>/',views.chat_page_agent,name="chat_page_agent"),
    path('load_messages/<int:chatRequestId>/',views.load_new_messages,name="load_messages"),
+   path('get-consent-form/', views.get_consent_form, name='get_consent_form'),
+    path('save-consent-answers/', views.save_consent_answers, name='save_consent_answers'),
+    path('update_details/',views.update_details,name='update_details'),
    
 
 

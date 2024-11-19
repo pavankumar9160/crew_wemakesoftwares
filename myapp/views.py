@@ -88,8 +88,10 @@ def community_user(request):
 
 @login_required
 def details_v2_user(request):
+    user = request.user
+    profile_picture = user.profile_picture.url 
 
-    return render(request,'details_v2_user.html')
+    return render(request,'details_v2_user.html',{'user': user,'profile_picture': profile_picture})
 
 @login_required
 def help_supp_user(request):
@@ -663,4 +665,256 @@ def get_user_chat_history(request,chatRequestId):
         # Handle case where ChatRequest doesn't exist
         return JsonResponse({"error": "Chat request not found."}, status=404)
 
+
+from .models import ConsentQuestion
+
+@login_required
+def get_consent_form(request):
+    questions = ConsentQuestion.objects.all()
+    data = []
+
+    for question in questions:
+        options = list(question.options.values('id', 'option_text'))
+        data.append({
+            'question': question.question_text,
+            'options': options,
+            'question_id': question.id,
+        })
+        
+    return JsonResponse({'questions': data})
+
+
+
+from .models import ConsentAnswer, ConsentOption
+from django.core.files.storage import FileSystemStorage
+@login_required
+@csrf_exempt
+def save_consent_answers(request):
+    if request.method == "POST":
+        user = request.user  # Assuming user is logged in
+        questions = request.POST.getlist('questions[]')
+        options = request.POST.getlist('options[]')
+        language = request.POST.get('language')
+        video = request.FILES.get('video')
+        
+        # Save video if provided
+        if video:
+            fs = FileSystemStorage()
+            filename = fs.save(video.name, video)
+            video_url = fs.url(filename)
+        else:
+            video_url = None
+
+        for i in range(len(questions)):
+            question_id = questions[i]
+            selected_option_id = options[i]
+           
+
+            # Get the question and option
+            question = ConsentQuestion.objects.get(id=question_id)
+            selected_option = ConsentOption.objects.get(id=selected_option_id)
+
+            # Save the user's answer
+            ConsentAnswer.objects.create(
+                user=user,
+                question=question,
+                selected_option=selected_option,
+                language=language,
+                video=video_url
+            )
+
+        return JsonResponse({'status': 'success', 'message': 'Answers saved successfully'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+from django.core.exceptions import ObjectDoesNotExist
+
+@login_required
+@csrf_exempt
+def update_details(request):
+    
+    if request.method == 'POST':
+        user_id = request.POST.get('id')
+        try:
           
+            user = User.objects.get(id=user_id)
+            
+            name = request.POST.get('name')
+            if name :
+               user.name = name
+           
+            contact_number = request.POST.get('contact_number')
+            if contact_number:
+                user.contact_number = contact_number
+                
+            email = request.POST.get('email')
+            if email:
+                user.email = email
+            
+            occupation = request.POST.get('occupation')
+            if occupation:
+                user.occupation = occupation
+            
+            date_of_birth = request.POST.get('date_of_birth')
+            if date_of_birth:
+                user.date_of_birth = date_of_birth    
+                
+            course_name = request.POST.get('course_name')
+            if course_name:
+                user.course_name = course_name
+                
+            college_name = request.POST.get('college_name')
+            if college_name:
+                user.college_name = college_name
+                
+            company_name = request.POST.get('company_name')
+            if company_name:
+                user.company_name = company_name
+                
+            current_residential_address = request.POST.get('current_residential_address')
+            if current_residential_address:
+                user.current_residential_address = current_residential_address    
+                
+            permanent_residential_address = request.POST.get('permanent_residential_address')
+            if permanent_residential_address:
+                user.permanent_residential_address = permanent_residential_address 
+            
+            
+            facebook_id = request.POST.get('facebook_id')
+            if facebook_id:
+                user.facebook_id = facebook_id           
+           
+            
+            instagram_id = request.POST.get('instagram_id')
+            if instagram_id:
+                user.instagram_id = instagram_id
+                
+            company_address = request.POST.get('company_address')
+            if company_address:
+                user.company_address = company_address
+                
+            work_contact_number = request.POST.get('work_contact_number')
+            if work_contact_number:
+                user.work_contact_number = work_contact_number
+                
+            salary = request.POST.get('salary')
+            if salary:
+                user.salary = salary
+                
+                
+            years_in_current_role = request.POST.get('years_in_current_role')
+            if years_in_current_role:
+                user.years_in_current_role = years_in_current_role
+                
+            year_of_admission = request.POST.get('year_of_admission')
+            if year_of_admission:
+                user.year_of_admission = year_of_admission 
+                
+            expected_graduation_year = request.POST.get('expected_graduation_year')
+            if expected_graduation_year:
+                user.expected_graduation_year = expected_graduation_year       
+            
+            
+            past_employement = request.POST.get('past_employement')
+            if past_employement:
+                user.past_employement = past_employement                            
+                
+            achievements = request.POST.get('achievements')
+            if achievements:
+                user.achievements = achievements   
+            
+
+            father_name = request.POST.get('father_name')
+            if father_name:
+                user.father_name = father_name
+                
+            father_occupation = request.POST.get('father_occupation')
+            if father_occupation:
+                user.father_occupation = father_occupation
+            
+            
+            mother_name = request.POST.get('mother_name')
+            if mother_name:
+                user.mother_name = mother_name
+                
+            siblings = request.POST.get('siblings')
+            if siblings:
+                user.siblings = siblings  
+                
+            
+            spouse_name = request.POST.get('spouse_name')
+            if spouse_name:
+                user.spouse_name = spouse_name 
+                
+            children_details = request.POST.get('children_details')
+            if children_details:
+                user.children_details = children_details
+                
+            
+            type_of_residence = request.POST.get('type_of_residence')
+            if type_of_residence:
+                user.type_of_residence = type_of_residence
+                
+            
+            years_at_current_address = request.POST.get('years_at_current_address')
+            if years_at_current_address:
+                user.years_at_current_address = years_at_current_address 
+                
+            
+            previous_address = request.POST.get('previous_address')
+            if previous_address:
+                user.previous_address = previous_address
+                
+            current_and_past_loans = request.POST.get('current_and_past_loans')
+            if current_and_past_loans:
+                user.current_and_past_loans = current_and_past_loans      
+                
+            
+            total_monthly_emi_commitments = request.POST.get('total_monthly_emi_commitments')
+            if total_monthly_emi_commitments:
+                user.total_monthly_emi_commitments = total_monthly_emi_commitments
+                
+                
+            credit_score = request.POST.get('credit_score')
+            if credit_score:
+                user.credit_score = credit_score
+                
+                
+            association_memberships = request.POST.get('association_memberships')
+            if association_memberships:
+                user.association_memberships = association_memberships 
+                
+             
+            reference_name = request.POST.get('reference_name')
+            if reference_name:
+                user.reference_name = reference_name                                                    
+                
+            reference_relationship = request.POST.get('reference_relationship')
+            if reference_relationship:
+                user.reference_relationship = reference_relationship     
+            
+            
+            reference_contact_number = request.POST.get('reference_contact_number')
+            if reference_contact_number:
+                user.reference_contact_number = reference_contact_number
+                
+            date = request.POST.get('date')
+            if date:
+                user.date = date    
+        
+
+            # Handle file upload
+            if 'applicant_signature' in request.FILES:
+                user.applicant_signature = request.FILES['applicant_signature']
+
+            # Save the updated user instance
+            user.save()
+
+            # Respond with success message
+            return JsonResponse({'status': 'success', 'message': 'User details updated successfully!'})
+
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    
+    
