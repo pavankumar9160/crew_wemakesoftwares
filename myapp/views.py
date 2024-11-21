@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 
-from .models import *
+from myapp.models import *
 
 
 def signup_page(request):
@@ -176,7 +176,7 @@ def signup_view(request):
             college_name = request.POST.get("college_name")  
             company_name = request.POST.get("company_name")  
             
-            profile_picture = request.FILES.get("profile_picture")
+            profile_picture = request.FILES.get("captured-image-file")
             aadhar_front = request.FILES.get("aadhar_front")
             aadhar_back =  request.FILES.get("aadhar_back")
             pan_card = request.FILES.get("pan_card")
@@ -367,9 +367,9 @@ def logout_view(request):
         return redirect('login_page') 
     
 from django.http import JsonResponse
-from .models import Message
+from myapp.models import Message
 from django.http import JsonResponse
-from .models import Message, ChatRequest
+from myapp.models import Message, ChatRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -428,10 +428,10 @@ def view_messages(request, chatRequestId):
 
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import User, Message
+from myapp.models import User, Message
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import User, Message, ChatRequest
+from myapp.models import User, Message, ChatRequest
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -508,7 +508,7 @@ def toggle_status(request, user_id):
 
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import ChatRequest, Message
+from myapp.models import ChatRequest, Message
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -666,7 +666,7 @@ def get_user_chat_history(request,chatRequestId):
         return JsonResponse({"error": "Chat request not found."}, status=404)
 
 
-from .models import ConsentQuestion
+from myapp.models import ConsentQuestion
 
 @login_required
 def get_consent_form(request):
@@ -685,7 +685,7 @@ def get_consent_form(request):
 
 
 
-from .models import ConsentAnswer, ConsentOption
+from myapp.models import ConsentAnswer, ConsentOption
 from django.core.files.storage import FileSystemStorage
 @login_required
 @csrf_exempt

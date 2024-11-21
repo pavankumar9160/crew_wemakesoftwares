@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+</head>
+
+<style>
+    body {
+        background-color: #f4f7fc;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 900px;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #052c65;
+        font-weight: 600;
+    }
+
+    .form-group label {
+        color: #052c65;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #052c65;
+        box-shadow: 0 0 0 0.2rem rgba(5, 44, 101, 0.25);
+    }
+
+    .invalid-feedback {
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+
+    .btn {
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        background-color: #052c65;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #003b5c;
+    }
+
+    .btn-outline-secondary {
+        border-color: #052c65;
+        color: #052c65;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #052c65;
+        color: white;
+    }
+
+    .text-center {
+        margin-top: 20px;
+    }
+
+    .d-grid {
+        margin-top: 20px;
+    }
+
+    #capture-btn {
+        margin-left: 20px;
+        height: 40px;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+
+    .modal-footer button {
+        border-radius: 8px;
+    }
+
+    
+
+    .form-group img {
+        max-width: 100%;
+        max-height: 100px;
+    }
+
+    #cameraModal .modal-content {
+        border-radius: 10px;
+    }
+
+    .form-group .invalid-feedback {
+        display: block;
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+
+    .row.mb-3 {
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-center mb-4">Sign Up Into Your Account</h2>
+                <form>
+                   
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name (as per Aadhar Card)</label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter your Name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contact1" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="contact1" placeholder="Enter your contact 1" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contact2" class="form-label">Alternative Contact Number</label>
+                                <input type="text" class="form-control" id="contact2" placeholder="Enter your contact 2" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="aadhar_front" class="form-label">Upload Aadhar Card (Front)</label>
+                                <input type="file" class="form-control" id="aadhar_front"  required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="aadhar_back" class="form-label">Upload Aadhar Card (Back)</label>
+                                <input type="file" class="form-control" id="aadhar_back"  required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pan_card" class="form-label">Upload Pan Card</label>
+                                <input type="file" class="form-control" id="pan_card" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="occupation" class="form-label">Occupation</label>
+                                <select id="occupation" class="form-control form-select" required>
+                                    <option value="0">Select...</option>
+                                    <option value="1">Student</option>
+                                    <option value="2">Salaried</option>
+                                    <option value="3">Self-Employed</option>
+                                    <option value="4">Others</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                </div>
+                    <div class ="row mb-3" id="additionalFields"></div>
+                 
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateofbirth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="date_of_birth" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="DCcode" class="form-label">DC Code</label>
+                                <input type="text" class="form-control" id="dc_Code" placeholder="Enter DC code" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="captured-image">Profile Picture</label>
+                            <button type="button" id="capture-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cameraModal" style="margin-left: 30px; height: 40px">
+                                Capture Image
+                            </button>
+                            <canvas id="canvas" style="display:none;"></canvas>
+                            <img id="captured-image" alt="Captured Image" style="display:none; width: 70px; height: 58px;">
+                            <input type="file" id="captured-image-file" name="captured-image" style="display:none;" accept=".png">
+                            <span id="image-status" style="display:none;">Captured Image</span>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cameraModalLabel">Capture Image Using Front Camera</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <video id="camera-stream" class="w-100" autoplay playsinline></video>
+                                    <img id="modal-captured-image" class="img-fluid mt-2" style="display:none; width: 100%;" alt="Captured Image">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="capture-image-btn">Capture Image</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirm_password" placeholder="Confirm your password" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+            
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="systemipaddress">System IP Address</label>
+                                <input type="text" id="systemipaddress" name="SystemIPAddress" class="form-control" placeholder="System IP Address" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+            
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" id="sign_up" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+
+            
+                <div class="text-center">
+                    <p>Already have an account?</p>
+                    <a href="{% url 'login_page' %}" class="btn btn-outline-secondary">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Bootstrap JS (Optional but recommended for interactive components) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+<script>   
+    $(document).ready(function() {
+        $('#sign_up').on('click', function(event) {
+    
+            event.preventDefault();
+
+            if (!ValidateForm()) {
+                return; // Stop if validation fails
+            }
+    
+            var name = $('#name').val();
+            var contact1 = $('#contact1').val();
+            var contact2 = $('#contact2').val();
+            var password = $('#password').val();
+            var password2 = $('#confirm_password').val();
+            var email = $('#email').val();
+            var dc_code = $('#dc_Code').val();
+            var date_of_birth = $('#date_of_birth').val();
+            var occupation = $('#occupation').val();
+            var ip_address = $('#systemipaddress').val();
+            var course_name = $('#course_name').val();
+            var college_name = $('#college_name').val();
+            var company_name = $('#company_name').val();
+            
+    
+            if (!name || !contact1 || !email || !password || !password2 || !contact2 || !dc_Code || !date_of_birth) {
+                return;
+            }
+    
+            // Create a FormData object
+            var formData = new FormData();
+    
+            // Append form data manually
+            formData.append('name', name);
+            formData.append('contact1', contact1);
+            formData.append('contact2', contact2);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('password2', password2);
+            formData.append('dc_code', dc_code);
+            formData.append('occupation',occupation);
+            formData.append('ip_address',ip_address);
+            formData.append('date_of_birth',date_of_birth);
+            formData.append('course_name',course_name);
+            formData.append('college_name',college_name);
+            formData.append('company_name',company_name);
+            
+            
+            const fileInputs = ['captured-image-file','aadhar_front','aadhar_back','pan_card']
+                fileInputs.forEach((fileInputId)=>{
+
+                var fileInput = document.getElementById(fileInputId);
+
+            if (fileInput.files.length > 0) {
+                formData.append(fileInputId, fileInput.files[0]);
+            }
+                })
+            
+    
+            // Send data via AJAX
+            $.ajax({
+                url: '/signup_api/',
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false,
+                success: function(response) {
+                    toastr.success('Registration successful!', 'Success');
+    
+                    const inputFields = ["name", "contact1","contact2","email", "password", "password2", "dc_Code","date_of_birth",'occupation','ip_address','course_name','college_name','company_name'];
+                    inputFields.forEach(fieldId => {
+                        document.getElementById(fieldId).value = "";
+                        localStorage.removeItem(fieldId);
+                    });
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON;
+                    var firstKey = Object.keys(errors)[0];
+                    var firstError = errors[firstKey][0];
+                    toastr.error(firstError, 'Error');
+                }
+            });
+        });
+    
+        // Capture image using front camera
+        let cameraStream = null;
+    
+        const video = document.getElementById('camera-stream');
+        const canvas = document.getElementById('canvas');
+        const modalCapturedImage = document.getElementById('modal-captured-image');
+        const captureBtn = document.getElementById('capture-image-btn');
+        const inputFile = document.getElementById('captured-image-file');
+        const imageStatus = document.getElementById('image-status');
+        const capturedImage = document.getElementById('captured-image');
+    
+        // Open camera when modal is shown
+        $('#cameraModal').on('shown.bs.modal', () => {
+            modalCapturedImage.style.display = 'none';
+            video.style.display = 'block';
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                .then((stream) => {
+                    cameraStream = stream;
+                    video.srcObject = stream;
+                })
+                .catch((err) => {
+                    console.error("Error accessing camera: ", err);
+                });
+        });
+    
+        // Capture Image when button is clicked
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+            const dataUrl = canvas.toDataURL('image/png');
+            modalCapturedImage.src = dataUrl;
+            modalCapturedImage.style.display = 'block';
+            video.style.display = 'none';
+    
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], "captured-image.png", { type: "image/png" });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputFile.files = dataTransfer.files;
+    
+                    capturedImage.src = dataUrl;
+                    capturedImage.style.display = 'block';
+                });
+    
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+    
+            captureBtn.disabled = true;
+        });
+    
+        $('#cameraModal').on('hidden.bs.modal', () => {
+            if (modalCapturedImage.src) {
+                capturedImage.src = modalCapturedImage.src;
+                capturedImage.style.display = 'block';
+                $('#capture-btn').hide();
+                imageStatus.style.display = 'block';
+            }
+        });
+    
+        // Fetch IP address
+        function fetchIPAddress() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('systemipaddress').value = data.ip;
+                })
+                .catch(error => {
+                    console.error('Error fetching IP address:', error);
+                });
+        }
+    
+        window.onload = fetchIPAddress;
+
+    });
+
+
+    function ValidateForm(){
+        let isValid = true;
+    
+        // Validation for each field
+        const fields = ['name', 'contact1', 'contact2', 'email', 'date_of_birth', 'dc_Code', 'password', 'confirm_password', 'systemipaddress'];
+    
+        fields.forEach(function(fieldId) {
+            const field = document.getElementById(fieldId);
+            const feedback = field.nextElementSibling;
+    
+            // Name validation
+            if (fieldId === 'name') {
+                if (field.value.trim() === "") {
+                    feedback.textContent = 'Name is required.';
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    feedback.textContent = '';
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            }
+    
+            // Contact 1 and Contact 2 validation
+            if (fieldId === 'contact1' || fieldId === 'contact2') {
+                if (!/^\d+$/.test(field.value.trim())) {
+                    feedback.textContent = 'Contact must be a valid number.';
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    feedback.textContent = '';
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            }
+    
+            // Email validation
+          // Custom validation for Email
+          if (fieldId === 'email') {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (field.value.trim() === "") {
+                feedback.textContent = 'Email ID is required.';
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else if (!emailPattern.test(field.value)) {
+                feedback.textContent = 'Invalid Email ID';
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                feedback.textContent = '';
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+
+            }
+        }
+    
+            // Date of birth validation
+            if (fieldId === 'date_of_birth') {
+                if (field.value.trim() === "") {
+                    feedback.textContent = 'Date of birth is required.';
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    feedback.textContent = '';
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            }
+    
+            // DC Code validation
+            if (fieldId === 'dc_Code') {
+                if (field.value.trim() === "") {
+                    feedback.textContent = 'DC Code is required.';
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    feedback.textContent = '';
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            }
+    
+            // Password validation
+              // Custom validation for Password
+if (fieldId  === 'password') {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (field.value.trim() === "") {
+        feedback.textContent = 'Password is required.';
+        field.classList.remove('is-valid');
+        field.classList.add('is-invalid');
+        feedback.style.display = 'block';
+        isValid = false;
+    } else if (!passwordPattern.test(field.value)) {
+        // Check for missing criteria
+        if (field.value.length < 8) {
+            feedback.textContent = 'Password should be at least 8 characters long.';
+        } else if (!/(?=.*[a-z])/.test(field.value)) {
+            feedback.textContent = 'Password should include at least one lowercase letter.';
+        } else if (!/(?=.*[A-Z])/.test(field.value)) {
+            feedback.textContent = 'Password should include at least one uppercase letter.';
+        } else if (!/(?=.*\d)/.test(field.value)) {
+            feedback.textContent = 'Password should include at least one digit.';
+        } else if (!/(?=.*[@$!%*?&])/.test(field.value)) {
+            feedback.textContent = 'Password should include at least one special character (e.g., @$!%*?&).';
+        }
+        field.classList.remove('is-valid');
+        field.classList.add('is-invalid');
+        feedback.style.display = 'block';
+        isValid = false;
+    } else {
+        feedback.textContent = '';
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+        feedback.style.display = 'none';
+    }
+}
+
+             // Custom validation for Confirm Password
+             if (fieldId  === 'confirm_password') {
+                 const passwordField = document.getElementById('password');
+                 if (field.value.trim() === "") {
+                     feedback.textContent = 'Confirm password is required.';
+                     field.classList.remove('is-valid');
+                     field.classList.add('is-invalid');
+                     feedback.style.display = 'block';
+                     isValid = false;
+                 } else if (field.value !== passwordField.value) {
+                     feedback.textContent = 'Password and confirm password do not match.';
+                     field.classList.remove('is-valid');
+                     field.classList.add('is-invalid');
+                     feedback.style.display = 'block';
+                     isValid = false;
+                 } else {
+                     feedback.textContent = '';
+                     field.classList.remove('is-invalid');
+                     field.classList.add('is-valid');
+                     feedback.style.display = 'none ';
+                 }
+             }
+            // System IP Address validation
+            if (fieldId === 'systemipaddress') {
+                if (field.value.trim() === "") {
+                    feedback.textContent = 'System IP Address is required.';
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    feedback.textContent = '';
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            }
+        });
+    
+        return isValid;
+    }
+
+    $(document).ready(function() {
+        $('#occupation').change(function() {
+            var occupation = $(this).val();
+            var additionalFields = $('#additionalFields');
+            additionalFields.empty();
+
+            if (occupation === '1') {
+                additionalFields.append(`
+                    <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="coursename" class="form-label">Course Name</label>
+                                <input type="text" class="form-control" id="course_name" placeholder="Enter course name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="collegename" class="form-label">College Name</label>
+                                <input type="text" class="form-control" id="college_name" placeholder="Enter college name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                `);
+            } else if (occupation === '2') {
+                additionalFields.append(`
+                      <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="companyname" class="form-label">Company/Business Name</label>
+                                <input type="text" class="form-control" id="company_name" placeholder="Enter company name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                `);
+            }
+        });
+    });
+    
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Signup Form</title>
+    
+       <!-- Bootstrap CSS -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+       <!-- Toastr CSS -->
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  
+   
+    <style>
+     /*   body {
+            background: #edf2f7;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        } */
+        main{
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+        
+    
+         /* Navbar styling */
+         .navbar {
+            background-color: #3498db;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 6rem;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #eaf6fd !important;
+        }
+        .dropdown-item:hover {
+            background-color: #2a7fb8;
+            color: white !important;
+        }
+        .navbar .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .navbar .container-fluid {
+            display: flex;
+            justify-content: space-between; /* Space between links and profile */
+        }
+        main {
+            margin-top: 1.5rem; /* Small gap between navbar and main content */
+        }
+            </style>
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <div>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
+                                </li> 
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Payment Assistance</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link"href="#">Loan Closure</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Legal and Compliance</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Account Management</a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button 
+                            class="btn d-flex align-items-center" 
+                            type="button" 
+                            id="userMenu" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false" 
+                            style="padding: 0; border: none; background-color: transparent;">
+                            {% comment %} <span style="white-space: nowrap; font-size: 16px; color:yellow">{{ user.name }}</span> {% endcomment %}
+                            <!-- Profile Picture -->
+                            <img 
+                                src="{{ profile_picture }}" 
+                                alt="{{ user.name }}" 
+                                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                            
+                            <!-- User's Name -->
+                            
+                        </button>
+                        
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="#">Update Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                </nav>
+                <main>
+                    <div class="container" id="formContainer">
+                        <h2 class="text-center my-4">Applicant Signup Form</h2>
+                        <form>
+                            <!-- 1. Applicant Personal Information -->
+                            <div class="form-section mb-4">
+                                <h4>1. Applicant Personal Information</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Full Name:</label>
+                                        <input type="text" id="name" class="form-control mb-3" placeholder="Full Name">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Date of Birth:</label>
+                                        <input type="date" id="date_of_birth" class="form-control mb-3">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Current Phone Number:</label>
+                                        <input type="tel" id="contact_number" class="form-control mb-3" placeholder="Phone Number">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Email Address:</label>
+                                        <input type="email" id="email" class="form-control mb-3" placeholder="Email Address">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Current Residential Address:</label>
+                                        <textarea class="form-control mb-3" id="current_address" placeholder="Current Address"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Permanent Residential Address:</label>
+                                        <textarea class="form-control mb-3" id="permanent_address" placeholder="Permanent Address"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Facebook:</label>
+                                        <input type="text" class="form-control mb-3" id="facebook_id" placeholder="Facebook">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Instagram:</label>
+                                        <input type="text" class="form-control mb-3" id="instagram_id" placeholder="Instagram">
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- 2. Employment or Academic Details -->
+                            <div class="form-section mb-4">
+                                <h4>2. Employment or Academic Details</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Current Job Title/Occupation:</label>
+                                        <input type="text" class="form-control mb-3" id="occupation" placeholder="Job Title/Occupation">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Employer/Business Name:</label>
+                                        <input type="text" class="form-control mb-3" id="company_name" placeholder="Employer/Business Name">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Work Contact Number:</label>
+                                        <input type="tel" class="form-control mb-3" id="work_number" placeholder="Work Contact Number">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>College/University Name:</label>
+                                        <input type="text" class="form-control mb-3" id="college_name" placeholder="College/University Name">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Field of Study:</label>
+                                        <input type="text" class="form-control mb-3" id="course_name" placeholder="Field of Study">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Year of Admission:</label>
+                                        <input type="number" class="form-control mb-3" id="year_of_admission" placeholder="Year">
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- 3. Family Background Details -->
+                            <div class="form-section mb-4">
+                                <h4>3. Family Background Details</h4>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label>Father's Full Name:</label>
+                                        <input type="text" class="form-control mb-3" id="father_name" placeholder="Father's Name">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Mother's Full Name:</label>
+                                        <input type="text" class="form-control mb-3" id="mother_name" placeholder="Mother's Name">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Spouse's Name (if married):</label>
+                                        <input type="text" class="form-control mb-3" id="spouse_name" placeholder="Spouse's Name">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Children (if any):</label>
+                                        <textarea class="form-control mb-3" id="children_details" placeholder="Children Details"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+           
+
+        <!-- 4. Residential and Contact Details -->
+        <div class="form-section mb-4">
+            <h2>4. Residential and Contact Details</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Type of Residence:</label>
+                    <input type="text" class="form-control mb-3" id="type_of_residence" placeholder="Owned, Rented, Shared">
+                </div>
+           
+                <div class="col-md-3">
+                    <label>Years at Current Address:</label>
+                    <input type="number" class="form-control mb-3" id="years_at_current_address" placeholder="Years">
+                </div>
+                <div class="col-md-3">
+                    <label>Previous Addresses (last 5 years):</label>
+                    <textarea class="form-control mb-3" id="previous_address" placeholder="Previous Addresses"></textarea>
+                </div>
+        </div>
+    </div>
+
+        <!-- 5. Financial Background -->
+        <div class="form-section mb-4">
+            <h2>5. Financial Background</h2>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Current and Past Loans:</label>
+                    <textarea class="form-control mb-3" id="past_loans" placeholder="Loan Details"></textarea>
+                </div>
+           
+                <div class="col-md-3">
+                    <label>Total Monthly EMI Commitments:</label>
+                    <input type="text" class="form-control mb-3" id="total_monthly_emi_commitments" placeholder="EMI Commitments">
+                </div>
+                <div class="col-md-3">
+                    <label>Credit Score (if available and with consent):</label>
+                    <input type="text" class="form-control mb-3" id="credit_score" placeholder="Credit Score">
+                </div>
+        </div>
+     </div>
+
+        <!-- 6. Community and Personal Engagements -->
+        <div class="form-section mb-4">
+            <h2>6. Community and Personal Engagements</h2>
+            <div class= 'row'>
+            <div class="col-md-12">
+                <label>Clubs/Associations Memberships:</label>
+                <textarea class="form-control mb-3"  id="association_memberships" placeholder="Clubs/Associations"></textarea>
+            </div>
+        </div>
+        </div>
+
+        <!-- 7. References -->
+        <div class="form-section mb-4">
+            <h2>7. References</h2>
+
+            <div class= 'row'>
+                <div class="col-md-4">
+                    <label>Reference Name:</label>
+                    <input type="text" class="form-control mb-3" id="reference_name" placeholder="Reference Name">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Reference Relationship:</label>
+                    <input type="text"class="form-control mb-3" id="reference_relationship" placeholder="Relationship">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Contact Number:</label>
+                    <input type="tel" class="form-control mb-3" id="reference_number" placeholder="Contact Number">
+                </div>
+            </div>  
+        </div>
+
+        <!-- 8. Declaration -->
+        <div class="form-section mb-4">
+            <h4>8. Declaration</h4>
+            <p class="text-muted mb-2">
+                I hereby declare that the information provided is accurate and true to the best of my knowledge. I take full responsibility for the information provided.
+            </p>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="agree" required>
+                <label for="agree" class="form-check-label">I agree to the declaration above</label>
+            </div>
+        </div>
+
+        <div class="form-section mb-4">
+            <div class = "row">
+                <div class="col-md-6">
+                    <label>Applicant's Signature:</label>
+                    <input type="file" class="form-control mb-3" id="applicant_signature" accept="image/*">
+                </div>
+                <div class="col-md-6">
+                    <label>Date:</label>
+                    <input type="date" id="currentDate" class="form-control mb-3" readonly>
+                </div>
+            </div>
+    </div>
+
+        <button type="submit" id="update_form" class="btn btn-primary w-100">Submit</button>
+    </form>
+</div>
+</main>
+
+
+<!-- Bootstrap JS (Optional but recommended for interactive components) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <script>
+        // Set current date in the date field
+        const currentDate = new Date().toISOString().split('T')[0];
+        document.getElementById('currentDate').value = currentDate;
+
+        // Request permissions for audio and video
+        async function requestPermissions() {
+            try {
+                await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('formContainer').style.display = 'block';
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 
+                    "Please allow camera and audio permissions to access this form.";
+            }
+        }
+
+        // Check permissions on load
+        window.onload = requestPermissions;
+
+        $('#update_form').on('click', function(event) {
+    
+            event.preventDefault();
+
+            
+    
+            var name = $('#name').val();
+            var contact_number = $('#contact_number').val();
+            var current_address = $('#current_address').val();
+            var email = $('#email').val();
+            var permanent_address = $('#permanent_address').val();
+            var date_of_birth = $('#date_of_birth').val();
+            var facebook_id  = $('#facebook_id').val();
+            var instagram_id  = $('#instagram_id').val();
+            var occupation = $('#occupation').val();
+            var company_address = $('#company_address').val();
+            var work_number = $('#work_number').val();
+            var course_name = $('#course_name').val();
+            var college_name = $('#college_name').val();
+            var current_role = $('#current_role').val();
+            var salary = $('#salary').val();
+            var company_name = $('#company_name').val();
+            var year_of_admission = $('#year_of_admission').val();
+            var expected_graduation_year = $('#expected_graduation_year').val();
+            var past_employement = $('#past_employement').val();
+            var father_name = $('#father_name').val();
+            var father_occupation = $('#father_occupation').val();
+            var mother_name = $('#mother_name').val();
+            var siblings = $('#siblings').val();
+            var spouse_name = $('#spouse_name').val();
+            var children_details = $('#children_details').val();
+            var type_of_residence = $('#type_of_residence').val();
+            var years_at_current_address = $('#years_at_current_address').val();
+            var previous_address = $('#previous_address').val();
+            var past_loans = $('#past_loans').val();
+            var total_monthly_emi_commitments = $('#total_monthly_emi_commitments').val();
+            var credit_score = $('#credit_score').val();
+            var association_memberships = $('#association_memberships').val();
+            var reference_name = $('#reference_name').val();
+            var reference_relationship = $('#reference_relationship').val();
+            var reference_number = $('#reference_number').val();
+            var achievements = $('#achievements').val();
+            var date = $('#currentDate').val();
+            
+            var id = {{user.id}}
+            console.log(id);
+           
+    
+            // Create a FormData object
+            var formData = new FormData();
+    
+            // Append form data manually
+            formData.append('id',id);
+            formData.append('name', name);
+            formData.append('contact_number', contact_number);
+            formData.append('email', email);
+            formData.append('occupation',occupation);
+            formData.append('date_of_birth',date_of_birth);
+            formData.append('course_name',course_name);
+            formData.append('college_name',college_name);
+            formData.append('company_name',company_name);
+            formData.append('current_residential_address', current_address);
+            formData.append('permanent_residential_address',permanent_address);
+            formData.append('facebook_id',facebook_id);
+            formData.append('instagram_id',instagram_id);
+            formData.append('company_address',company_address);
+            formData.append('work_contact_number',work_number);
+            formData.append('salary',salary);
+            formData.append('years_in_current_role', current_role);
+            formData.append('year_of_admission',year_of_admission);
+            formData.append('expected_graduation_year',expected_graduation_year);
+            formData.append('past_employement',past_employement);
+            formData.append('achievements',achievements);
+            formData.append('father_name',father_name);
+            formData.append('father_occupation',father_occupation);
+            formData.append('mother_name',mother_name);
+            formData.append('siblings',siblings);
+            formData.append('spouse_name',spouse_name);
+            formData.append('children_details',children_details);
+            formData.append('type_of_residence',type_of_residence);
+            formData.append('years_at_current_address',years_at_current_address);
+            formData.append('previous_address',previous_address);
+            formData.append('current_and_past_loans',past_loans);
+            formData.append('total_monthly_emi_commitments',total_monthly_emi_commitments);
+            formData.append('credit_score',credit_score);
+            formData.append('association_memberships',association_memberships);
+            formData.append('reference_name',reference_name);
+            formData.append('reference_relationship',reference_relationship);
+            formData.append('reference_contact_number',reference_number);
+            formData.append('date',date);
+
+            
+           
+           
+                var fileInput = document.getElementById('applicant_signature');
+
+            if (fileInput.files.length > 0) {
+                formData.append(applicant_signature, fileInput.files[0]);
+            }
+                
+            
+    
+            // Send data via AJAX
+            $.ajax({
+                url: '/update_details/',
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false,
+                success: function(response) {
+                    toastr.success('update successful!', 'Success');
+
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON;
+                    var firstKey = Object.keys(errors)[0];
+                    var firstError = errors[firstKey][0];
+                    toastr.error(firstError, 'Error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
