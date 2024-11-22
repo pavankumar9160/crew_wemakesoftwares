@@ -224,7 +224,7 @@ main {
                                         <td>${data.user_info.contact_number}</td>
                                         <td>${data.last_message.timestamp}</td>
                                         <td>${data.last_message.message}</td>
-                                        <td><button class="action-button chat-button" onclick="navigateToChat(${chatRequestId})">Chat</button></td>
+                                        <td><button class="action-button chat-button" onclick="navigateToChat()">Chat</button></td>
                                         <td><button class="action-button details-button">View Details</button></td>
                                         <td><button class="action-button docs-button">View All Documents</button></td>
                                     </tr>`;
@@ -248,9 +248,9 @@ main {
         
 
 
-        function navigateToChat(chatRequestId) {
+        function navigateToChat() {
     // Redirect to the chat page with the chat_request_id in the URL
-    window.location.href = `/chatui/chat_page_agent/${chatRequestId}/`;
+    window.location.href = `/chatui/agent_chat_page/`;
 }
 
     </script>

@@ -17,8 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from newChatUI import views
-from django.conf import settings
-from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -50,9 +49,10 @@ urlpatterns = [
    path('chat_page_agent/<int:chatRequestId>/',views.chat_page_agent,name="chat_page_agent"),
    path('load_messages/<int:chatRequestId>/',views.load_new_messages,name="load_messages"),
    path('get-consent-form/', views.get_consent_form, name='get_consent_form'),
-    path('save-consent-answers/', views.save_consent_answers, name='save_consent_answers'),
-    path('update_details/',views.update_details,name='update_details'),
-     path('getmessages/<int:csaId>/', views.get_messages, name = "getmessages"),
+   path('save-consent-answers/', views.save_consent_answers, name='save_consent_answers'),
+   path('update_details/',views.update_details,name='update_details'),
+   path('getmessages/<int:csaId>/', views.get_messages, name = "getmessages"),
+   path('agent_chat_page/',views.agent_chat_page,name="agent_chat_page"),
    
 
 
@@ -64,4 +64,4 @@ urlpatterns = [
   
    
   
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

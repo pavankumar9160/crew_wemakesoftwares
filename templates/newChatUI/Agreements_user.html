@@ -375,7 +375,7 @@
 
 
         $(document).ready(function() {
-            $.get('/get-consent-form/', function(response) {
+            $.get('/chatui/get-consent-form/', function(response) {
                 const questionsContainer = $('#questionsContainer');
                 response.questions.forEach((question) => {
                     let questionHtml = `<div class="question" data-id="${question.question_id}">

@@ -452,6 +452,7 @@ def get_users_info_and_messages(request):
                     'id': user.id,
                     'name': user.name,
                     'contact_number': user.contact_number,
+                    'profile_picture': user.profile_picture.url if user.profile_picture else None,  # Get the URL of the image
                 }
 
                 # Retrieve all chat requests for the user where accepted=False
@@ -513,6 +514,11 @@ from django.http import JsonResponse
 from myapp.models import ChatRequest, Message
 from django.contrib.auth.decorators import login_required
 
+
+def agent_chat_page(request):
+    user = request.user
+    return render (request, 'newChatUI/chat_page_agent.html',{'user':user})
+
 @login_required
 def chat_page_agent(request, chatRequestId):
     try:
@@ -526,7 +532,7 @@ def chat_page_agent(request, chatRequestId):
             # user.is_idle = False
             user.save()
 
-        chat_request.accepted = True
+       # chat_request.accepted = True
         chat_request.csa = user
         chat_request.save()
         
@@ -545,32 +551,8 @@ def chat_page_agent(request, chatRequestId):
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image
                
             })
-            
-            
-
-        # If the request is AJAX (for the messages), return a JSON response
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-
-            return JsonResponse({
-                'status': 'success',
-                'messages': messages,
-                 'user': {
-                    'user': user.name,
-                    'email': user.email,
-                    'is_csa': user.is_csa,
-                }
-            })
-        print('user',user)
-        # For non-AJAX requests, render the chat page template with the messages data
-        return render(request, 'newChatUI/chat_page_agent.html', {
-            
-            'chat_request_id': chatRequestId,
-            'messages': messages,
-            'user':user
-            
-        })
         
-        
+        return JsonResponse({'success': True, 'messages': messages})
     
     except ChatRequest.DoesNotExist:
         # Handle case where ChatRequest doesn't exist
@@ -923,33 +905,42 @@ def update_details(request):
 
 @login_required
 def get_messages(request, csaId):
-    # Get the logged-in user
-    user = request.user
-    
-    # Fetch all chat requests between the user and the specified CSA
-    chat_requests = ChatRequest.objects.filter(user=user, csa_id=csaId)
-    
-    # If no chat requests exist, return an empty list
-    if not chat_requests.exists():
-        return JsonResponse({"messages": []}, safe=False)
-    
-    # Fetch all messages related to these chat requests
-    messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
-    
-    # Format the messages for JSON response
-    messages_data = [
-        {
-            "id": message.id,
-            "sender": message.sender.name if message.sender else None,
-            "message": message.message,
-            "attachment": message.attachment.url if message.attachment else None,
-            "timestamp": message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-        }
-        for message in messages
-    ]
+    try: # Get the logged-in user
+        user = request.user
+        
+        # Fetch all chat requests between the user and the specified CSA
+        chat_requests = ChatRequest.objects.filter(user=user, csa_id=csaId)
+        
+        # If no chat requests exist, return an empty list
+        if not chat_requests.exists():
+            return JsonResponse({"messages": []}, safe=False)
+        
+        # Fetch all messages related to these chat requests
+        messages = Message.objects.filter(chat_request__in=chat_requests).order_by('-timestamp')[:20]
 
-    # Return the formatted messages as JSON
-    return JsonResponse({"messages": messages_data}, safe=False)
+        
+        # Format the messages for JSON response
+        messages_data = [
+            {
+                "id": message.id,
+                "sender": message.sender.name if message.sender else None,
+                "message": message.message,
+                "attachment": message.attachment.url if message.attachment else None,
+                "timestamp": message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,
+                
+            }
+            for message in messages[::-1]
+        ]
+
+        # Return the formatted messages as JSON
+        return JsonResponse({"messages": messages_data}, safe=False)
+    except ObjectDoesNotExist as e:
+        # Handle object not found error
+        return JsonResponse({"error": f"Object not found: {str(e)}"}, status=404)
+    except Exception as e:
+        # Catch any other exceptions and return a generic error
+        return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
 
     
         
