@@ -1795,7 +1795,7 @@
                             <div class="overlay-content">
                                 <div>
                                     <div class="user-chat-nav p-3">
-
+    
                                         <div class="d-flex w-100 align-items-center">
                                             <div class="flex-grow-1">
                                                 <h5 class="text-white mb-0">Settings</h5>
@@ -1815,7 +1815,7 @@
                                 </div>
                             </div>
                         </div>
-
+    
                         <div class="text-center p-3 p-lg-4 border-bottom pt-2 pt-lg-2 mt-n5 position-relative">
                             <div class="mb-3 profile-user">
                                 <img src="{% static 'images/users/avatar-1.jpg' %}" class="rounded-circle avatar-lg img-thumbnail user-profile-image" alt="user-profile-image">
@@ -1828,283 +1828,132 @@
                                     </label>
                                 </div>
                             </div>
-
+    
                             <h5 class="fs-16 mb-1 text-truncate"></h5>
-
+    
                             <div class="dropdown d-inline-block">
                                 <a class="text-muted dropdown-toggle d-block" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="bx bxs-circle text-success fs-10 align-middle"></i> Active <i class="mdi mdi-chevron-down"></i>
                                 </a>
-
+    
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#"><i
-                                            class="bx bxs-circle text-success fs-10 me-1 align-middle"></i>
+                                    <a class="dropdown-item" href="#"><i class="bx bxs-circle text-success fs-10 me-1 align-middle"></i>
                                         Active</a>
-                                    <a class="dropdown-item" href="#"><i
-                                            class="bx bxs-circle text-warning fs-10 me-1 align-middle"></i>
+                                    <a class="dropdown-item" href="#"><i class="bx bxs-circle text-warning fs-10 me-1 align-middle"></i>
                                         Away</a>
-                                    <a class="dropdown-item" href="#"><i
-                                            class="bx bxs-circle text-danger fs-10 me-1 align-middle"></i> Do
+                                    <a class="dropdown-item" href="#"><i class="bx bxs-circle text-danger fs-10 me-1 align-middle"></i> Do
                                         not disturb</a>
                                 </div>
                             </div>
-
-
+    
+    
                         </div>
                         <!-- End profile user -->
-
+    
                         <!-- Start User profile description -->
-                        <div class="user-setting" data-simplebar="init">
-                            <div class="simplebar-wrapper" style="margin: 0px;">
-                                <div class="simplebar-height-auto-observer-wrapper">
-                                    <div class="simplebar-height-auto-observer"></div>
-                                </div>
-                                <div class="simplebar-mask">
-                                    <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                        <div class="simplebar-content-wrapper" style="height: auto; overflow: hidden;">
-                                            <div class="simplebar-content" style="padding: 0px;">
-                                                <div id="settingprofile" class="accordion accordion-flush">
-                                                    <div class="accordion-item">
-                                                        <div class="accordion-header" id="headerpersonalinfo">
-                                                            <a class="accordion-button fs-14 fw-medium" data-bs-toggle="collapse" href="#personalinfo" aria-expanded="true" aria-controls="personalinfo">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="flex-shrink-0 me-3 avatar-xs">
-                                                                        <div class="avatar-title bg-info-subtle 
-                 text-info text-info rounded">
-                                                                            <i class="bx bxs-user"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                    Personal Info
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <div id="personalinfo" class="accordion-collapse collapse show" aria-labelledby="headerpersonalinfo" data-bs-parent="#settingprofile">
-                                                            <div class="accordion-body edit-input">
-                                                                <div class="float-end">
-                                                                    <a href="#" class="badge bg-light text-muted" id="user-profile-edit-btn"> <i class="bx bxs-pencil align-middle" id="edit-icon"></i>
-                                                                    </a>
-                                                                </div>
-
-                                                                <div>
-                                                                    <label for="exampleInputPassword1" class="form-label text-muted fs-13">Name</label>
-                                                                    <input type="text" class="form-control" id="exampleInputPassword1" value="Dushane Daniel" placeholder="Enter name" disabled="">
-                                                                </div>
-
-                                                                <div>
-                                                                    <label for="exampleInputPassword1" class="form-label text-muted fs-13">Email</label>
-                                                                    <input type="email" class="form-control" id="exampleInputPassword1" value="dashanedaniel@vhato.com" placeholder="Enter email" disabled="">
-                                                                </div>
-
-                                                                <div class="mt-3">
-                                                                    <label for="exampleInputPassword1" class="form-label text-muted fs-13">Phone
-                                                                        No</label>
-                                                                    <input type="text" class="form-control" id="exampleInputPassword1" value="+(245) 4577 14523" placeholder="Enter phone no" disabled="">
-                                                                </div>
-
-                                                                <div class="mt-3">
-                                                                    <label for="exampleInputPassword1" class="form-label text-muted fs-13">Location</label>
-                                                                    <input type="text" class="form-control" id="exampleInputPassword1" value="California, USA" placeholder="Location" disabled="">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end personal info card -->
-
-                                                    <div class="accordion-item">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a class="accordion-button fs-14 fw-medium collapsed" data-bs-toggle="collapse" href="#privacy" aria-expanded="false" aria-controls="privacy">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="flex-shrink-0 me-3 avatar-xs">
-                                                                        <div class="avatar-title bg-info-subtle 
-                 text-info text-info rounded">
-                                                                            <i class="bx bxs-lock"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                    Privacy
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <div id="privacy" class="accordion-collapse collapse" aria-labelledby="privacy1" data-bs-parent="#settingprofile">
-                                                            <div class="accordion-body">
-                                                                <h6 class="mb-3">Who can see my personal info</h6>
-                                                                <ul class="list-unstyled vstack gap-4 mb-0">
-                                                                    <li>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Profile photo</h5>
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <select class="form-select form-select-sm">
-                                                                                    <option value="Everyone"
-                                                                                        selected="">Everyone</option>
-                                                                                    <option value="Selected">Selected
-                                                                                    </option>
-                                                                                    <option value="Nobody">Nobody
-                                                                                    </option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Status</h5>
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <select class="form-select form-select-sm">
-                                                                                    <option value="Everyone"
-                                                                                        selected="">Everyone</option>
-                                                                                    <option value="Selected">Selected
-                                                                                    </option>
-                                                                                    <option value="Nobody">Nobody
-                                                                                    </option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Groups</h5>
-
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <select class="form-select form-select-sm">
-                                                                                    <option value="Everyone"
-                                                                                        selected="">Everyone</option>
-                                                                                    <option value="Selected">Selected
-                                                                                    </option>
-                                                                                    <option value="Nobody">Nobody
-                                                                                    </option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Last seen</h5>
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <div class="form-check form-switch">
-                                                                                    <input type="checkbox" class="form-check-input" id="privacy-lastseenSwitch" checked="">
-                                                                                    <label class="form-check-label" for="privacy-lastseenSwitch"></label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Read receipts</h5>
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <div class="form-check form-switch">
-                                                                                    <input type="checkbox" class="form-check-input" id="privacy-readreceiptSwitch" checked="">
-                                                                                    <label class="form-check-label" for="privacy-readreceiptSwitch"></label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end privacy card -->
-
-                                                    <div class="accordion-item">
-                                                        <div class="accordion-header" id="headersecurity">
-                                                            <a class="accordion-button fs-14 fw-medium collapsed" data-bs-toggle="collapse" href="#collapsesecurity" aria-expanded="false" aria-controls="collapsesecurity">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="flex-shrink-0 me-3 avatar-xs">
-                                                                        <div class="avatar-title bg-info-subtle 
-                 text-info text-info rounded">
-                                                                            <i class="bx bxs-check-shield"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                    Security
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapsesecurity" class="accordion-collapse collapse" aria-labelledby="headersecurity" data-bs-parent="#settingprofile">
-                                                            <div class="accordion-body">
-                                                                <ul class="list-group list-group-flush">
-                                                                    <li class="list-group-item p-0">
-                                                                        <div class="d-flex align-items-center">
-                                                                            <div class="flex-grow-1 overflow-hidden">
-                                                                                <h5 class="fs-13 mb-0 text-truncate">
-                                                                                    Show security notification</h5>
-
-                                                                            </div>
-                                                                            <div class="flex-shrink-0 ms-2">
-                                                                                <div class="form-check form-switch">
-                                                                                    <input type="checkbox" class="form-check-input" id="security-notificationswitch">
-                                                                                    <label class="form-check-label" for="security-notificationswitch"></label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end security card -->
-
-
-
-                                                    <div class="accordion-item">
-                                                        <div class="accordion-header" id="headerhelp">
-                                                            <button class="accordion-button fs-14 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsehelp" aria-expanded="false" aria-controls="collapsehelp">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="flex-shrink-0 me-3 avatar-xs">
-                                                                        <div class="avatar-title bg-info-subtle 
-                 text-info text-info rounded">
-                                                                            <i class="bx bxs-help-circle"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                    Help
-                                                                </div>
-                                                            </button>
-                                                        </div>
-                                                        <div id="collapsehelp" class="accordion-collapse collapse" aria-labelledby="headerhelp" data-bs-parent="#settingprofile">
-                                                            <div class="accordion-body">
-                                                                <ul class="list-unstyled vstack gap-4 mb-0">
-                                                                    <li>
-                                                                        <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">FAQs</a></h5>
-                                                                    </li>
-                                                                    <li>
-                                                                        <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Contact</a>
-                                                                        </h5>
-                                                                    </li>
-                                                                    <li>
-                                                                        <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Terms &amp;
-                                                                                Privacy policy</a>
-                                                                        </h5>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
+                        <div class="user-setting" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 0px;">
+                            <div id="settingprofile" class="accordion accordion-flush">
+                                {% comment %} <div class="accordion-item">
+                                    <div class="accordion-header" id="headerpersonalinfo">
+                                        <a class="accordion-button fs-14 fw-medium collapsed" data-bs-toggle="collapse" href="#personalinfo" aria-expanded="false" aria-controls="personalinfo">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-3 avatar-xs">
+                                                    <div class="avatar-title bg-info-subtle text-info text-info rounded">
+                                                        <i class="bx bxs-user"></i>
                                                     </div>
                                                 </div>
-                                                <!-- end profile-setting-accordion -->
+                                                Personal Info
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div id="personalinfo" class="accordion-collapse collapse" aria-labelledby="headerpersonalinfo" data-bs-parent="#settingprofile" style="">
+                                        <div class="accordion-body edit-input">
+                                            <div class="float-end">
+                                                <a href="#" class="badge bg-light text-muted" id="user-profile-edit-btn"> <i class="bx bxs-pencil align-middle" id="edit-icon"></i>
+                                                </a>
+                                            </div>
+    
+                                            <div>
+                                                <label for="exampleInputPassword1" class="form-label text-muted fs-13">Name</label>
+                                                <input type="text" class="form-control" id="exampleInputPassword1" value="Dushane Daniel" placeholder="Enter name" disabled="">
+                                            </div>
+    
+                                            <div>
+                                                <label for="exampleInputPassword1" class="form-label text-muted fs-13">Email</label>
+                                                <input type="email" class="form-control" id="exampleInputPassword1" value="dashanedaniel@vhato.com" placeholder="Enter email" disabled="">
+                                            </div>
+    
+                                            <div class="mt-3">
+                                                <label for="exampleInputPassword1" class="form-label text-muted fs-13">Phone No</label>
+                                                <input type="text" class="form-control" id="exampleInputPassword1" value="+(245) 4577 14523" placeholder="Enter phone no" disabled="">
+                                            </div>
+    
+                                            <div class="mt-3">
+                                                <label for="exampleInputPassword1" class="form-label text-muted fs-13">Location</label>
+                                                <input type="text" class="form-control" id="exampleInputPassword1" value="California, USA" placeholder="Location" disabled="">
                                             </div>
                                         </div>
                                     </div>
+                                </div> {% endcomment %}
+                                <!-- end personal info card -->
+    
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="{% url 'agreements_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                            Agreements
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div>
+                                   
+                                <!-- end privacy card -->
+    
+                                
+                               
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                            Payment Assistance
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- end security card -->
+    
+    
+    
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                            Loan Closure
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                            Legal And Compliance
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                            Account Management
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
+                                    <div class="accordion-header" id="privacy1">
+                                        <a href="{% url 'help_supp_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
+                                           Help & Support
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-                                <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
-                            </div>
-                            <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
-                                <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
-                            </div>
-                        </div>
+                            <!-- end profile-setting-accordion -->
+                        </div></div></div></div><div class="simplebar-placeholder" style="width: auto; height: 258px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 41px; display: block; transform: translate3d(0px, 0px, 0px);"></div></div></div>
                         <!-- End User profile description -->
                     </div>
                     <!-- Start Settings content -->
@@ -2409,19 +2258,18 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="chat-input-collapse chat-input-collapse1 collapse" id="chatinputmorecollapse">
+                            <div class="chat-input-collapse chat-input-collapse1 collapse" id="chatinputmorecollapse" style="">
                                 <div class="card mb-0">
                                     <div class="card-body py-3">
                                         <!-- Swiper -->
-                                        <div class="swiper chatinput-links">
-                                            <div class="swiper-wrapper">
-                                                <div class="swiper-slide">
+                                        <div class="swiper chatinput-links swiper-initialized swiper-horizontal swiper-pointer-events">
+                                            <div class="swiper-wrapper" id="swiper-wrapper-6c2fe2f276af1b05" aria-live="polite">
+                                                <div class="swiper-slide swiper-slide-active" role="group" aria-label="1 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2 position-relative">
                                                         <div>
-                                                            <input id="attachedfile-input" type="file" class="d-none" accept=".zip,.rar,.7zip,.pdf" multiple="">
+                                                            <input id="attachedfile-input" type="file" class="d-none" multiple="">
                                                             <label for="attachedfile-input" class="avatar-sm mx-auto stretched-link">
-                                                                <span
-                                                                    class="avatar-title fs-18 bg-primary-subtle  text-primary  text-primary rounded-circle">
+                                                                <span class="avatar-title fs-18 bg-primary-subtle  text-primary  text-primary rounded-circle">
                                                                     <i class="bx bx-paperclip"></i>
                                                                 </span>
                                                             </label>
@@ -2430,7 +2278,7 @@
                                                             Attached</h5>
                                                     </div>
                                                 </div>
-                                                <div class="swiper-slide">
+                                                <div class="swiper-slide swiper-slide-next" role="group" aria-label="2 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2">
                                                         <div class="avatar-sm mx-auto">
                                                             <div class="avatar-title fs-18 bg-primary-subtle text-primary  text-primary rounded-circle">
@@ -2440,7 +2288,7 @@
                                                         <h5 class="fs-11 text-uppercase text-truncate mt-3 mb-0"><a href="#" class="text-body stretched-link" onclick="cameraPermission()">Camera</a></h5>
                                                     </div>
                                                 </div>
-                                                <div class="swiper-slide">
+                                                <div class="swiper-slide" role="group" aria-label="3 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2 position-relative">
                                                         <div>
                                                             <input id="galleryfile-input" type="file" class="d-none" accept="image/png, image/gif, image/jpeg" multiple="">
@@ -2454,7 +2302,7 @@
                                                         </h5>
                                                     </div>
                                                 </div>
-                                                <div class="swiper-slide">
+                                                <div class="swiper-slide" role="group" aria-label="4 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2">
                                                         <div>
                                                             <input id="audiofile-input" type="file" class="d-none" accept="audio/*" multiple="">
@@ -2468,7 +2316,7 @@
                                                         </h5>
                                                     </div>
                                                 </div>
-                                                <div class="swiper-slide">
+                                                <div class="swiper-slide" role="group" aria-label="5 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2">
                                                         <div class="avatar-sm mx-auto">
                                                             <div class="avatar-title fs-18 bg-primary-subtle text-primary  text-primary rounded-circle">
@@ -2479,10 +2327,10 @@
                                                         <h5 class="fs-11 text-uppercase text-truncate mt-3 mb-0"><a href="#" class="text-body stretched-link" onclick="getLocation()">Location</a></h5>
                                                     </div>
                                                 </div>
-                                                <div class="swiper-slide">
+                                                <div class="swiper-slide" role="group" aria-label="6 / 7" style="width: 111.667px; margin-right: 30px;">
                                                     <div class="text-center px-2">
                                                         <div class="avatar-sm mx-auto">
-                                                            <div class="avatar-title fs-18 bg-primary-subtle text-primary  text-primary rounded-circle">
+                                                            <div class="avatar-title fs-18 bg-primary-subtle  text-primary  text-primary rounded-circle">
                                                                 <i class="bx bxs-user-circle"></i>
                                                             </div>
                                                         </div>
@@ -2490,10 +2338,10 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="swiper-slide d-block d-sm-none">
+                                                <div class="swiper-slide d-block d-sm-none" role="group" aria-label="7 / 7" style="margin-right: 30px;">
                                                     <div class="text-center px-2">
                                                         <div class="avatar-sm mx-auto">
-                                                            <div class="avatar-title fs-18 bg-primary-subtle text-primary  text-primary rounded-circle">
+                                                            <div class="avatar-title fs-18 bg-primary-subtle  text-primary  text-primary rounded-circle">
                                                                 <i class="bx bx-microphone"></i>
                                                             </div>
                                                         </div>
@@ -2501,7 +2349,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
                                     </div>
                                 </div>
                             </div>
@@ -4446,7 +4294,31 @@ let chatRequestId = null;
                                                                 <div class="ctext-wrap">
                                                                    <div class="ctext-wrap-content" id="${message.id}">
                                                                         ${message.message ? `<p class="mb-0 ctext-content">${message.message}</p>` : ""}
-                                                            ${message.attachment ? `<p class="mb-0 ctext-content"><a href="${message.attachment}" target="_blank">View Attachment</a></p>` : ""}
+                                                            ${message.attachment ? `<div class="p-3 border rounded-3">
+                                                                                <div class="d-flex align-items-center attached-file">
+                                                                                    <div class="flex-shrink-0 avatar-sm me-3 ms-0 attached-file-avatar">
+                                                                                        <div class="avatar-title bg-soft-dark rounded-circle fs-20">
+                                                                                            <i class="ri-attachment-2"></i>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="flex-grow-1 overflow-hidden">
+                                                                                        <div class="text-start">
+                                                                                            <h5 class="fs-14 text-black mb-1">${message.attachment}</h5>
+                                                                                            <p class="text-black-50 text-truncate fs-13 mb-0"></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="flex-shrink-0 ms-4">
+                                                                                        <div class="d-flex gap-2 fs-20 d-flex align-items-start">
+                                                                                            <div>
+                                                                                                <a href="${message.attachment}" target="_blank" class="text-black-50 download-file" data-id="2">
+                                                                                                    <i class="bx bxs-download"></i>
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            ` : ""}
                                                                     </div>
                                                                     <div class="align-self-start message-box-drop d-flex">
                                                                         <div class="dropdown">
@@ -4574,33 +4446,48 @@ let chatRequestId = null;
            
             const userInput = document.getElementById("chat-input");
             const userMessage = userInput.value.trim();
-            if (userMessage === "") {
-                return; // Prevent sending empty messages
+
+            const fileInput = document.getElementById("attachedfile-input");
+            const file = fileInput?.files[0];
+            console.log(file);
+
+            if (!userMessage && !file) {
+                
+                return; 
             }
-        
+
+            const formData = new FormData();
+            if (userMessage) {
+                formData.append("message", userMessage);
+            }
+            if (file) {
+                formData.append("attachment", file);
+            }
         
             $.ajax({
                 url: `/chatui/send_messages/${chatRequestId}`,
                 type: "POST",
-                data: {
-                    message: userMessage,
-                    
-                    
-                },
+                data: formData, // Send FormData directly
+                processData: false, // Important: don't let jQuery process the data
+                contentType: false, // Important: don't let jQuery set content-type
                 success: function(response) {
 
                     userInput.value="";
+            const fileUploadField = document.querySelector('.file_Upload');
+            if (fileUploadField) {
+                fileUploadField.innerHTML = ""; 
+                fileUploadField.classList.remove("show");
+            }
                     console.log(response.messages);
-                    setInterval(loadNewMessages,2000) // Handle chat update with response
+                    setInterval(loadNewMessages,2000) 
                 
                 },
                 error: function(xhr, status, error) {
-                    console.log('Error:', xhr.responseText); // Log error in case of failure
-                    var errors = xhr.responseJSON;
+                    console.log('Error:', xhr.responseText); 
                     console.log(errors);
                     var firstKey = Object.keys(errors)[0];
                     var firstError = errors[firstKey][0];
-                    console.log(firstError); // Log the error message from the response
+                    console.log(firstError); 
                 }
             });
         }
@@ -4629,7 +4516,53 @@ let chatRequestId = null;
         document.querySelector(".user-profile-sidebar").classList.remove('d-block');
     }); 
     
-   
+    document.getElementById("attachedfile-input").addEventListener("change", function () {
+        const file = this.files[0]; 
+        if (file) {
+            const fileUploadfield = document.querySelector('.file_Upload');
+            fileUploadfield.classList.add("show");
+            document.getElementById('chatinputmorecollapse').classList.remove('show');
+        
+            const uploadData = `
+                <div class="card p-2 border attchedfile_pre d-inline-block position-relative">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 avatar-xs ms-1 me-3">
+                            <div class="avatar-title bg-soft-primary text-primary rounded-circle">
+                                <i class="ri-attachment-2"></i> 
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <a href="" id="a"></a>
+                            <h5 class="fs-14 text-truncate mb-1">${file.name}</h5> 
+                            <input type="hidden" name="downloaddata" value="${file}">
+                            <p class="text-muted text-truncate fs-13 mb-0">${file.size} bytes</p>
+                        </div>
+                        <div class="flex-shrink-0 align-self-start ms-3">
+                            <div class="d-flex gap-2">
+                                <div> 
+                                    <i class="ri-close-line text-muted attechedFile-remove" id="remove-attechedFile"></i> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+    
+            
+            fileUploadfield.insertAdjacentHTML('beforeend', uploadData);
+    
+  
+            document.getElementById("remove-attechedFile").addEventListener('click', function () {
+                fileUploadfield.classList.remove("show");
+                this.closest('.attchedfile_pre').remove(); 
+            });
+    
+        } else {
+            console.log("No file uploaded.");
+        }
+    });
+    
+    
     
 
 
