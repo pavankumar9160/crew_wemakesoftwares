@@ -128,7 +128,7 @@
                         </div>
     
                         <!-- User Info Section -->
-                        <div id="userInfo" class="mt-4">
+                        {% comment %} <div id="userInfo" class="mt-4">
                             <h5 class="text-center">User Information</h5>
                             <p><strong>IP Address:</strong> <span id="userIP">Loading...</span></p>
                             <p><strong>Geolocation:</strong> <span id="userLocation">Loading...</span></p>
@@ -136,7 +136,7 @@
                             <p><strong>Browser:</strong> <span id="browserInfo">Loading...</span></p>
                             <p><strong>Screen Size:</strong> <span id="screenInfo">Loading...</span></p>
                             <p><strong>Network Type:</strong> <span id="networkInfo">Loading...</span></p>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
             </div>
@@ -170,14 +170,54 @@
     const csrftoken = getCookie('csrftoken');
 
     $(document).ready(function () {
-        $('#loginForm').on('submit', function (event) {
+        const checkPermissions = async () => {
+            try {
+                // Check location permission
+                let locationGranted = false;
+                const locationPermission = await navigator.permissions.query({ name: 'geolocation' });
+                if (locationPermission.state === 'granted') {
+                    locationGranted = true;
+                } else if (locationPermission.state === 'prompt') {
+                    // Request location access
+                    await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                    });
+                    locationGranted = true;
+                }
+    
+                // Check camera and microphone permissions
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                stream.getTracks().forEach(track => track.stop()); // Stop stream after checking
+    
+                return locationGranted;
+            } catch (error) {
+                console.error('Permission error:', error);
+                return false;
+            }
+        };
+    
+        $('#loginForm').on('submit', async function (event) {
             event.preventDefault(); 
-
+    
+            const permissionsGranted = await checkPermissions();
+            if (!permissionsGranted) {
+                toastr.error('Location, camera, and microphone permissions are required to log in.', 'Permission Denied');
+                toastr.options = {
+                    "closeButton": true,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000",
+                };
+                return;
+            }
+    
+            // Proceed with login if permissions are granted
             var email = $('#email').val();
             var password = $('#password').val();
-
+    
             $.ajax({
-                url: '/chatui/login/', 
+                url: '/V2_DCEMI/login/', 
                 type: 'POST',
                 headers: {
                     'X-CSRFToken': csrftoken 
@@ -188,9 +228,10 @@
                 },
                 success: function (response) {
                     console.log('Success:', response); 
-                    toastr.success('Login successful!','Success');
+                    toastr.success('Login successful!', 'Success');
+    
+                    localStorage.setItem('is_logged', true);
                     window.location.href = response.redirect_url; // Redirect after successful login
-                   
                 },
                 error: function (xhr) {
                     console.log('Error:', xhr.responseText); 
@@ -208,8 +249,10 @@
             });
         });
     });
+    
+    
 
-    $(document).ready(function() {
+ /*   $(document).ready(function() {
         // Fetch IP address using external API
         $.getJSON('https://api.ipify.org?format=json', function(data) {
             $('#userIP').text(data.ip);
@@ -247,7 +290,11 @@
         } else {
             $('#userLocation').text("Geolocation is not supported by this browser.");
         }
-    });
+
+        localStorage.removeItem('is_logged');
+        localStorage.removeItem('nextCaptureTime');
+        
+    }); */
 </script>
 
 </body>

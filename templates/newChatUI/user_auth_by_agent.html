@@ -294,7 +294,7 @@ function getCookie(name) {
 
 $(document).ready(function() {
     $.ajax({
-        url: '/chatui/get_registered_users_info/',
+        url: '/V2_DCEMI/get_registered_users_info/',
         type: "GET",
         success: function(response) {
             console.log(response.users);

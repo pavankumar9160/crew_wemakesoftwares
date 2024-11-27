@@ -265,7 +265,7 @@ main {
             
                         $.ajax({
 
-                            url :`/chatui/get_user_chat_history/${chatRequestId}`,
+                            url :`/V2_DCEMI/get_user_chat_history/${chatRequestId}`,
                             type: "GET",
                             success:function(data){
 
@@ -339,7 +339,7 @@ main {
         
         
             $.ajax({
-                url: `/chatui/send_messages/${chatRequestId}`,
+                url: `/V2_DCEMI/send_messages/${chatRequestId}`,
                 type: "POST",
                 data: {
                     message: userMessage,
@@ -383,7 +383,7 @@ main {
             const formData = new FormData();
         formData.append('attachment', file);
             $.ajax({
-                url: `/chatui/send_messages/${chatRequestId}`,  // Ensure this URL matches your view
+                url: `/V2_DCEMI/send_messages/${chatRequestId}`,  // Ensure this URL matches your view
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -411,7 +411,7 @@ main {
 
             $.ajax({
 
-                url :'/chatui/get_users_info_and_messages/',
+                url :'/V2_DCEMI/get_users_info_and_messages/',
                 type:"GET",
                 success:function(response){
                         console.log(response.users)
@@ -458,7 +458,7 @@ main {
         console.log(chatRequestId); 
       
       $.ajax({
-          url: `/chatui/load_messages/${chatRequestId}/`,  // Assume this URL endpoint returns messages
+          url: `/V2_DCEMI/load_messages/${chatRequestId}/`,  // Assume this URL endpoint returns messages
           method: "GET",
           success: function(response) {
              

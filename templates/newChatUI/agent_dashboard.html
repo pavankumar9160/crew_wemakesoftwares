@@ -204,7 +204,7 @@ main {
         $(document).ready(function () {
             function fetchAndDisplayUserInfo() {
                 $.ajax({
-                    url: '/chatui/get_users_info_and_messages/',
+                    url: '/V2_DCEMI/get_users_info_and_messages/',
                     type: "GET",
                     success: function (response) {
                         console.log(response.users);
@@ -250,7 +250,7 @@ main {
 
         function navigateToChat() {
     // Redirect to the chat page with the chat_request_id in the URL
-    window.location.href = `/chatui/agent_chat_page/`;
+    window.location.href = `/V2_DCEMI/agent_chat_page/`;
 }
 
     </script>

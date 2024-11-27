@@ -73,7 +73,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="pills-chat-tab" data-bs-toggle="pill" href="#pills-chat" role="tab">
                             <i class="ri-discuss-line"></i>
-                            <span class="badge bg-danger fs-11 rounded-pill sidenav-item-badge">9</span>
+                            <span class="badge bg-danger fs-11 rounded-pill sidenav-item-badge" id ="nav-left-unreadCount"></span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -435,7 +435,7 @@
                         <div class="px-4 pt-4">
                             <div class="d-flex align-items-start">
                                 <div class="flex-grow-1">
-                                    <h4 class="mb-4">Messages <span class="text-primary fs-13">(128)</span></h4>
+                                    <h4 class="mb-4">Messages <span id ="totalMessageCount"  class="text-primary fs-13"></span></h4>
                                 </div>
                             </div>
                             <form>
@@ -2102,7 +2102,7 @@
                                         </li>
 
                                         <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                                            <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target=".videocallModal" fdprocessedid="v1saq">
+                                            <button type="button" class="btn nav-btn" id="videocallButton" fdprocessedid="v1saq">
                                                 <i class="bx bx-video"></i>
                                             </button>
                                         </li>
@@ -2317,9 +2317,9 @@
                                             </div>
                                             <input autocomplete="off" type="text" class="form-control  bg-light border-0 chat-input" autofocus="" id="chat-input" placeholder="Type your message..." fdprocessedid="66ggnw">
                                             <div class="chat-input-typing">
-                                                <span class="typing-user d-flex">Victoria Lane
-                                                    is
-                                                    typing
+                                                <span class="typing-user d-flex">
+                                                
+                                                
                                                     <span class="typing ms-2">
                                                         <span class="dot"></span>
                                                 <span class="dot"></span>
@@ -2337,7 +2337,7 @@
                                                 </button>
                                             </div>
                                             <div class="links-list-item">
-                                                <button type="button" class ="send-button" class="btn btn-primary btn-lg chat-send waves-effect waves-light" data-bs-toggle="collapse" data-bs-target=".chat-input-collapse1.show" fdprocessedid="0uzpm">
+                                                <button type="button" class="btn btn-primary btn-lg chat-send waves-effect waves-light send-button" data-bs-toggle="collapse" data-bs-target=".chat-input-collapse1.show" fdprocessedid="0uzpm">
                                                     <i class="bx bxs-send align-middle" id="submit-btn"></i>
                                                 </button>
                                             </div>
@@ -4330,6 +4330,25 @@
     </div>
 
 
+<!-- Modal Structure -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Your Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to proceed with the chat?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="disagreeButton">Disagree</button>
+                <button type="button" class="btn btn-primary" id="agreeButton">Agree</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- JAVASCRIPT -->
     <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
@@ -4356,11 +4375,13 @@
     <script>
 
       let chatRequestId = null;
-
+      let loadMessagesIntervalId = null;
+      let typingStatusIntervalId = null;
+        let user_id = null;
     $(document).ready(function () {
         function fetchAndDisplayUserInfo() {
             $.ajax({
-                url: '/chatui/get_users_info_and_messages/',
+                url: '/V2_DCEMI/get_users_info_and_messages/',
                 type: "GET",
                 success: function (response) {
                     
@@ -4368,12 +4389,12 @@
                     $('#favourite-users').empty();
     
                     users_data.forEach((data) => {
-                       
+                       console.log(data.user_info)
                         data.chat_request_ids.forEach((chatRequestId) => {
                             
 
                             var chatItem = `
-                <li id="contact-id-${chatRequestId}" data-name="${data.user_info.name}" class="chat-item">
+                <li id="contact-id-${chatRequestId}" data-name="${data.user_info.name}" data-user-id="${data.user_info.id}" class="chat-item">
                     <a href="javascript: void(0);" class="unread-msg-user">
                         <div class="d-flex align-items-center">
                             <div class="chat-user-img online align-self-center me-2 ms-0">
@@ -4387,7 +4408,7 @@
                                     ${data.last_message.message}</p>
                             </div>
                             <div class="ms-auto">
-                                <span class="badge badge-soft-danger rounded p-1 fs-10"></span>
+                                <span id = "unreadCount-${data.user_info.id}" class="badge badge-soft-danger rounded p-1 fs-10 messageCount"></span>
                             </div>
                         </div>
                     </a>
@@ -4415,34 +4436,52 @@
     });
 
     $("#favourite-users").on("click", "li.chat-item", function () {
-        // Extract the CSA ID from the element's ID
+ 
         chatRequestId =  $(this).attr("id").split("contact-id-")[1] 
         const userName = this.getAttribute("data-name");
+        user_id = this.getAttribute("data-user-id");
+        console.log("user_id",user_id)
         const profilePicture = this.querySelector(".chat-user-img img").src;
         document.querySelector("#user-profile-picture").src= profilePicture
         document.querySelector(".user-image").src= profilePicture
         document.querySelector("#user-profile-name").textContent= userName
         document.querySelector(".user-name").textContent= userName
-        document.querySelector(".chat-input-typing .typing-user").textContent= userName +" is typing..."
         document.querySelector(".chat-input-section").style.display= 'block';
+
+        document.getElementById(`unreadCount-${user_id}`).textContent = "";
+
+        const storedMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
+        localStorage.setItem(`user-${user_id}-message-count`, storedMessageCount);
+        const chatContainer = document.getElementById("users-conversation");
+    chatContainer.innerHTML = "";
         console.log(chatRequestId)
         if (chatRequestId) {
-            // Pass the CSA ID to the AJAX call
-            fetchMessages(chatRequestId);
+            if (loadMessagesIntervalId || typingStatusIntervalId) {
+                clearInterval(loadMessagesIntervalId);
+                clearInterval(typingStatusIntervalId);
+            }
+            fetchMessages(user_id);
+
+            setInterval(getTypingStatus,1000)
+           
+
+            
         }
     });
 
-    function fetchMessages(chatRequestId) {
+    function fetchMessages(user_id) {
         $.ajax({
-            url: `/chatui/chat_page_agent/${chatRequestId}/`,
+            url: `/V2_DCEMI/chat_page_agent/${user_id}/`,
             method: "GET",
             contentType: "application/json",
             success: function (data) {
                 console.log(data.messages);
                 document.querySelector(".user-chat-topbar").style.display= 'block';
                
+                const messageCount = data.messages.length;
+            localStorage.setItem(`user-${user_id}-message-count`, messageCount);
 
-                setInterval(loadNewMessages,2000)
+            renderChatMessages(data.messages)
 
             },
             error: function (error) {
@@ -4582,6 +4621,9 @@ function sendMessage() {
                 
         return; 
     }
+    const currentMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
+    const newMessageCount = parseInt(currentMessageCount) + 1;
+    localStorage.setItem(`user-${user_id}-message-count`, newMessageCount);
 
     const formData = new FormData();
     if (userMessage) {
@@ -4592,7 +4634,7 @@ function sendMessage() {
     }
 
     $.ajax({
-        url: `/chatui/send_messages/${chatRequestId}`,
+        url: `/V2_DCEMI/send_messages/${chatRequestId}/`,
         type: "POST",
         data: formData, // Send FormData directly
         processData: false, // Important: don't let jQuery process the data
@@ -4606,8 +4648,9 @@ function sendMessage() {
         fileUploadField.classList.remove("show");
     }
             console.log(response.messages);
-            setInterval(loadNewMessages,2000) 
-        
+            loadMessagesIntervalId = setInterval(() => loadNewMessages(), 100);
+
+           
         },
         error: function(xhr, status, error) {
             console.log('Error:', xhr.responseText); 
@@ -4621,18 +4664,63 @@ function sendMessage() {
 function loadNewMessages() {
             
     $.ajax({
-        url: `/chatui/load_messages/${chatRequestId}/`,  // Assume this URL endpoint returns messages
+        url: `/V2_DCEMI/load_messages_agent/${user_id}/`,  // Assume this URL endpoint returns messages
         method: "GET",
         success: function(response) {
            
+            const messageCount = response.messages.length;
+            localStorage.setItem(`user-${user_id}-message-count`, messageCount);
           renderChatMessages(response.messages) 
-            
+          
+           
+         
         },
         error: function(error) {
             console.log(error);
         }
     });
 }
+function getAllUserIds() {
+    return Array.from(document.querySelectorAll('.chat-item')).map(item => item.getAttribute('data-user-id'));
+}
+function checkNewMessages() {
+    const userIds = getAllUserIds(); 
+    userIds.forEach(user_id => {
+        const storedMessageCount =   localStorage.getItem(`user-${user_id}-message-count`) || 0; 
+        $.ajax({
+            url: `/V2_DCEMI/getthe_message_count/${user_id}/`,  
+            method: "GET",
+            success: function(response) {
+                console.log(response);
+                const newMessageCount = response.message_count;
+               console.log('count',newMessageCount)
+                if (newMessageCount > storedMessageCount) {
+                    const unreadCount = newMessageCount - storedMessageCount;  
+                    console.log("hi",unreadCount);
+                    document.getElementById(`unreadCount-${user_id}`).textContent = unreadCount;
+                  
+                    //const totalCount = getTotalUnreadCount();
+                   //document.getElementById("nav-left-unreadCount").textContent = totalCount;
+                  // document.getElementById('totalMessageCount').textContent = "("+totalCount+")";
+                }
+            },
+            error: function(error) {
+                console.log("Error fetching message count:", error);
+            }
+        });
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    checkNewMessages(); // Check initially
+    setInterval(checkNewMessages, 8000); 
+});
+
+
+    
+
+   
 
 document.querySelector(".i-icon").addEventListener("click", function () {
     document.querySelector(".user-profile-sidebar").classList.add('d-block');
@@ -4689,8 +4777,124 @@ document.getElementById("attachedfile-input").addEventListener("change", functio
 });
 
 
+document.querySelector("#videocallButton").addEventListener("click",function(){
+    alert("your device doesn't support this functionality");
+})
+
+function getTotalUnreadCount() {
+    let totalUnreadCount = 0;
+    
+    document.querySelectorAll('.messageCount').forEach(span => {
+        const unreadCount =  parseInt(span.textContent.trim(),10);
+        console.log('un',unreadCount)
+        console.log("tc",unreadCount)
+        if (!isNaN(unreadCount)) {
+            totalUnreadCount += unreadCount;
+        }
+    });
+
+    console.log('Total Unread Count:', totalUnreadCount);
+    return totalUnreadCount;
+}
+
+function updateAgentTypingStatus(status){
+
+    $.ajax({
+        url: `/V2_DCEMI/update_agent_typing_status/${chatRequestId}/`,
+        type: "POST",
+        data: {
+            csa_typing: status,
+    
+        },
+        success: function (response) {
+            console.log("Typing status updated:", response);
+        },
+        error: function (error) {
+            console.error("Error updating typing status:", error);
+        }
+    });
 
 
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+
+    const inputField = document.getElementById("chat-input");
+    let isTyping = false;
+
+    inputField.addEventListener("input", function () {
+        if (!isTyping) {
+            isTyping = true;
+            updateAgentTypingStatus(true);
+        }
+    });
+
+    inputField.addEventListener("blur", function () {
+        if (isTyping) {
+            isTyping = false;
+            updateAgentTypingStatus(false);
+        }
+    });
+
+})
+
+function getTypingStatus(){
+
+    
+    user =user_id
+    $.ajax({
+        url: `/V2_DCEMI/get_user_typing_status/${chatRequestId}/`,
+        type: "POST",
+        data: {
+            user: user,
+    
+        },
+        success: function (response) {
+            console.log("user typing", response);
+
+            const typingElement = document.querySelector('.chat-input-typing');
+            const typingUserElement = typingElement.querySelector('.typing-user');
+            const typingDots = typingElement.querySelector('.typing');
+
+            if (response.user_typing) {
+
+                typingUserElement.textContent = `${response.user} is typing...`;
+              
+             } else {
+                typingUserElement.textContent = "";
+                }
+        },
+        error: function (error) {
+            console.error("Error getting typing status:", error);
+        }
+    });
+
+ }
+
+ document.getElementById('pills-chat-tab').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent immediate navigation
+
+    // Show the modal for agreement
+    var modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    modal.show();
+});
+
+document.getElementById('agreeButton').addEventListener('click', function() {
+    // Close the modal
+    var modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+    modal.hide();
+
+    // Navigate to the target
+    window.location.hash = '#pills-chat'; // This will navigate to the section with id "pills-chat"
+});
+
+document.getElementById('disagreeButton').addEventListener('click', function() {
+    // Close the modal without navigating
+    var modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+    modal.hide();
+
+    // Do nothing and stay on the current page
+});
 
 
 

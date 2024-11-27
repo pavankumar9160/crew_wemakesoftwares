@@ -52,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     aadhar_card_front = models.ImageField(upload_to='profiles/', blank=True, null=True)
     aadhar_card_back = models.ImageField(upload_to='profiles/', blank=True, null=True)
     pan_card = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    pan_number =  models.CharField(max_length=500,blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
     occupation = models.IntegerField(choices=OCCUPATION_CHOICES, default =0)
     course_name = models.CharField(max_length=500,blank=True, null=True)
@@ -95,6 +96,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     reference_contact_number =models.CharField(max_length=500,blank=True, null=True)
     applicant_signature = models.ImageField(upload_to='profiles/', blank=True, null=True)
     date = models.DateField( blank=True, null=True)
+    remarks = models.CharField(max_length=500,blank=True, null=True)
     
     
     
@@ -107,17 +109,25 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
     
     
+
+
+    
+    
+    
 class ChatRequest(models.Model):
     user = models.ForeignKey(User, related_name='chat_requests', on_delete=models.CASCADE)
     csa = models.ForeignKey(User, related_name='assigned_requests', on_delete=models.SET_NULL, null=True, blank=True)
     accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    user_typing = models.BooleanField(default=False)
+    csa_typing = models.BooleanField(default=False) 
 
 class Message(models.Model):
     chat_request = models.ForeignKey(ChatRequest, related_name='messages', on_delete=models.CASCADE, null=True, blank=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField(blank=True, null=True)
     attachment = models.ImageField(upload_to='chat_images/',blank=True, null=True)
+    
     timestamp = models.DateTimeField(auto_now_add=True)       
     
 from django.db import models
@@ -147,3 +157,9 @@ class ConsentAnswer(models.Model):
 
     def __str__(self):
         return f"{self.user.name}"
+
+
+class HistoryCapturedImage(models.Model):
+    user = models.ForeignKey(User, related_name='captured_images', on_delete=models.CASCADE,null=True,blank=True)
+    image_captured = models.ImageField(upload_to='captured_images/', null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)

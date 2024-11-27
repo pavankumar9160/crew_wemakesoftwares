@@ -41,19 +41,28 @@ urlpatterns = [
   path('personal_details/',views.personal_details,name="personal_details"),
   path('user_auth_by_agent/',views.user_auth_by_agent,name="user_auth_by_agent"),
   path('get_users_info_and_messages/',views.get_users_info_and_messages,name="get_users_info_and_messages"),
-  path('send_messages/<int:chatRequestId>', views.view_messages, name="messages"),
+  path('send_messages/<int:chatRequestId>/', views.view_messages, name="messages"),
   path('get_registered_users_info/',views.get_registered_users_info,name="get_registered_users_info"),
    path('toggle-status/<int:user_id>/', views.toggle_status, name='toggle_status'),
    path('get_user_chat_history/<int:chatRequestId>/',views.get_user_chat_history,name='get_user_chat_history'),
-   path('request_chat/', views.request_chat, name='request_chat'),
-   path('chat_page_agent/<int:chatRequestId>/',views.chat_page_agent,name="chat_page_agent"),
-   path('load_messages/<int:chatRequestId>/',views.load_new_messages,name="load_messages"),
+   path('chat_page_user/', views.chat_page_user, name='chat_page_user'),
+   path('request_chat/<int:csaId>/',views.request_chat,name="request_chat"),
+   path('chat_page_agent/<int:user_id>/',views.chat_page_agent,name="chat_page_agent"),
+   path('load_messages_user/<int:csaId>/',views.load_new_messages_user,name="load_messages_user"),
+   path('load_messages_agent/<int:user_id>/',views.load_new_messages_agent,name="load_messages_agent"),
    path('get-consent-form/', views.get_consent_form, name='get_consent_form'),
    path('save-consent-answers/', views.save_consent_answers, name='save_consent_answers'),
    path('update_details/',views.update_details,name='update_details'),
    path('getmessages/<int:csaId>/', views.get_messages, name = "getmessages"),
    path('agent_chat_page/',views.agent_chat_page,name="agent_chat_page"),
-   
+    path('get_message_count/<int:csaId>/', views.get_message_count, name = "get_message_count"),
+     path('getthe_message_count/<int:user_id>/', views.getthe_message_count, name = "get_the_message_count"),
+   path('update_user_typing_status/<int:chatRequestId>/',views.update_user_typing_status, name="update_user_typing_status"),
+   path('update_agent_typing_status/<int:chatRequestId>/',views.update_agent_typing_status, name="update_agent_typing_status"),
+       path('get_csa_typing_status/<int:chatRequestId>/',views.get_csa_typing_status, name="get_csa_typing_status"),
+path('get_user_typing_status/<int:chatRequestId>/',views.get_user_typing_status, name="get_user_typing_status"),
+path('capture-image/',views.capture_image,name="capture-image"),
+
 
 
   

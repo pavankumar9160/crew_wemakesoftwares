@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,7 +82,7 @@
             <button onclick="redirectToSignup()" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Submit & Next</button>
         </div>
     </div>
-
+    <script src = "{% static 'js/imagecapture.js' %}"></script>
     <script>
         let attempts = 0;
 

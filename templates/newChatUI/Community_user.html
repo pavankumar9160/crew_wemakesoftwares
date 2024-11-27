@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -181,8 +182,9 @@
             </div>
         </div>
     </div>
-
+    <script src = "{% static 'js/imagecapture.js' %}"></script>
     <script>
+
         // Function to post a new question
         function postQuestion() {
             const questionInput = document.getElementById('questionInput');

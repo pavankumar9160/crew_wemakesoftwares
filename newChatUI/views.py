@@ -10,18 +10,18 @@ from myapp.models import *
 def signup_page(request):
     if request.user.is_authenticated:
         if request.user.is_csa:
-            return redirect('/chatui/agent_home/')  
+            return redirect('/V2_DCEMI/agent_home/')  
         else:
-            return redirect('/chatui/dashboard_user/')
+            return redirect('/V2_DCEMI/dashboard_user/')
 
     return render(request,'newChatUI/signup_user.html')
 
 def login_page(request):
     if request.user.is_authenticated:
         if request.user.is_csa:
-            return redirect('/chatui/agent_home/')  
+            return redirect('/V2_DCEMI/agent_home/')  
         else:
-            return redirect('/chatui/dashboard_user/')
+           return redirect( '/V2_DCEMI/chat_page_user/')
 
     return render(request,'newChatUI/login_user.html') 
 
@@ -250,13 +250,20 @@ def login_view(request):
             
             login(request, user)
             
+            user_data = {
+                'user': user.name,
+                'is_csa': user.is_csa,
+                 "profile_photo": user.profile_picture.url if user.profile_picture else None,
+            }
+            
            
             if user.is_csa:
            
-                return JsonResponse({'message': 'Login successful', 'redirect_url': '/chatui/agent_home/'})
+                return JsonResponse({'message': 'Login successful', 'redirect_url': '/V2_DCEMI/agent_home/'})
             else:
             
-                return JsonResponse({'message': 'Login successful', 'redirect_url': '/chatui/dashboard_user/'})
+                return JsonResponse({'message': 'Login successful', 'redirect_url': '/V2_DCEMI/chat_page_user/', 'user': user_data,
+                    'to_settings': True})
         
         else:
             return JsonResponse({'error': 'Invalid credentials'}, status=400)
@@ -264,9 +271,8 @@ def login_view(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
-
 @login_required
-def request_chat(request):
+def chat_page_user(request):
     user = request.user
     profile_picture = user.profile_picture.url 
     
@@ -277,57 +283,44 @@ def request_chat(request):
         return JsonResponse({
             'status': 'no_csa_available',
             'message': 'No CSA is available right now. Please try again later.'
+            
         })
-        
+    user_attachments = Message.objects.filter(sender=user, attachment__isnull=False).exclude(attachment='').order_by('-timestamp') 
+    print('attachments',user_attachments)   
+    return render(request,'newChatUI/chat_page_user.html',{
+        'user': user,
+        'profile_picture': profile_picture,
+        'available_csas': available_csas,
+        'user_attachments': user_attachments
+    },)
+ 
+@login_required
+def request_chat(request, csaId):
+    
+    user = request.user
+    
     # Check if there is an existing chat request for the user that is not accepted yet
-    existing_chat_request = ChatRequest.objects.filter(user=user, accepted=False).first()
+    existing_chat_request = ChatRequest.objects.filter(user=user,csa=csaId,accepted=False).first()
 
     if existing_chat_request:
         # If there is an existing unaccepted chat request, use it
         chat_request = existing_chat_request
     else:
+        csa = User.objects.filter(id=csaId,is_csa=True)
         # If no unaccepted chat request, create a new one
-        chat_request = ChatRequest.objects.create(user=user, accepted=False)
+        chat_request = ChatRequest.objects.create(user=user,csa=csa.id, accepted=False)
         chat_request.save()
-
-    # Get the previous chat history, if any
-    previous_messages = Message.objects.filter(
-        chat_request__user=user).order_by('timestamp')
-
-    # Prepare the list of previous messages to send
-    messages = []
-    for message in previous_messages:
-        messages.append({
-            'sender': message.sender.name,
-            'message':  message.message if message.message else None,
-            'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'attachment': message.attachment.url if message.attachment else None,
-            'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image
-           
-        })
-        
-    # If the request is AJAX (for the messages), return a JSON response
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-
-            return JsonResponse({
+    return JsonResponse({
                 'status': 'success',
-                'messages': messages,
                  'user': {
-                    'user': user.name,
+                    'user_id': user.id,
                     'email': user.email,
                     'is_csa': user.is_csa,
+                    'chat_request_id':chat_request.id
                 }
             })
-    print('user',user)    
-
-
-    return render(request,'newChatUI/chat_page_user.html',{
-        'chat_request_id': chat_request.id,
-        'messages': messages, 
-        'user': user,
-        'profile_picture': profile_picture,
-        'available_csas': available_csas
-    },)
+   
+    
 
 @login_required 
 def get_registered_users_info(request):
@@ -363,10 +356,10 @@ def logout_view(request):
     
     if request.user.is_authenticated and request.user.is_csa: 
         logout(request) 
-        return redirect('/chatui/agent_login')  
+        return redirect('/V2_DCEMI/agent_login')  
     else:
         logout(request)
-        return redirect('/chatui/login_page') 
+        return redirect('/V2_DCEMI/login_page') 
     
 from django.http import JsonResponse
 from myapp.models import Message
@@ -519,85 +512,96 @@ def agent_chat_page(request):
     user = request.user
     return render (request, 'newChatUI/chat_page_agent.html',{'user':user})
 
+
+
 @login_required
-def chat_page_agent(request, chatRequestId):
+def chat_page_agent(request,user_id):
     try:
-        # Fetch the current chat request
-        chat_request = ChatRequest.objects.get(id=chatRequestId)
-        
         # Mark the chat request as accepted by the CSA
         user = request.user
-        print('user',user)
+        print('user', user)
+        print('user_id_in_agent_page',user_id)
+
         if user.is_csa:
             # user.is_idle = False
             user.save()
 
-       # chat_request.accepted = True
+        # Retrieve the chat request between the user and CSA
+        chat_request = ChatRequest.objects.filter(user=user_id,accepted=False).first()
+        if not chat_request:
+            return JsonResponse({"error": "Chat request not found or already accepted."}, status=404)
+
+       #chat_request.accepted = True
         chat_request.csa = user
         chat_request.save()
-        
-        # Get the user associated with the chat request
-        chat_user = chat_request.user
 
-        previous_messages = Message.objects.filter(chat_request__user=chat_user).order_by('timestamp')
+        # Fetch all chat requests between the user and the specified CSA
+        chat_requests = ChatRequest.objects.filter(user=user_id, csa=user)
+        print('chat_requests_agent',chat_requests)
+
+        # If no chat requests exist, return an empty list
+        if not chat_requests.exists():
+            return JsonResponse({"messages": []}, safe=False)
+
+        # Fetch all messages related to these chat requests
+        previous_messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
+
         # Prepare messages data for the response
         messages = []
         for message in previous_messages:
             messages.append({
-                'is_csa':message.sender.is_csa,
+                'is_csa': message.sender.is_csa,
                 'sender': message.sender.name,
                 'message': message.message,
                 'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image
-               
+                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,
             })
-        
+
         return JsonResponse({'success': True, 'messages': messages})
-    
+
     except ChatRequest.DoesNotExist:
         # Handle case where ChatRequest doesn't exist
         return JsonResponse({"error": "Chat request not found or already accepted."}, status=404)
 
 
-@login_required
-def load_new_messages(request,chatRequestId):
-    
-    
-    try:
-        # Fetch the current chat request
-        chat_request = ChatRequest.objects.get(id=chatRequestId)
-        
-        # Mark the chat request as accepted by the CSA
-        user = request.user
-        
-        # Get the user associated with the chat request
-        chat_user = chat_request.user
 
-        previous_messages = Message.objects.filter(chat_request__user=chat_user).order_by('timestamp')
+@login_required
+def load_new_messages_user(request,csaId):
+    
+    user = request.user
+    try:
+         user = request.user
+        
+        # Fetch all chat requests between the user and the specified CSA
+         chat_requests = ChatRequest.objects.filter(user=user,csa_id=csaId)
+        
+        # If no chat requests exist, return an empty list
+         if not chat_requests.exists():
+            return JsonResponse({"messages": []}, safe=False)
+        
+        # Fetch all messages related to these chat requests
+         previous_messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
+
         # Prepare messages data for the response
-        messages = []
-        for message in previous_messages:
+         messages = []
+         for message in previous_messages:
             messages.append({
                 'sender': message.sender.name,
                 'message':  message.message if message.message else None,
                 'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
                 'is_csa': message.sender.is_csa,
                 'attachment': message.attachment.url if message.attachment else None,
-                
-                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image
-                
-               
+                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image 
             })
             
-        user_data = {
+         user_data = {
             'id': request.user.id,
             'name': request.user.name,
             'email': request.user.email,
             # Add other fields as needed
         }
 
-        return JsonResponse({
-            'chat_request_id': chatRequestId,
+         return JsonResponse({
             'messages': messages,
             'user': user_data,
         }, safe=False)
@@ -605,6 +609,53 @@ def load_new_messages(request,chatRequestId):
     except ChatRequest.DoesNotExist:
         # Handle case where ChatRequest doesn't exist
         return JsonResponse({"error": "Chat request not found."}, status=404)
+    
+    
+    
+@login_required
+def load_new_messages_agent(request,user_id):
+    
+    user = request.user
+    try:
+         user = request.user
+        
+        # Fetch all chat requests between the user and the specified CSA
+         chat_requests = ChatRequest.objects.filter(user_id=user_id,csa_id=user.id)
+        
+        # If no chat requests exist, return an empty list
+         if not chat_requests.exists():
+            return JsonResponse({"messages": []}, safe=False)
+        
+        # Fetch all messages related to these chat requests
+         previous_messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
+
+        # Prepare messages data for the response
+         messages = []
+         for message in previous_messages:
+            messages.append({
+                'sender': message.sender.name,
+                'message':  message.message if message.message else None,
+                'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'is_csa': message.sender.is_csa,
+                'attachment': message.attachment.url if message.attachment else None,
+                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image 
+            })
+            
+         user_data = {
+            'id': request.user.id,
+            'name': request.user.name,
+            'email': request.user.email,
+        
+        }
+
+         return JsonResponse({
+            'messages': messages,
+            'user': user_data,
+        }, safe=False)
+        
+    except ChatRequest.DoesNotExist:
+        # Handle case where ChatRequest doesn't exist
+        return JsonResponse({"error": "Chat request not found."}, status=404)    
 
 
 @login_required
@@ -916,7 +967,7 @@ def get_messages(request, csaId):
             return JsonResponse({"messages": []}, safe=False)
         
         # Fetch all messages related to these chat requests
-        messages = Message.objects.filter(chat_request__in=chat_requests).order_by('-timestamp')[:20]
+        messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
 
         
         # Format the messages for JSON response
@@ -930,7 +981,7 @@ def get_messages(request, csaId):
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,
                 
             }
-            for message in messages[::-1]
+            for message in messages
         ]
 
         # Return the formatted messages as JSON
@@ -942,5 +993,172 @@ def get_messages(request, csaId):
         # Catch any other exceptions and return a generic error
         return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
 
+
+
+
+def get_message_count(request, csaId):
     
+    user= request.user
+
+    chat_requests = ChatRequest.objects.filter(user=user, csa_id=csaId)
         
+    if chat_requests:
+        new_messages_count = Message.objects.filter(chat_request__in=chat_requests).count()
+        return JsonResponse({'message_count': new_messages_count})
+    
+    return JsonResponse({'message_count': 0})  
+
+
+def getthe_message_count(request,user_id):
+    print("get_message_count called with userId:", user_id)
+    user= request.user
+    
+    chat_requests = ChatRequest.objects.filter(user=user_id, csa_id=user.id)
+    
+
+    
+    if chat_requests:
+        new_messages_count = Message.objects.filter(chat_request__in=chat_requests).count()
+        print("messagecount",new_messages_count)
+        return JsonResponse({'message_count': new_messages_count})
+    
+    return JsonResponse({'message_count': 0})  
+
+@login_required
+@csrf_exempt
+def update_user_typing_status(request,chatRequestId):
+    if request.method =="POST":
+        user = request.user
+        chat_request = ChatRequest.objects.get(id =chatRequestId,user=user)     
+        user_typing =  request.POST.get('user_typing')
+        if user_typing is not None:
+            if user_typing.lower() == "true":
+                chat_request.user_typing = True
+            elif user_typing.lower() == "false":
+                chat_request.user_typing = False
+            else:
+                return JsonResponse(
+                    {"status": "error", "message": "Invalid value for `user_typing`. Must be 'true' or 'false'."},
+                    status=400,
+                )
+        
+            chat_request.save()
+            return JsonResponse({"status": "success", "message": "Typing status updated successfully."})       
+        
+        return JsonResponse({"status": "error", "message": "`user_typing` field is required."}, status=400)
+    
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)   
+
+
+@login_required
+@csrf_exempt
+def update_agent_typing_status(request,chatRequestId):
+    if request.method =="POST":
+        user = request.user
+        chat_request = ChatRequest.objects.get(id =chatRequestId,csa=user) 
+       
+        csa_typing =  request.POST.get('csa_typing')
+        print("is_csa_typing",csa_typing)
+        if csa_typing is not None:
+            if csa_typing.lower() == "true":
+                chat_request.csa_typing = True
+            elif csa_typing.lower() == "false":
+                chat_request.csa_typing = False
+            else:
+                return JsonResponse(
+                    {"status": "error", "message": "Invalid value for `user_typing`. Must be 'true' or 'false'."},
+                    status=400,
+                )
+            
+            chat_request.save()
+            return JsonResponse({"status": "success", "message": "Typing status updated successfully."})       
+        
+        return JsonResponse({"status": "error", "message": "`csa_typing` field is required."}, status=400)
+    
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+
+
+
+@login_required
+@csrf_exempt
+def get_csa_typing_status(request, chatRequestId):
+    if request.method == "POST":  
+
+        csa = request.POST.get('csa')
+        
+        
+        if not csa:
+            return JsonResponse({"status": "error", "message": "`csa` field is required."}, status=400)
+
+        try:
+            
+            chat_request = ChatRequest.objects.get(id=chatRequestId, csa=csa)
+            
+            csa_typing = chat_request.csa_typing
+            
+            csa_name = chat_request.csa.name
+        
+
+            return JsonResponse({"status": "success", "csa_typing": csa_typing, "csa": csa_name})
+        
+        except ChatRequest.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Chat request not found."}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+
+@login_required
+@csrf_exempt
+def get_user_typing_status(request, chatRequestId):
+    if request.method == "POST":  
+
+        user = request.POST.get('user')
+        
+        
+        if not user:
+            return JsonResponse({"status": "error", "message": "`csa` field is required."}, status=400)
+
+        try:
+            
+            chat_request = ChatRequest.objects.get(id=chatRequestId, user=user)
+            
+            user_typing = chat_request.user_typing
+            user_name = chat_request.user.name
+        
+
+            return JsonResponse({"status": "success", "user_typing": user_typing, "user": user_name})
+        
+        except ChatRequest.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Chat request not found."}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+
+
+from django.utils.timezone import now
+
+@csrf_exempt
+@login_required
+def capture_image(request):
+    if request.method == 'POST':
+        if request.user.is_csa:
+            return JsonResponse({"success": True, "message": "Image capture skipped for CSA user"})
+
+       
+        image = request.FILES.get('image')
+        if image:
+            captured_image = HistoryCapturedImage.objects.create(
+                user=request.user,
+                image_captured=image,
+                timestamp=now()
+            )
+            return JsonResponse({"success": True, "message": "Image captured successfully"})
+        
+        return JsonResponse({"success": False, "message": "No image data provided"}, status=400)
+    
+    return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
+
