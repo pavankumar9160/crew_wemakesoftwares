@@ -98,7 +98,7 @@
                     </li>
                     <li class="nav-item dropdown profile-user-dropdown">
                         <a class="nav-link dropdown-toggle bg-light" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="{% static 'images/users/avatar-1.jpg' %}" alt="" class="profile-user rounded-circle">
+                            <img src="{{ user.profile_picture.url }}" alt="" class="profile-user rounded-circle">
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item d-flex align-items-center justify-content-between" id="pills-user-tab" data-bs-toggle="pill" href="#pills-user" role="tab">Profile <i
@@ -108,7 +108,7 @@
                             <a class="dropdown-item d-flex align-items-center justify-content-between" href="">Change Password <i
                                     class="bx bx-lock-open text-muted ms-1"></i></a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="">Log out <i class="bx bx-log-out-circle text-muted ms-1"></i></a>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="{% url 'logout' %}">Log out <i class="bx bx-log-out-circle text-muted ms-1"></i></a>
                         </div>
                     </li>
                 </ul>
@@ -2051,13 +2051,13 @@
         </div>
         <!-- end chat-leftsidebar -->
 
-        <div class="user-chat w-100 overflow-hidden">
+        <div class="user-chat w-100 overflow-hidden" id ="chat_body" style="display:none">
 
             <div class="chat-content d-lg-flex">
                 <!-- start chat conversation section -->
-                <div class="w-100 overflow-hidden position-relative" id ="chat_body" style="display:none">
+                <div class="w-100 overflow-hidden position-relative">
                     <!-- conversation user -->
-                    <div id="users-chat" class="position-relative" style="display: block;">
+                    <div id="user-chat" class="position-relative" style="display: block;">
                         <div class="py-3 user-chat-topbar">
                             <div class="row align-items-center">
                                 <div class="col-sm-4 col-8">
@@ -2093,6 +2093,12 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </li>
+
+                                        <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
+                                            <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target="#playVideoModal" id="playVideoButton">
+                                                <i class="bx bx-play-circle"></i>
+                                            </button>
                                         </li>
 
                                         <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
@@ -4354,6 +4360,34 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="playVideoModal" tabindex="-1" aria-labelledby="playVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="playVideoModalLabel">Recorded Videos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+             
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            
+                            <th>Video</th>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="videoTableBody">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- JAVASCRIPT -->
     <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
@@ -4460,6 +4494,8 @@
         const chatContainer = document.getElementById("users-conversation");
     chatContainer.innerHTML = "";
         console.log(chatRequestId)
+        
+        document.querySelector('.user-chat').classList.add('user-chat-show'); 
         if (chatRequestId) {
             if (loadMessagesIntervalId || typingStatusIntervalId) {
                 clearInterval(loadMessagesIntervalId);
@@ -4486,6 +4522,22 @@
 
                
                 const messageCount = data.messages.length;
+                
+                $.ajax({
+                    url: '/V2_DCEMI/update_user_current_message_count/',
+                    type: 'POST',
+                    data: {
+                        user_id: user_id,
+                        message_count: messageCount,
+                       
+                    },
+                    success: function(response) {
+                        console.log('Message count updated successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Failed to update message count:', error);
+                    }
+                });
             localStorage.setItem(`user-${user_id}-message-count`, messageCount);
 
             renderChatMessages(data.messages)
@@ -4668,6 +4720,22 @@ function sendMessage() {
 
     const currentMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
     const newMessageCount = parseInt(currentMessageCount) + 1;
+   
+    $.ajax({
+        url: '/V2_DCEMI/update_user_current_message_count/',
+        type: 'POST',
+        data: {
+            user_id: user_id,
+            message_count: newMessageCount,
+           
+        },
+        success: function(response) {
+            console.log('Message count updated successfully');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to update message count:', error);
+        }
+    });
     localStorage.setItem(`user-${user_id}-message-count`, newMessageCount);
      
       console.log(response.messages);
@@ -4689,6 +4757,22 @@ function loadNewMessages() {
         success: function(response) {
            
             const messageCount = response.messages.length;
+           
+            $.ajax({
+                url: '/V2_DCEMI/update_user_current_message_count/',
+                type: 'POST',
+                data: {
+                    user_id: user_id,
+                    message_count: messageCount,
+                   
+                },
+                success: function(response) {
+                    console.log('Message count updated successfully');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to update message count:', error);
+                }
+            });
             localStorage.setItem(`user-${user_id}-message-count`, messageCount);
 
             if (user_id && document.querySelector("#chat_body").style.display === 'block') {
@@ -4707,6 +4791,8 @@ function loadNewMessages() {
 function getAllUserIds() {
     return Array.from(document.querySelectorAll('.chat-item')).map(item => item.getAttribute('data-user-id'));
 }
+
+
 function checkNewMessages() {
 
     if (user_id && document.querySelector("#chat_body").style.display === 'block') {
@@ -4714,28 +4800,47 @@ function checkNewMessages() {
     }
     const userIds = getAllUserIds(); 
     userIds.forEach(user_id => {
-        const storedMessageCount =   localStorage.getItem(`user-${user_id}-message-count`) || 0; 
+
         $.ajax({
-            url: `/V2_DCEMI/getthe_message_count/${user_id}/`,  
-            method: "GET",
+            url: '/V2_DCEMI/get_user_current_message_count/', 
+            type: 'GET',
+            data: { user_id: user_id },  
             success: function(response) {
-                console.log(response);
-                const newMessageCount = response.message_count;
-               console.log('count',newMessageCount)
-                if (newMessageCount > storedMessageCount) {
-                    const unreadCount = newMessageCount - storedMessageCount;  
-                    console.log("hi",unreadCount);
-                    document.getElementById(`unreadCount-${user_id}`).textContent = unreadCount;
-                  
-                    //const totalCount = getTotalUnreadCount();
-                   //document.getElementById("nav-left-unreadCount").textContent = totalCount;
-                  // document.getElementById('totalMessageCount').textContent = "("+totalCount+")";
-                }
+                const messageCount = response.message_count || 0;
+                localStorage.setItem(`user-${user_id}-message-count`, messageCount);
+                console.log('Message count retrieved:', messageCount);
+
+                // Now fetch the stored message count after it's set in localStorage
+                const storedMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
+                console.log('storedmsgcount', storedMessageCount);
+
+                // Now, fetch new message count from the server
+                $.ajax({
+                    url: `/V2_DCEMI/getthe_message_count/${user_id}/`,  
+                    method: "GET",
+                    success: function(response) {
+                        console.log(response);
+                        const newMessageCount = response.message_count;
+                        console.log('count', newMessageCount);
+
+                        if (newMessageCount > storedMessageCount) {
+                            const unreadCount = newMessageCount - storedMessageCount;  
+                            console.log("hi", unreadCount);
+                            document.getElementById(`unreadCount-${user_id}`).textContent = unreadCount;
+                        }
+                    },
+                    error: function(error) {
+                        console.log("Error fetching message count:", error);
+                    }
+                });
+
             },
-            error: function(error) {
-                console.log("Error fetching message count:", error);
+            error: function(xhr, status, error) {
+                console.error('Failed to retrieve message count:', error);
+                localStorage.setItem(`user-${user_id}-message-count`, 0);
             }
         });
+
     });
 }
 
@@ -4968,6 +5073,11 @@ function getTypingStatus(){
     });
 
  }
+
+
+ document.querySelector('.user-chat-remove').addEventListener('click', function(e) {
+    document.querySelector('.user-chat').classList.remove('user-chat-show');   
+});
  
  document.getElementById('recordButton').addEventListener('click', function () {
     fetch('/V2_DCEMI/start_video_recording/', {
@@ -4986,6 +5096,41 @@ function getTypingStatus(){
         .catch(error => console.error('Error starting recording:', error));
 });
 
+
+document.getElementById("playVideoButton").addEventListener("click", function () {
+ 
+    const tableBody = document.getElementById("videoTableBody");
+
+    // Clear existing table rows
+    tableBody.innerHTML = '';
+
+    fetch(`/V2_DCEMI/get-videos/?user_id=${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.videos.length > 0) {
+                data.videos.forEach(video => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        
+                        <td>${video.video_url}</td>
+                        <td>${new Date(video.timestamp).toLocaleString()}</td>
+                        <td>
+                            <a href="${video.video_url}" target="_blank" class="btn btn-primary btn-sm">Play</a>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="4">No videos found for this user.</td></tr>`;
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching videos:", error);
+            tableBody.innerHTML = `<tr><td colspan="4">Error fetching videos.</td></tr>`;
+        });
+});
 
 
 

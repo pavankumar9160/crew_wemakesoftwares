@@ -190,7 +190,13 @@ main {
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>Current Job Title/Occupation:</label>
-                                        <input type="text" class="form-control mb-3" id="occupation" placeholder="Job Title/Occupation">
+                                        <select id="occupation" class="form-control mb-3" required>
+                                            <option value="0">Select...</option>
+                                            <option value="1">Student</option>
+                                            <option value="2">Salaried</option>
+                                            <option value="3">Self-Employed</option>
+                                            <option value="4">Others</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label>Employer/Business Name:</label>

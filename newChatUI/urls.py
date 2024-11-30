@@ -71,7 +71,13 @@ path('callback_request/',views.callback_request,name="callback_request"),
     path('save_video/', views.save_video, name='save_video'),
     path('get_csa_online_status/',views.get_csa_online_status,name='get_csa_online_status'),
     path('get_user_online_status/',views.get_user_online_status,name='get_user_online_status'),
+path('update_user_current_message_count/',views.update_user_current_message_count,name="update_user_current_message_count"),
+path('update_csa_current_message_count/',views.update_csa_current_message_count,name="update_csa_current_message_count"),
 
+path('get_user_current_message_count/',views.get_user_current_message_count,name="get_user_current_message_count"),
+
+path('get_csa_current_message_count/',views.get_csa_current_message_count,name="get_csa_current_message_count"),
+path('get-videos/',views.get_videos,name="get-videos"),
 
 
   

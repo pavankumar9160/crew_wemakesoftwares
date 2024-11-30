@@ -157,7 +157,7 @@ class ConsentAnswer(models.Model):
     video = models.FileField(upload_to='videos/', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.name}"
+        return f"{self.user.name}"  
 
 
 class HistoryCapturedImage(models.Model):
@@ -200,3 +200,14 @@ class Video(models.Model):
 
     def __str__(self):
         return f"Video recorded by {self.user.name} for {self.recorded_user_id}"       
+    
+class MessageCount_csa(models.Model):
+    
+    user_id =    models.IntegerField( blank=True, null=True)
+    csa_id =  models.IntegerField( blank=True, null=True)
+    message_count= models.IntegerField( blank=True, null=True)  
+    
+class MessageCount_user(models.Model):
+    user_id =    models.IntegerField( blank=True, null=True)
+    csa_id =  models.IntegerField( blank=True, null=True)
+    message_count= models.IntegerField( blank=True, null=True)      

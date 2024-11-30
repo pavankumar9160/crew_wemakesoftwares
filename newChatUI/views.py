@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 
 # Create your views here.
@@ -1249,92 +1250,65 @@ def check_profile_completion(request):
         return JsonResponse({'status': 'complete', 'message': 'Profile is complete.'})
     
     
-    
 import uuid
 import os
-import subprocess
-from moviepy.editor import VideoFileClip
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import FileSystemStorage
 
 def generate_unique_filename():
-    return str(uuid.uuid4())  # Generate a unique filename using UUID
-
-def fix_video_metadata(input_path, output_path):
-    """Fix missing metadata in the video using FFmpeg."""
-    try:
-        subprocess.run(
-            [
-                "ffmpeg", "-i", input_path, "-c", "copy", "-map", "0",
-                "-f", "matroska", output_path
-            ],
-            check=True
-        )
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"Error fixing metadata: {e}")
-        return False
+    """Generate a unique filename using UUID."""
+    return str(uuid.uuid4())
 
 @csrf_exempt
 def save_video(request):
+    """Save the uploaded .webm video directly without conversion."""
     if request.method == 'POST' and request.FILES.get('video'):
         video_file = request.FILES['video']
         chat_request_id = request.POST.get('chatRequestId')
 
         try:
-            video = Video.objects.filter(chat_request_id=chat_request_id, status='start').exclude(status='completed').order_by('-timestamp').first()
+           
+            video = Video.objects.filter(chat_request_id=chat_request_id, status='start') \
+                                  .exclude(status='completed') \
+                                  .order_by('-timestamp').first()
 
             if not video:
                 return JsonResponse({'status': 'error', 'message': 'Video entry not found or already completed'})
 
-            unique_filename = generate_unique_filename() + '.webm'
+          
 
-            # Save the original video file
-            fs = FileSystemStorage(location='media/videos/')
-            webm_filename = fs.save(unique_filename, video_file)
-            webm_file_path = fs.path(webm_filename)
-
-            fixed_file_path = os.path.join('media/videos/', 'fixed_' + webm_filename)
-            if not fix_video_metadata(webm_file_path, fixed_file_path):
-                return JsonResponse({'status': 'error', 'message': 'Failed to fix video metadata'})
-
-            try:
-                clip = VideoFileClip(fixed_file_path)
-            except Exception as e:
-                return JsonResponse({'status': 'error', 'message': f"Error reading video file: {e}"})
-
-            # Convert the webm video to mp4
-            mp4_filename = unique_filename.replace('.webm', '.mp4')
-            mp4_file_path = os.path.join('media/videos/', mp4_filename)
-
-            clip.write_videofile(mp4_file_path, codec='libx264')
-            clip.close()
-
-            video.video = mp4_filename
+            # Update the video record
+            video.video = video_file
             video.status = 'completed'
             video.save()
 
-            os.remove(webm_file_path)
-            os.remove(fixed_file_path)
-
-            return JsonResponse({'status': 'success', 'message': 'Video saved successfully!', 'video_url': fs.url(mp4_filename)})
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Video saved successfully!',
+                'video_url': video_file
+            })
         except Video.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Video entry not found'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
-    return JsonResponse({'status': 'error', 'message': 'Failed to save video'})  
-
+    return JsonResponse({'status': 'error', 'message': 'Failed to save video'})
 
 @csrf_exempt
 def start_video_recording(request):
+    """Start a new video recording session."""
     if request.method == 'POST':
         data = json.loads(request.body)
         recorded_user_id = data.get('recorded_user_id')
         chat_request_id = data.get('chatRequestId')
 
+        # Check if a recording is already in progress
         existing_video = Video.objects.filter(chat_request_id=chat_request_id, status='start').first()
         if existing_video:
             return JsonResponse({'status': 'error', 'message': 'Recording already in progress for this chatRequestId'})
 
+        # Create a new video entry
         video = Video.objects.create(
             chat_request_id=chat_request_id,
             recorded_user_id=recorded_user_id,
@@ -1342,11 +1316,11 @@ def start_video_recording(request):
             user=request.user,
         )
 
-        return JsonResponse({'status': 'success', 'message': 'Recording started', 'chatRequestId': chatRequestId})
-
+        return JsonResponse({'status': 'success', 'message': 'Recording started', 'chatRequestId': chat_request_id})
 
 @csrf_exempt
 def poll_video_recording(request):
+    """Poll the status of the video recording."""
     chat_request_id = request.GET.get('chatRequestId')
 
     if not chat_request_id:
@@ -1360,7 +1334,6 @@ def poll_video_recording(request):
         return JsonResponse({'status': 'completed', 'chatRequestId': video.chat_request_id})
     else:
         return JsonResponse({'status': 'waiting'})
-
 
 @csrf_exempt
 def get_csa_online_status(request):
@@ -1415,4 +1388,128 @@ def get_user_online_status(request):
 
 
 
-    
+
+
+
+def get_csa_current_message_count(request):
+    user_id = request.user.id  # Assuming the user is authenticated
+    csa_id = request.GET.get('csa_id')
+
+    if csa_id:
+        try:
+            # Get or create the message count entry
+            message, created = MessageCount_csa.objects.get_or_create(
+                user_id=user_id,
+                csa_id=csa_id,
+                defaults={'message_count': 0}
+            )
+            
+            # Return the current message count
+            return JsonResponse({'message_count': message.message_count})
+        
+        except Exception as e:
+            # Log the error for debugging and return an error response
+            print(f"Error occurred: {e}")
+            return JsonResponse({'error': 'An error occurred'}, status=500)
+
+    # If csa_id is not provided, return a bad request response
+    return JsonResponse({'message_count': 0}, status=400)
+
+
+
+
+
+def get_user_current_message_count(request):
+    csa_id = request.user.id  
+    user_id = request.GET.get('user_id')
+
+    if user_id:
+        try:
+            # Get or create the message count entry
+            message, created = MessageCount_user.objects.get_or_create(
+                user_id=user_id,
+                csa_id=csa_id,
+                defaults={'message_count': 0}
+            )
+            
+            # Log if a new record is created
+            if created:
+                print(f"Created new record for user_id={user_id}, csa_id={csa_id} with default count=0")
+            
+            # Return the current message count
+            return JsonResponse({'message_count': message.message_count})
+
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            return JsonResponse({'error': 'An error occurred'}, status=500)
+
+    # If user_id is not provided, return a bad request response
+    return JsonResponse({'message_count': 0}, status=400)
+
+
+
+@csrf_exempt 
+def update_csa_current_message_count(request):
+    if request.method == 'POST':
+        
+        user_id = request.user.id
+        csa_id = request.POST.get('csa_id')
+        message_count = request.POST.get('message_count')
+
+        try:
+            
+            message = MessageCount_csa.objects.get(user_id=user_id,csa_id=csa_id)
+
+            message.message_count = message_count
+            message.save() 
+
+            return JsonResponse({'status': 'success', 'message_count': message_count})
+
+        except MessageCount_csa.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'CSA not found'}, status=404)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt 
+def update_user_current_message_count(request):
+    if request.method == 'POST':
+        
+        csa_id = request.user.id
+        user_id = request.POST.get('user_id')
+        message_count = request.POST.get('message_count')
+
+        try:
+            
+            message = MessageCount_user.objects.get(user_id=user_id,csa_id=csa_id)
+
+            message.message_count = message_count
+            message.save() 
+
+            return JsonResponse({'status': 'success', 'message_count': message_count})
+
+        except MessageCount_user.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'CSA not found'}, status=404)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+
+
+def get_videos(request):
+    user_id = request.GET.get('user_id')
+
+    if not user_id:
+        return JsonResponse({'status': 'error', 'message': 'User ID is required'}, status=400)
+
+    videos = Video.objects.filter(recorded_user_id=user_id).values('id', 'video', 'timestamp', 'status')
+    video_list = [
+        {
+            'id': video['id'],
+            'video_url': settings.MEDIA_URL + video['video'],
+            'timestamp': video['timestamp'],
+            'status': video['status']
+        } for video in videos
+    ]
+
+    return JsonResponse({'status': 'success', 'videos': video_list})    

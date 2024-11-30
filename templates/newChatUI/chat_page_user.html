@@ -2070,11 +2070,38 @@
         </div>
         <!-- end chat-leftsidebar -->
 
-        <div class="user-chat w-100 overflow-hidden">
+   
+        <div class="user w-100 overflow-hidden" id="initial_chat_body" style="display:block">
+            <div class="container d-flex justify-content-center align-items-center vh-100" style="background-color: #f4f7fb;">
+                <div class="card text-center p-5 shadow-lg" 
+                     style="width: 100%; max-width: 100vh; border-radius: 20px; background: #ffffff; color: #333;">
+                    <h5 class="card-title fw-bold fs-3 mb-3">
+                        Welcome, {{user.name}}!
+                    </h5>
+                    <p class="card-text fs-5 mb-4">
+                        <span id="greeting">We're so happy to have you back with us.</span>
+                    </p>
+                    <p class="fs-6 mb-4 text-muted">
+                        Take a moment to explore the features of your dashboard. We're here to assist you if you need anything.
+                    </p>
+                    <p class="fs-5 mb-4 text-muted">
+                        Feel free to check out your latest updates, and don't hesitate to reach out if you need help with anything.
+                    </p>
+                    <div class="mt-5 text-muted">
+                        <small>Let's go!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+
+        <div class="user-chat w-100 overflow-hidden" id ="chat_body" style="display:none">
 
             <div class="chat-content d-lg-flex">
                 <!-- start chat conversation section -->
-                <div class="w-100 overflow-hidden position-relative" id ="chat_body" style="display:none">
+                <div class="w-100 overflow-hidden position-relative">
                     <!-- conversation user -->
                     <div id="user-chat" class="position-relative" style="display:block">
                         <div class="py-3 user-chat-topbar">
@@ -2088,7 +2115,7 @@
                                         <div class="flex-grow-1 overflow-hidden">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
-                                                    <img id="user-profile-picture" src="{% static 'images/users/avatar-2.jpg' %}" class="rounded-circle avatar-sm" alt="">
+                                                    <img id="user-profile-picture" src="" class="rounded-circle avatar-sm" alt="">
                                                     <span class="user-symbol"></span>
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
@@ -2818,7 +2845,7 @@
                                                                 <img src="{% static 'images/image-file.png' %}" alt="" class="avatar-xs">
                                                             </div>
                                                             <div class="flex-grow-1 overflow-hidden">
-                                                                <h5 class="fs-14 text-truncate mb-1">Image-2.jpg' %}
+                                                                <h5 class="fs-14 text-truncate mb-1">Image-2.jpg'
                                                                 </h5>
                                                                 <p class="text-muted fs-13 mb-0">3.1 MB</p>
                                                             </div>
@@ -4611,8 +4638,28 @@
                     console.log(data)
                     document.querySelector("#chat_body").style.display = 'block';
                     document.querySelector(".chat-input-section").style.display = 'block';
+                    document.querySelector("#initial_chat_body").style.display = 'none';
+                    
 
                     const messageCount = data.messages.length;
+                     
+
+                    $.ajax({
+                        url: '/V2_DCEMI/update_csa_current_message_count/',
+                        type: 'POST',
+                        data: {
+                            csa_id: csaId,
+                            message_count: messageCount,
+                           
+                        },
+                        success: function(response) {
+                            console.log('Message count updated successfully');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Failed to update message count:', error);
+                        }
+                    });
+
                     localStorage.setItem(`csa-${csaId}-message-count`, messageCount);
 
 
@@ -4685,6 +4732,23 @@
 
                     const currentMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
                     const newMessageCount = parseInt(currentMessageCount) + 1;
+                 
+
+                    $.ajax({
+                        url: '/V2_DCEMI/update_csa_current_message_count/',
+                        type: 'POST',
+                        data: {
+                            csa_id: csaId,
+                            message_count: newMessageCount,
+                           
+                        },
+                        success: function(response) {
+                            console.log('Message count updated successfully');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Failed to update message count:', error);
+                        }
+                    });
                     localStorage.setItem(`csa-${csaId}-message-count`, newMessageCount);
                     console.log(response.messages);
 
@@ -4713,7 +4777,24 @@
                     console.log('from load messsages', response.messages.length);
 
                     const messageCount = response.messages.length;
+                    
+                    $.ajax({
+                        url: '/V2_DCEMI/update_csa_current_message_count/',
+                        type: 'POST',
+                        data: {
+                            csa_id: csaId,
+                            message_count: messageCount,
+                           
+                        },
+                        success: function(response) {
+                            console.log('Message count updated successfully');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Failed to update message count:', error);
+                        }
+                    });
             localStorage.setItem(`csa-${csaId}-message-count`, messageCount);
+
             if (csaId && document.querySelector("#chat_body").style.display === 'block') {
                 document.getElementById(`unreadCount-${csaId}`).textContent = '';
             }
@@ -4743,33 +4824,48 @@
 
             const csaIds = getAllCsaIds();
             csaIds.forEach(csaId => {
-                const storedMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
+ 
                 $.ajax({
-                    url: `/V2_DCEMI/get_message_count/${csaId}/`,
-                    method: "GET",
-                    success: function (response) {
-                        console.log(response);
-                        const newMessageCount = response.message_count;
-                        console.log('count', newMessageCount)
-                        if (newMessageCount > storedMessageCount) {
-                            const unreadCount = newMessageCount - storedMessageCount;
-                            console.log("unreadcount", unreadCount);
+                    url: '/V2_DCEMI/get_csa_current_message_count/', 
+                    type: 'GET',
+                    data: { csa_id: csaId },  
+                    success: function(response) {
+                        const messageCount = response.message_count || 0;
+                        localStorage.setItem(`csa-${csaId}-message-count`, messageCount);
+                        console.log('Message count retrieved:', messageCount);
+        
+                        // Now fetch the stored message count after it's set in localStorage
+                        const storedMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
+                        console.log('storedmsgcount', storedMessageCount);
+        
+                        // Now, fetch new message count from the server
+                        $.ajax({
+                            url: `/V2_DCEMI/get_message_count/${csaId}/`,  
+                            method: "GET",
+                            success: function(response) {
+                                console.log(response);
+                                const newMessageCount = response.message_count;
+                                console.log('count', newMessageCount);
+        
+                                if (newMessageCount > storedMessageCount) {
+                                    const unreadCount = newMessageCount - storedMessageCount;  
+                                    console.log("hi", unreadCount);
+                                    document.getElementById(`unreadCount-${csaId}`).textContent = unreadCount;
 
-                           
-                                document.getElementById(`unreadCount-${csaId}`).textContent = unreadCount;
-
-                            
-
-                          
-
-
-                           // const totalCount = getTotalUnreadCount();
+                                    // const totalCount = getTotalUnreadCount();
                            // document.getElementById("nav-left-unreadCount").textContent = totalCount;
                            // document.getElementById('totalMessageCount').textContent = "(" + totalCount + ")";
-                        }
+                                }
+                            },
+                            error: function(error) {
+                                console.log("Error fetching message count:", error);
+                            }
+                        });
+        
                     },
-                    error: function (error) {
-                        console.log("Error fetching message count:", error);
+                    error: function(xhr, status, error) {
+                        console.error('Failed to retrieve message count:', error);
+                        localStorage.setItem(`user-${user_id}-message-count`, 0);
                     }
                 });
             });
@@ -5324,6 +5420,19 @@ function startRecording() {
 // Start polling when the page loads
 startPolling();
 
+
+
+    const greetingElement = document.getElementById('greeting');
+    const currentHour = new Date().getHours();
+
+    let greetingMessage = 'Good morning';
+    if (currentHour >= 12 && currentHour < 17) {
+        greetingMessage = 'Good afternoon';
+    } else if (currentHour >= 17 || currentHour < 5) {
+        greetingMessage = 'Good evening';
+    }
+
+    greetingElement.textContent = greetingMessage;
 
 </script>
 </body>
