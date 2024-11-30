@@ -11,7 +11,7 @@
     <meta name="keywords" content="Vhato chat template, chat, web chat template, chat status, chat template, communication, discussion, group chat, message, messenger template, status" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %} id="tabIcon">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" id="tabIcon">
 
     <!-- glightbox css -->
     <link rel="stylesheet" href="{% static 'libs/glightbox/css/glightbox.min.css' %}">
@@ -2055,10 +2055,10 @@
 
             <div class="chat-content d-lg-flex">
                 <!-- start chat conversation section -->
-                <div class="w-100 overflow-hidden position-relative">
+                <div class="w-100 overflow-hidden position-relative" id ="chat_body" style="display:none">
                     <!-- conversation user -->
                     <div id="users-chat" class="position-relative" style="display: block;">
-                        <div class="py-3 user-chat-topbar" style="display: none;">
+                        <div class="py-3 user-chat-topbar">
                             <div class="row align-items-center">
                                 <div class="col-sm-4 col-8">
                                     <div class="d-flex align-items-center">
@@ -2070,11 +2070,11 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
                                                     <img id = "user-profile-picture" src="{% static 'images/users/avatar-2.jpg' %}" class="rounded-circle avatar-sm" alt="">
-                                                    <span class="user-status"></span>
+                                                    <span class="user-symbol"></span>
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <h6 class="text-truncate mb-0 fs-18"><a href="#" id ="user-profile-name" class="user-profile-show text-reset"></a></h6>
-                                                    <p class="text-truncate text-muted mb-0"><small>Online</small></p>
+                                                    <p class="text-truncate text-muted mb-0 online-status"><small></small></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -2098,6 +2098,11 @@
                                         <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
                                             <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target=".audiocallModal" fdprocessedid="l7py">
                                                 <i class="bx bxs-phone-call"></i>
+                                            </button>
+                                        </li>
+                                        <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
+                                            <button type="button" class="btn nav-btn" id="recordButton">
+                                                <i class="bx bx-circle"></i> 
                                             </button>
                                         </li>
 
@@ -4378,6 +4383,7 @@
       let loadMessagesIntervalId = null;
       let typingStatusIntervalId = null;
         let user_id = null;
+        let isUserScrolling = false; 
     $(document).ready(function () {
         function fetchAndDisplayUserInfo() {
             $.ajax({
@@ -4399,7 +4405,7 @@
                         <div class="d-flex align-items-center">
                             <div class="chat-user-img online align-self-center me-2 ms-0">
                                 <img src="${data.user_info.profile_picture}" class="rounded-circle avatar-xs" alt="">
-                                <span class="user-status"></span>
+                                <span class="user"></span>
                             </div>
                             <div class="overflow-hidden me-2">
                                 <p class="text-truncate chat-username mb-0">
@@ -4446,10 +4452,9 @@
         document.querySelector(".user-image").src= profilePicture
         document.querySelector("#user-profile-name").textContent= userName
         document.querySelector(".user-name").textContent= userName
-        document.querySelector(".chat-input-section").style.display= 'block';
-
+       
         document.getElementById(`unreadCount-${user_id}`).textContent = "";
-
+        setInterval(getUserOnlineStatus,2000)  
         const storedMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
         localStorage.setItem(`user-${user_id}-message-count`, storedMessageCount);
         const chatContainer = document.getElementById("users-conversation");
@@ -4476,12 +4481,18 @@
             contentType: "application/json",
             success: function (data) {
                 console.log(data.messages);
-                document.querySelector(".user-chat-topbar").style.display= 'block';
+                document.querySelector("#chat_body").style.display = 'block';
+                    document.querySelector(".chat-input-section").style.display = 'block';
+
                
                 const messageCount = data.messages.length;
             localStorage.setItem(`user-${user_id}-message-count`, messageCount);
 
             renderChatMessages(data.messages)
+            const chatBox = document.querySelector(".chat-box");
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            loadMessagesIntervalId = setInterval(() => loadNewMessages(), 2000);
 
             },
             error: function (error) {
@@ -4598,10 +4609,14 @@ function renderChatMessages(messages) {
 
         // Append the message to the chat container
         chatContainer.insertAdjacentHTML("beforeend", chatMessage);
+       
     });
 
-    const chatBox = document.querySelector(".chat-box");
-    chatBox.scrollTop = chatBox.scrollHeight; 
+    if (!isUserScrolling) {
+        const chatBox = document.querySelector(".chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
 }
 $('.send-button').on('click', function() {
     sendMessage();
@@ -4621,9 +4636,8 @@ function sendMessage() {
                 
         return; 
     }
-    const currentMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
-    const newMessageCount = parseInt(currentMessageCount) + 1;
-    localStorage.setItem(`user-${user_id}-message-count`, newMessageCount);
+    
+   
 
     const formData = new FormData();
     if (userMessage) {
@@ -4632,6 +4646,10 @@ function sendMessage() {
     if (file) {
         formData.append("attachment", file);
     }
+    if (user_id && document.querySelector("#chat_body").style.display === 'block') {
+        document.getElementById(`unreadCount-${user_id}`).textContent = '';
+    }
+    
 
     $.ajax({
         url: `/V2_DCEMI/send_messages/${chatRequestId}/`,
@@ -4647,9 +4665,12 @@ function sendMessage() {
         fileUploadField.innerHTML = ""; 
         fileUploadField.classList.remove("show");
     }
-            console.log(response.messages);
-            loadMessagesIntervalId = setInterval(() => loadNewMessages(), 100);
 
+    const currentMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
+    const newMessageCount = parseInt(currentMessageCount) + 1;
+    localStorage.setItem(`user-${user_id}-message-count`, newMessageCount);
+     
+      console.log(response.messages);
            
         },
         error: function(xhr, status, error) {
@@ -4664,12 +4685,15 @@ function sendMessage() {
 function loadNewMessages() {
             
     $.ajax({
-        url: `/V2_DCEMI/load_messages_agent/${user_id}/`,  // Assume this URL endpoint returns messages
-        method: "GET",
+        url: `/V2_DCEMI/load_messages_agent/${user_id}/`,  
         success: function(response) {
            
             const messageCount = response.messages.length;
             localStorage.setItem(`user-${user_id}-message-count`, messageCount);
+
+            if (user_id && document.querySelector("#chat_body").style.display === 'block') {
+                document.getElementById(`unreadCount-${user_id}`).textContent = '';
+            }
           renderChatMessages(response.messages) 
           
            
@@ -4684,6 +4708,10 @@ function getAllUserIds() {
     return Array.from(document.querySelectorAll('.chat-item')).map(item => item.getAttribute('data-user-id'));
 }
 function checkNewMessages() {
+
+    if (user_id && document.querySelector("#chat_body").style.display === 'block') {
+        document.getElementById(`unreadCount-${user_id}`).textContent = '';
+    }
     const userIds = getAllUserIds(); 
     userIds.forEach(user_id => {
         const storedMessageCount =   localStorage.getItem(`user-${user_id}-message-count`) || 0; 
@@ -4718,9 +4746,79 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-    
-
+function getUserOnlineStatus() {
    
+    $.ajax({
+        url: `/V2_DCEMI/get_user_online_status/`,
+        type: "POST",
+        data: {
+            user_id: user_id,
+        },
+        success: function (response) {
+            console.log("user online status", response);
+
+            const onlineStatus = document.querySelector('.online-status');
+            const onlineStatusSymbol = document.querySelector('.user-symbol');
+
+            if (response.user_online_status === true) {
+                if (onlineStatus) {
+                    onlineStatus.textContent = "Online";
+                }
+
+                if (onlineStatusSymbol && !onlineStatusSymbol.classList.contains("user-status")) {
+                    onlineStatusSymbol.classList.add("user-status");
+                }
+            } else {
+
+                const logoutTime = new Date(response.user_logout_time); // Convert to a Date object
+                const now = new Date();
+                let formattedTime;
+
+                if (logoutTime.toDateString() === now.toDateString()) {
+                    formattedTime = `Today, ${logoutTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}`;
+                } else {
+                    formattedTime = logoutTime.toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    });
+                }
+
+                if (onlineStatus) {
+                    onlineStatus.textContent = `Last seen: ${formattedTime}`;
+                }
+
+                if (onlineStatusSymbol && onlineStatusSymbol.classList.contains("user-status")) {
+                    onlineStatusSymbol.classList.remove("user-status");
+                }
+            }
+        },
+        error: function (error) {
+            console.error("Error getting online status:", error);
+        }
+    });
+}
+ 
+const conversationElement = document.querySelector('.chat-box');
+conversationElement.addEventListener('mouseenter', function () {
+    isUserScrolling = true; // User is now interacting
+    conversationElement.style.overflowY = 'scroll'; // Enable manual scrolling
+});
+
+// Handle mouse leave
+conversationElement.addEventListener('mouseleave', function () {
+    isUserScrolling = false; 
+    conversationElement.style.overflowY = 'hidden'; 
+    conversationElement.scrollTop = conversationElement.scrollHeight; 
+});
+
+
 
 document.querySelector(".i-icon").addEventListener("click", function () {
     document.querySelector(".user-profile-sidebar").classList.add('d-block');
@@ -4870,31 +4968,24 @@ function getTypingStatus(){
     });
 
  }
-
- document.getElementById('pills-chat-tab').addEventListener('click', function(e) {
-    e.preventDefault(); // Prevent immediate navigation
-
-    // Show the modal for agreement
-    var modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-    modal.show();
+ 
+ document.getElementById('recordButton').addEventListener('click', function () {
+    fetch('/V2_DCEMI/start_video_recording/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recorded_user_id: user_id, chatRequestId: chatRequestId }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Recording started');
+            } else {
+                console.error('Error starting recording:', data.message);
+            }
+        })
+        .catch(error => console.error('Error starting recording:', error));
 });
 
-document.getElementById('agreeButton').addEventListener('click', function() {
-    // Close the modal
-    var modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
-    modal.hide();
-
-    // Navigate to the target
-    window.location.hash = '#pills-chat'; // This will navigate to the section with id "pills-chat"
-});
-
-document.getElementById('disagreeButton').addEventListener('click', function() {
-    // Close the modal without navigating
-    var modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
-    modal.hide();
-
-    // Do nothing and stay on the current page
-});
 
 
 

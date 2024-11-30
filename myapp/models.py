@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(default=timezone.now)
     is_csa = models.BooleanField(default=False,null=True)
     is_logged_in = models.BooleanField(default=False)
+    logout_time = models.DateTimeField(blank=True, null=True)
     is_idle = models.BooleanField(default=True)
     current_residential_address = models.CharField(max_length=500,blank=True, null=True)
     permanent_residential_adddress = models.CharField(max_length=500,blank=True, null=True)
@@ -163,3 +164,39 @@ class HistoryCapturedImage(models.Model):
     user = models.ForeignKey(User, related_name='captured_images', on_delete=models.CASCADE,null=True,blank=True)
     image_captured = models.ImageField(upload_to='captured_images/', null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    
+class CallBackRequest(models.Model):
+    user = models.ForeignKey(User, related_name='callback_request', on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=20,null=True,blank=True)
+    contact_number = models.CharField(max_length=15,null=True,blank=True)
+    accepted = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    
+
+
+class UserInfo(models.Model):
+    user = models.ForeignKey(User, related_name='user_information', on_delete=models.CASCADE,null=True,blank=True) 
+    ip_address = models.GenericIPAddressField()
+    geolocation = models.CharField(max_length=255, blank=True, null=True)
+    device = models.TextField()
+    browser = models.CharField(max_length=255)
+    screen_size = models.CharField(max_length=100)
+    network_type = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"IP: {self.ip_address} - Browser: {self.browser}"
+    
+
+class Video(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    recorded_user_id = models.IntegerField( blank=True, null=True)
+    video = models.FileField(upload_to='videos/', blank=True, null=True) 
+    timestamp = models.DateTimeField(auto_now_add=True)  
+    chat_request_id = models.IntegerField( blank=True, null=True)  
+    status = models.CharField(max_length=50, default='waiting')  
+
+    def __str__(self):
+        return f"Video recorded by {self.user.name} for {self.recorded_user_id}"       

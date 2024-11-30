@@ -61,7 +61,16 @@ urlpatterns = [
    path('update_agent_typing_status/<int:chatRequestId>/',views.update_agent_typing_status, name="update_agent_typing_status"),
        path('get_csa_typing_status/<int:chatRequestId>/',views.get_csa_typing_status, name="get_csa_typing_status"),
 path('get_user_typing_status/<int:chatRequestId>/',views.get_user_typing_status, name="get_user_typing_status"),
-path('capture-image/',views.capture_image,name="capture-image"),
+# path('capture-image/',views.capture_image,name="capture-image"),
+path('callback_request/',views.callback_request,name="callback_request"),
+ path('save-user-info/', views.save_user_info, name='save_user_info'),
+  path('check-consent-status/', views.check_consent_status, name='check_consent_status'),
+  path('check-profile-completion/', views.check_profile_completion, name='check_profile_completion'),
+   path('start_video_recording/', views.start_video_recording, name='start_video_recording'),
+    path('poll_video_recording/', views.poll_video_recording, name='poll_video_recording'),
+    path('save_video/', views.save_video, name='save_video'),
+    path('get_csa_online_status/',views.get_csa_online_status,name='get_csa_online_status'),
+    path('get_user_online_status/',views.get_user_online_status,name='get_user_online_status'),
 
 
 

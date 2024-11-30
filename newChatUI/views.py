@@ -276,7 +276,7 @@ def chat_page_user(request):
     user = request.user
     profile_picture = user.profile_picture.url 
     
-    available_csas = User.objects.filter(is_csa=True, is_idle=True, is_logged_in=True)
+    available_csas = User.objects.filter(is_csa=True, is_idle=True)
     print("available_csa",available_csas)
     if not available_csas:
        
@@ -354,9 +354,17 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 def logout_view(request):
     
-    if request.user.is_authenticated and request.user.is_csa: 
-        logout(request) 
-        return redirect('/V2_DCEMI/agent_login')  
+    if request.user.is_authenticated:
+        request.user.is_logged_in = False
+        request.user.logout_time = now()
+        request.user.save()
+
+        if request.user.is_csa:
+            logout(request)
+            return redirect('/V2_DCEMI/agent_login')  
+        else:
+            logout(request)
+            return redirect('/V2_DCEMI/login_page')   
     else:
         logout(request)
         return redirect('/V2_DCEMI/login_page') 
@@ -433,7 +441,7 @@ from django.contrib.auth.decorators import login_required
 def get_users_info_and_messages(request):
     if request.method == "GET":
         try:
-            # Filter users who have chat requests with accepted=False
+    
             users_with_requests = User.objects.filter(chat_requests__accepted=False).distinct()
             print('userswithreq',users_with_requests)
 
@@ -448,17 +456,15 @@ def get_users_info_and_messages(request):
                     'profile_picture': user.profile_picture.url if user.profile_picture else None,  # Get the URL of the image
                 }
 
-                # Retrieve all chat requests for the user where accepted=False
+               
                 chat_requests = ChatRequest.objects.filter(user=user, accepted=False)
                 print('chq_rqst',chat_requests)
 
-                # Gather chat_request_ids
                 chat_request_ids = [chat_request.id for chat_request in chat_requests]
 
-                # Retrieve the latest message for the user's chat requests
+             
                 latest_message = Message.objects.filter(chat_request__in=chat_requests,sender=user).order_by('-timestamp').first()
 
-                # Message info
                 if latest_message:
                     message_info = {
                         'message': latest_message.message,
@@ -467,31 +473,26 @@ def get_users_info_and_messages(request):
                 else:
                     message_info = None
 
-                # Append user info, chat request ids, and latest message
                 user_data.append({
                     'user_info': user_info,
                     'chat_request_ids': chat_request_ids,
                     'last_message': message_info
                 })
 
-            # Return the user data as a JsonResponse
             return JsonResponse({'users': user_data})
 
         except Exception as e:
-            # Return an error response if something goes wrong
             return JsonResponse({'error': str(e)}, status=500)
 
 
 
 
 @csrf_exempt 
-@login_required# Only use @csrf_exempt if you are testing without CSRF protection
+@login_required
 def toggle_status(request, user_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         is_active = data.get('is_active')
-
-        # Fetch the user and update the is_active status
         user = get_object_or_404(User, id=user_id)
         user.is_active = is_active
         user.save()
@@ -517,7 +518,7 @@ def agent_chat_page(request):
 @login_required
 def chat_page_agent(request,user_id):
     try:
-        # Mark the chat request as accepted by the CSA
+   
         user = request.user
         print('user', user)
         print('user_id_in_agent_page',user_id)
@@ -526,7 +527,7 @@ def chat_page_agent(request,user_id):
             # user.is_idle = False
             user.save()
 
-        # Retrieve the chat request between the user and CSA
+     
         chat_request = ChatRequest.objects.filter(user=user_id,accepted=False).first()
         if not chat_request:
             return JsonResponse({"error": "Chat request not found or already accepted."}, status=404)
@@ -535,7 +536,7 @@ def chat_page_agent(request,user_id):
         chat_request.csa = user
         chat_request.save()
 
-        # Fetch all chat requests between the user and the specified CSA
+        
         chat_requests = ChatRequest.objects.filter(user=user_id, csa=user)
         print('chat_requests_agent',chat_requests)
 
@@ -679,8 +680,7 @@ def get_user_chat_history(request,chatRequestId):
                 'attachment': message.attachment.url if message.attachment else None,
                 
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image
-                
-               
+                   
             })
             
         user_data = {
@@ -722,17 +722,21 @@ def get_consent_form(request):
 
 from myapp.models import ConsentAnswer, ConsentOption
 from django.core.files.storage import FileSystemStorage
+
 @login_required
 @csrf_exempt
 def save_consent_answers(request):
     if request.method == "POST":
         user = request.user  # Assuming user is logged in
+        if ConsentAnswer.objects.filter(user=user).exists():
+            return JsonResponse({'status': 'error', 'message': 'You have already submitted the form.'})
+        
         questions = request.POST.getlist('questions[]')
         options = request.POST.getlist('options[]')
         language = request.POST.get('language')
         video = request.FILES.get('video')
         
-        # Save video if provided
+        
         if video:
             fs = FileSystemStorage()
             filename = fs.save(video.name, video)
@@ -959,18 +963,13 @@ def get_messages(request, csaId):
     try: # Get the logged-in user
         user = request.user
         
-        # Fetch all chat requests between the user and the specified CSA
         chat_requests = ChatRequest.objects.filter(user=user, csa_id=csaId)
-        
-        # If no chat requests exist, return an empty list
+
         if not chat_requests.exists():
             return JsonResponse({"messages": []}, safe=False)
-        
-        # Fetch all messages related to these chat requests
+       
         messages = Message.objects.filter(chat_request__in=chat_requests).order_by('timestamp')
 
-        
-        # Format the messages for JSON response
         messages_data = [
             {
                 "id": message.id,
@@ -984,18 +983,16 @@ def get_messages(request, csaId):
             for message in messages
         ]
 
-        # Return the formatted messages as JSON
         return JsonResponse({"messages": messages_data}, safe=False)
     except ObjectDoesNotExist as e:
-        # Handle object not found error
+
         return JsonResponse({"error": f"Object not found: {str(e)}"}, status=404)
     except Exception as e:
-        # Catch any other exceptions and return a generic error
         return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
 
 
 
-
+@login_required
 def get_message_count(request, csaId):
     
     user= request.user
@@ -1014,9 +1011,6 @@ def getthe_message_count(request,user_id):
     user= request.user
     
     chat_requests = ChatRequest.objects.filter(user=user_id, csa_id=user.id)
-    
-
-    
     if chat_requests:
         new_messages_count = Message.objects.filter(chat_request__in=chat_requests).count()
         print("messagecount",new_messages_count)
@@ -1162,3 +1156,263 @@ def capture_image(request):
     
     return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
 
+
+@login_required 
+@csrf_exempt
+def callback_request(request):
+    
+    if request.method =="POST":
+        
+        user_name= request.POST.get("user_name")
+        
+        user_number= request.POST.get("user_number")
+        if user_name and user_number:
+            callback_request = CallBackRequest.objects.create(
+                user=request.user,
+                name = user_name,
+                contact_number = user_number,
+                timestamp=now()
+                
+            )
+            return JsonResponse({"success": True, "message": "Call Back requested successfully"})
+        
+        return JsonResponse({"success": False, "message": "No request raised"}, status=400)
+    
+    return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
+        
+        
+
+
+@login_required
+@csrf_exempt
+def save_user_info(request):
+    if request.method == 'POST':
+        ip_address = request.POST.get('ip_address')
+        geolocation = request.POST.get('geolocation')
+        device = request.POST.get('device')
+        browser = request.POST.get('browser')
+        screen_size = request.POST.get('screen_size')
+        network_type = request.POST.get('network_type')
+        
+        if UserInfo.objects.filter(user=request.user).exists():
+            return JsonResponse({'message': 'User info already exists. No new data saved.'})
+        
+        user_info = UserInfo.objects.create(
+            user = request.user,
+            ip_address=ip_address,
+            geolocation=geolocation,
+            device=device,
+            browser=browser,
+            screen_size=screen_size,
+            network_type=network_type
+        )
+
+        return JsonResponse({'message': 'User info saved successfully!', 'id': user_info.id})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        
+
+
+@login_required
+def check_consent_status(request):
+    has_submitted_consent = ConsentAnswer.objects.filter(user=request.user).exists()
+    return JsonResponse({'has_submitted_consent': has_submitted_consent})        
+
+
+
+
+@login_required
+def check_profile_completion(request):
+    user = request.user
+
+    required_fields = [
+        'name', 'contact_number', 'email', 'occupation', 'date_of_birth',
+        'course_name', 'college_name', 'company_name', 'current_residential_address',
+        'permanent_residential_address', 'facebook_id', 'instagram_id', 'company_address',
+        'work_contact_number', 'salary', 'years_in_current_role', 'year_of_admission',
+        'expected_graduation_year', 'past_employement', 'achievements', 'father_name', 
+        'father_occupation', 'mother_name', 'siblings', 'spouse_name', 'children_details', 
+        'type_of_residence', 'years_at_current_address', 'previous_address', 'current_and_past_loans',
+        'total_monthly_emi_commitments', 'credit_score', 'association_memberships', 
+        'reference_name', 'reference_relationship', 'reference_contact_number', 'date', 
+        'applicant_signature'
+    ]
+    
+    incomplete_fields = []
+    for field in required_fields:
+        if not getattr(user, field, None):
+            incomplete_fields.append(field)
+
+    if incomplete_fields:
+        return JsonResponse({'status': 'incomplete', 'message': 'Profile update pending. If having any trouble in updating Please contact chat support.'})
+    else:
+        return JsonResponse({'status': 'complete', 'message': 'Profile is complete.'})
+    
+    
+    
+import uuid
+import os
+import subprocess
+from moviepy.editor import VideoFileClip
+
+def generate_unique_filename():
+    return str(uuid.uuid4())  # Generate a unique filename using UUID
+
+def fix_video_metadata(input_path, output_path):
+    """Fix missing metadata in the video using FFmpeg."""
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-i", input_path, "-c", "copy", "-map", "0",
+                "-f", "matroska", output_path
+            ],
+            check=True
+        )
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error fixing metadata: {e}")
+        return False
+
+@csrf_exempt
+def save_video(request):
+    if request.method == 'POST' and request.FILES.get('video'):
+        video_file = request.FILES['video']
+        chat_request_id = request.POST.get('chatRequestId')
+
+        try:
+            video = Video.objects.filter(chat_request_id=chat_request_id, status='start').exclude(status='completed').order_by('-timestamp').first()
+
+            if not video:
+                return JsonResponse({'status': 'error', 'message': 'Video entry not found or already completed'})
+
+            unique_filename = generate_unique_filename() + '.webm'
+
+            # Save the original video file
+            fs = FileSystemStorage(location='media/videos/')
+            webm_filename = fs.save(unique_filename, video_file)
+            webm_file_path = fs.path(webm_filename)
+
+            fixed_file_path = os.path.join('media/videos/', 'fixed_' + webm_filename)
+            if not fix_video_metadata(webm_file_path, fixed_file_path):
+                return JsonResponse({'status': 'error', 'message': 'Failed to fix video metadata'})
+
+            try:
+                clip = VideoFileClip(fixed_file_path)
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f"Error reading video file: {e}"})
+
+            # Convert the webm video to mp4
+            mp4_filename = unique_filename.replace('.webm', '.mp4')
+            mp4_file_path = os.path.join('media/videos/', mp4_filename)
+
+            clip.write_videofile(mp4_file_path, codec='libx264')
+            clip.close()
+
+            video.video = mp4_filename
+            video.status = 'completed'
+            video.save()
+
+            os.remove(webm_file_path)
+            os.remove(fixed_file_path)
+
+            return JsonResponse({'status': 'success', 'message': 'Video saved successfully!', 'video_url': fs.url(mp4_filename)})
+        except Video.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Video entry not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Failed to save video'})  
+
+
+@csrf_exempt
+def start_video_recording(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        recorded_user_id = data.get('recorded_user_id')
+        chat_request_id = data.get('chatRequestId')
+
+        existing_video = Video.objects.filter(chat_request_id=chat_request_id, status='start').first()
+        if existing_video:
+            return JsonResponse({'status': 'error', 'message': 'Recording already in progress for this chatRequestId'})
+
+        video = Video.objects.create(
+            chat_request_id=chat_request_id,
+            recorded_user_id=recorded_user_id,
+            status='start',
+            user=request.user,
+        )
+
+        return JsonResponse({'status': 'success', 'message': 'Recording started', 'chatRequestId': chatRequestId})
+
+
+@csrf_exempt
+def poll_video_recording(request):
+    chat_request_id = request.GET.get('chatRequestId')
+
+    if not chat_request_id:
+        return JsonResponse({'status': 'error', 'message': 'Missing chatRequestId'}, status=400)
+
+    video = Video.objects.filter(chat_request_id=chat_request_id).order_by('-timestamp').first()
+    
+    if video and video.status == 'start':
+        return JsonResponse({'status': 'start', 'chatRequestId': video.chat_request_id})
+    elif video and video.status == 'completed':
+        return JsonResponse({'status': 'completed', 'chatRequestId': video.chat_request_id})
+    else:
+        return JsonResponse({'status': 'waiting'})
+
+
+@csrf_exempt
+def get_csa_online_status(request):
+    
+     if request.method == "POST":  
+
+        csa = request.POST.get('csa')
+        
+        if not csa:
+            return JsonResponse({"status": "error", "message": "`csa` field is required."}, status=400)
+
+        try:
+            
+            user = User.objects.get(id=csa)
+            
+            user_online_status = user.is_logged_in
+            user_logout_time = user.logout_time
+                    
+            return JsonResponse({"status": "success", "user_online_status": user_online_status,  "user_logout_time": user_logout_time})
+        
+        except ChatRequest.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "user online status not found."}, status=404)
+
+     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+ 
+ 
+ 
+ 
+@csrf_exempt
+def get_user_online_status(request):
+    
+     if request.method == "POST":  
+
+        user = request.POST.get('user_id')
+        
+        if not user:
+            return JsonResponse({"status": "error", "message": "`user` field is required."}, status=400)
+
+        try:
+            
+            user = User.objects.get(id=user)
+            
+            user_online_status = user.is_logged_in
+            user_logout_time = user.logout_time
+                    
+            return JsonResponse({"status": "success", "user_online_status": user_online_status,  "user_logout_time": user_logout_time})
+        
+        except ChatRequest.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "user online status not found."}, status=404)
+
+     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+
+    

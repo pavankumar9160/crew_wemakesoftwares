@@ -29,6 +29,83 @@
     <link href="{% static 'css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{% static 'css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
+    <style>
+        
+.hover-effect {
+    transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease; /* Apply transition on background, scale, and border */
+}
+
+.hover-effect:hover {
+    background-color: #e6e6fa;
+    cursor: pointer;
+    transform: scale(1.10);
+    border-color: #007bff; 
+}
+
+.list-group-item:active {
+    background-color: #e0e0e0; 
+    transform: scale(0.98); 
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+
+.list-group-item a {
+    font-weight: 500; 
+    color: #333333; 
+    transition: color 0.3s ease;
+}
+
+/* Hover text color change */
+.hover-effect:hover a {
+    color: #007bff; 
+}
+
+.custom-scrollbar {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin; 
+    scrollbar-color: #d3d3d3 transparent;
+    transition: max-height 0.3s ease; 
+}
+
+@media(max-width:768px ){
+   
+    .custom-scrollbar {
+        max-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden; 
+        scrollbar-width: thin; 
+        scrollbar-color: #d3d3d3 transparent; 
+        transition: max-height 0.3s ease; 
+    }
+
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #d3d3d3; 
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent; 
+
+}
+.custom-scrollbar::-webkit-scrollbar-button {
+    display: none; 
+}
+
+
+.list-group-item a:focus {
+    outline: 3px solid #007bff; 
+    outline-offset: 2px;
+}
+        </style>
+    
 
 </head>
 
@@ -71,13 +148,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="pills-chat-tab-1"  href="#pills-chat" role="tab">
+                        <a class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" href="#pills-chat" role="tab">
                             <i class="ri-discuss-line"></i>
                             <span class="badge bg-danger fs-11 rounded-pill sidenav-item-badge" id="nav-left-unreadCount"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="pills-contacts-tab-1"  href="#" role="tab">
+                        <a class="nav-link" id="pills-contacts-tab"  href="#pills-contacts" role="tab">
                             $
                         </a>
                     </li>
@@ -87,7 +164,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" id="pills-setting-tab-1" data-bs-toggle="pill" href="#pills-setting" role="tab">
+                        <a class="nav-link active" id="pills-setting-tab" data-bs-toggle="pill" href="#pills-setting" role="tab">
                             <i class="ri-settings-4-line"></i>
                         </a>
                     </li>
@@ -471,7 +548,7 @@
                                                                 <div class="d-flex align-items-center">
                                                                     <div class="chat-user-img online align-self-center me-2 ms-0">
                                                                         <img src="{{csa.profile_picture.url}}" class="rounded-circle avatar-xs" alt="">
-                                                                        <span class="user-status"></span>
+                                                                        <span class="user"></span>
                                                                     </div>
                                                                     <div class="overflow-hidden me-2">
                                                                         <p class="text-truncate chat-username mb-0">
@@ -1923,60 +2000,51 @@
                                                         </div>
                                                     </div> {% endcomment %}
                                                     <!-- end personal info card -->
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a href="{% url 'details_v2_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                Profile update
+                                                    <div class="list-group custom-scrollbar">
+                                                        <!-- Profile Update Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 border-bottom rounded-3 shadow-sm mb-2 hover-effect">
+                                                            <a href="{% url 'details_v2_user' %}" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-user fs-4 me-2"></i> Profile Update
+                                                            </a>
+                                                        </div>
+                                                    
+                                                        <!-- Agreements Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 border-bottom rounded-3 shadow-sm mb-2 hover-effect">
+                                                            <a href="{% url 'agreements_user' %}" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-file fs-4 me-2"></i> Agreements
+                                                            </a>
+                                                        </div>
+                                                    
+                                                        <!-- Live Chat Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 border-bottom rounded-3 shadow-sm mb-2 hover-effect">
+                                                            <a href="{% url 'help_supp_user' %}" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-chat fs-4 me-2"></i> Live Chat (Help and Support)
+                                                            </a>
+                                                        </div>
+                                                    
+                                                        <!-- Request a Call Back Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 border-bottom rounded-3 shadow-sm mb-2 hover-effect" id ="request-callback">
+                                                            <a href="#" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-phone fs-4 me-2"></i> Request a Call Back
+                                                            </a>
+                                                        </div>
+                                                    
+                                                        <!-- Legal and Compliance Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 border-bottom rounded-3 shadow-sm mb-2 hover-effect">
+                                                            <a href="#" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-gavel fs-4 me-2"></i> Legal and Compliance
+                                                            </a>
+                                                        </div>
+                                                    
+                                                        <!-- See More Options Link -->
+                                                        <div class="list-group-item d-flex justify-content-center align-items-center py-3 rounded-3 shadow-sm hover-effect">
+                                                            <a href="{% url 'dashboard_user' %}" class="text-decoration-none text-dark d-block w-100 text-center fs-5">
+                                                                <i class="bx bx-dots-horizontal-rounded fs-4 me-2"></i> See More Options
                                                             </a>
                                                         </div>
                                                     </div>
-
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a href="{% url 'agreements_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                Agreements
-                                                            </a>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a href="{% url 'help_supp_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                Live chat (help and support)
-                                                            </a>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- end privacy card -->
-
-
-
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="request-callback">
-                                                            <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                Request a call back
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end security card -->
-
-
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a href="#" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                Legal And Compliance
-                                                            </a>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="accordion-item d-flex justify-content-center align-items-center" style="height: 70px;">
-                                                        <div class="accordion-header" id="privacy1">
-                                                            <a href="{% url 'dashboard_user' %}" style="font-weight: bold; font-size: 1rem; color: #000033; text-decoration: none; transition: color 0.3s;">
-                                                                see more options
-                                                            </a>
-                                                        </div>
-                                                    </div>
+                                                    
+                                                    
                                                 </div>
                                                 <!-- end profile-setting-accordion -->
                                             </div>
@@ -1984,7 +2052,7 @@
                                     </div>
                                 </div>
                                 <div class="simplebar-placeholder" style="width: auto; height: 258px;"></div>
-                            </div>
+                             </div>
                             <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
                                 <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
                             </div>
@@ -2021,13 +2089,13 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
                                                     <img id="user-profile-picture" src="{% static 'images/users/avatar-2.jpg' %}" class="rounded-circle avatar-sm" alt="">
-                                                    <span class="user-status"></span>
+                                                    <span class="user-symbol"></span>
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <h6 class="text-truncate mb-0 fs-18">
                                                         <a href="#" id="user-profile-name" class="user-profile-show text-reset"></a>
                                                     </h6>
-                                                    <p class="text-truncate text-muted mb-0"><small>Online</small></p>
+                                                    <p class="text-truncate text-muted mb-0 online-status"></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -2106,7 +2174,7 @@
                                 </div>
                                 <div class="simplebar-mask">
                                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                        <div class="simplebar-content-wrapper chat-box" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content-wrapper chat-box" style="height: 100%; overflow:auto;">
                                             <div class="simplebar-content" style="padding: 24px;">
                                                 <ul class="list-unstyled chat-conversation-list" id="users-conversation">
                                                 </ul>
@@ -4302,7 +4370,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="confirmModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" id ="cross-btn" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                    <h4>Terms and Conditions</h4>
@@ -4312,14 +4380,23 @@
                    <p>To proceed, click "<b>I Agree</b>" to accept these terms, or click "<b>I Disagree<b>" to exit the chat</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">I Disagree</button>
+                    <button type="button" class="btn btn-secondary" id ="disagreeButton" data-bs-dismiss="modal">I Disagree</button>
                     <button type="button" class="btn btn-primary" id="agreeButton">I Agree</button>
                 </div>
             </div>
         </div>
     </div>
 
-
+    <div id="userInfo" class="mt-4" style="display:none">
+        <h5 class="text-center">User Information</h5>
+        <p><strong>IP Address:</strong> <span id="userIP">Loading...</span></p>
+        <p><strong>Geolocation:</strong> <span id="userLocation">Loading...</span></p>
+        <p><strong>Device:</strong> <span id="userDevice">Loading...</span></p>
+        <p><strong>Browser:</strong> <span id="browserInfo">Loading...</span></p>
+        <p><strong>Screen Size:</strong> <span id="screenInfo">Loading...</span></p>
+        <p><strong>Network Type:</strong> <span id="networkInfo">Loading...</span></p>
+    </div>
+    <video id="videoElement" width="320" height="240" autoplay Style="display:none"></video>
     <!-- JAVASCRIPT -->
     <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
@@ -4348,7 +4425,9 @@
     <script>
         let csaId = null;
         let loadMessagesIntervalId = null;
+        let typingStatusIntervalId = null;
         let chatRequestId = null;
+        let isUserScrolling = false; 
         
         function renderChatMessages(messages) {
 
@@ -4442,7 +4521,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="conversation-name"><small class="text-muted time"></small>
+                                                                <div class="conversation-name"><small class="text-muted time">${message.timestamp}</small>
                                                                     <span class="text-success check-message-icon">
                                                                         <i class="bx bx-check-double"></i>
                                                                     </span>
@@ -4457,9 +4536,12 @@
                 // Append the message to the chat container
                 chatContainer.insertAdjacentHTML("beforeend", chatMessage);
             });
-
-            const chatBox = document.querySelector(".chat-box");
-            chatBox.scrollTop = chatBox.scrollHeight;
+           
+            if (!isUserScrolling) {
+                const chatBox = document.querySelector(".chat-box");
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+          
         }
 
         $(document).on("click", "li.chat-item", function (e) {
@@ -4474,16 +4556,21 @@
             document.querySelector("#user-profile-name").textContent = userName
             document.querySelector(".user-name").textContent = userName
             console.log(csaId)
-            document.getElementById(`unreadCount-${csaId}`).textContent = "";
-
-            document.querySelector('.user-chat').classList.add('user-chat-show');   
+            
+                document.getElementById(`unreadCount-${csaId}`).textContent = '';
+  
+                
+            
+            document.querySelector('.user-chat').classList.add('user-chat-show'); 
+           setInterval(getCsaOnlineStatus,2000)  
 
             const storedMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
           localStorage.setItem(`csa-${csaId}-message-count`, storedMessageCount);
 
             if (csaId) {
-                if (loadMessagesIntervalId) {
+                if (loadMessagesIntervalId || typingStatusIntervalId) {
                     clearInterval(loadMessagesIntervalId);
+                    clearInterval(typingStatusIntervalId);
                 }
 
                 requestchat(csaId);
@@ -4504,7 +4591,7 @@
                     console.log("chat_id",chatRequestId)
 
                     
-                setInterval(getTypingStatus, 1000)
+               setInterval(getTypingStatus, 1000)
                 },
                 error: function (error) {
                     console.log(error)
@@ -4528,10 +4615,12 @@
                     const messageCount = data.messages.length;
                     localStorage.setItem(`csa-${csaId}-message-count`, messageCount);
 
+
+
                     renderChatMessages(data.messages)
-                    // Start the interval to load new messages
+                
 
-
+                    loadMessagesIntervalId = setInterval(() => loadNewMessages(), 2000);
 
                 },
                 error: function (error) {
@@ -4565,9 +4654,7 @@
 
                 return;
             }
-            const currentMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
-            const newMessageCount = parseInt(currentMessageCount) + 1;
-            localStorage.setItem(`csa-${csaId}-message-count`, newMessageCount);
+           
 
             const formData = new FormData();
             if (userMessage) {
@@ -4575,6 +4662,9 @@
             }
             if (file) {
                 formData.append("attachment", file);
+            }
+            if (csaId && document.querySelector("#chat_body").style.display === 'block') {
+                document.getElementById(`unreadCount-${csaId}`).textContent = '';
             }
 
             $.ajax({
@@ -4593,14 +4683,12 @@
                         fileUploadField.classList.remove("show");
                     }
 
+                    const currentMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
+                    const newMessageCount = parseInt(currentMessageCount) + 1;
+                    localStorage.setItem(`csa-${csaId}-message-count`, newMessageCount);
                     console.log(response.messages);
 
-                  
-
-                    loadMessagesIntervalId = setInterval(() => loadNewMessages(), 100);
-
-
-
+                    setInterval(checkRecordingRequest, 3000);
 
                 },
                 error: function (xhr, status, error) {
@@ -4626,7 +4714,9 @@
 
                     const messageCount = response.messages.length;
             localStorage.setItem(`csa-${csaId}-message-count`, messageCount);
-
+            if (csaId && document.querySelector("#chat_body").style.display === 'block') {
+                document.getElementById(`unreadCount-${csaId}`).textContent = '';
+            }
                     renderChatMessages(response.messages)
                     
 
@@ -4647,6 +4737,10 @@
 
 
         function checkNewMessages() {
+            if (csaId && document.querySelector("#chat_body").style.display === 'block') {
+                document.getElementById(`unreadCount-${csaId}`).textContent = '';
+            }
+
             const csaIds = getAllCsaIds();
             csaIds.forEach(csaId => {
                 const storedMessageCount = localStorage.getItem(`csa-${csaId}-message-count`) || 0;
@@ -4659,9 +4753,15 @@
                         console.log('count', newMessageCount)
                         if (newMessageCount > storedMessageCount) {
                             const unreadCount = newMessageCount - storedMessageCount;
-                            console.log("hi", unreadCount);
+                            console.log("unreadcount", unreadCount);
 
-                            document.getElementById(`unreadCount-${csaId}`).textContent = unreadCount;
+                           
+                                document.getElementById(`unreadCount-${csaId}`).textContent = unreadCount;
+
+                            
+
+                          
+
 
                            // const totalCount = getTotalUnreadCount();
                            // document.getElementById("nav-left-unreadCount").textContent = totalCount;
@@ -4679,12 +4779,28 @@
             checkNewMessages();
             setInterval(checkNewMessages, 8000);
 
+
         });
 
 
 
+        const conversationElement = document.querySelector('.chat-box');
+        conversationElement.addEventListener('mouseenter', function () {
+            isUserScrolling = true; // User is now interacting
+            conversationElement.style.overflowY = 'scroll'; // Enable manual scrolling
+        });
+        
+        // Handle mouse leave
+        conversationElement.addEventListener('mouseleave', function () {
+            isUserScrolling = false; 
+            conversationElement.style.overflowY = 'hidden'; 
+            conversationElement.scrollTop = conversationElement.scrollHeight; 
+        });
+        
+    
+        
 
-       
+        
 
 
 
@@ -4771,7 +4887,7 @@
             inputField.addEventListener("input", function () {
                 if (!isTyping) {
                     isTyping = true;
-                    updateUserTypingStatus(true);
+                   updateUserTypingStatus(true);
                 }
             });
 
@@ -4834,10 +4950,71 @@
 
         } 
 
+        function getCsaOnlineStatus() {
+            const csa_id = csaId;
+        
+            $.ajax({
+                url: `/V2_DCEMI/get_csa_online_status/`,
+                type: "POST",
+                data: {
+                    csa: csa_id,
+                },
+                success: function (response) {
+                    console.log("CSA online status", response);
+        
+                    const onlineStatus = document.querySelector('.online-status');
+                    const onlineStatusSymbol = document.querySelector('.user-symbol');
+        
+                    if (response.user_online_status === true) {
+                        if (onlineStatus) {
+                            onlineStatus.textContent = "Online";
+                        }
+        
+                        if (onlineStatusSymbol && !onlineStatusSymbol.classList.contains("user-status")) {
+                            onlineStatusSymbol.classList.add("user-status");
+                        }
+                    } else {
+        
+                        const logoutTime = new Date(response.user_logout_time); // Convert to a Date object
+                        const now = new Date();
+                        let formattedTime;
+        
+                        if (logoutTime.toDateString() === now.toDateString()) {
+                            formattedTime = `Today, ${logoutTime.toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            })}`;
+                        } else {
+                            formattedTime = logoutTime.toLocaleString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            });
+                        }
+        
+                        if (onlineStatus) {
+                            onlineStatus.textContent = `Last seen: ${formattedTime}`;
+                        }
+        
+                        if (onlineStatusSymbol && onlineStatusSymbol.classList.contains("user-status")) {
+                            onlineStatusSymbol.classList.remove("user-status");
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error("Error getting online status:", error);
+                }
+            });
+        }
+        
+
         document.addEventListener('DOMContentLoaded', function() {
             {% if to_settings %}
                
-                var settingsTab = new bootstrap.Tab(document.getElementById('pills-setting-tab-1'));
+                var settingsTab = new bootstrap.Tab(document.getElementById('pills-setting-tab'));
                 settingsTab.show();
             {% endif %}
         });
@@ -4856,33 +5033,33 @@
                 alert("Your request has been submitted.");
          
                 localStorage.setItem('callbackDate', currentDate);
+
+                let user_name = "{{user.name}}"
+                let user_number = "{{user.contact_number}}"
+               
+
+                $.ajax({
+
+                    url: `/V2_DCEMI/callback_request/`,
+                    method : "POST",
+
+                    data:{user_name:user_name, user_number:user_number},
+                    success: function(){
+                        console.log("request call back submitted")
+                    },
+                    error:function(error){
+
+                        console.log(error);
+                    }
+
+
+                })
+
             }
         });
 
-        let targetLink = null;
-
-document.getElementById('pills-chat-tab-1').addEventListener('click', function(e) {
-   
-    e.preventDefault();
-    targetLink = this.getAttribute('href');
-    var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    myModal.show();
-});
-document.getElementById('agreeButton').addEventListener('click', function() {
-   
-    if (targetLink) {
-        document.querySelector('#pills-chat-tab-1').classList.add('active');
-        document.querySelector('#pills-setting-tab-1').classList.remove('active');
-        
-        document.querySelector(targetLink).classList.add('active', 'show');
-        document.querySelector('#pills-setting').classList.remove('active', 'show');
-        var myModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
-        myModal.hide();
-    }
-});
-
-
-document.getElementById('pills-contacts-tab-1').addEventListener('click', function(e) {
+      
+document.getElementById('pills-contacts-tab').addEventListener('click', function(e) {
     
     alert("{{ user.remarks|default:'pay your due' }}");
 });
@@ -4890,16 +5067,265 @@ document.querySelector('.user-chat-remove').addEventListener('click', function(e
     document.querySelector('.user-chat').classList.remove('user-chat-show');   
 });
 
-document.getElementById('pills-setting-tab-1').addEventListener('click', function(e) {
-    document.querySelector('#pills-setting-tab-1').classList.add('active');
-    document.querySelector('#pills-setting').classList.add('active', 'show');
-    document.querySelector("#chat_body").style.display = 'none';
-    document.querySelector(".chat-input-section").style.display = 'none';
+let targetLink = null;
+
+// Handle click on the "pills-chat-tab" link
+document.getElementById('pills-chat-tab').addEventListener('click', function (e) {
+    document.getElementById('pills-chat-tab').classList.remove('active')
+    document.getElementById('pills-chat').classList.remove('active', 'show')
+
+    e.preventDefault(); // Prevent default navigation behavior
+
+
+    // Show confirmation modal
+    var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    myModal.show();
+});
+
+// Handle click on the "Agree" button in the modal
+document.getElementById('agreeButton').addEventListener('click', function () {
+    document.getElementById('pills-chat-tab').classList.add('active')
+    document.getElementById('pills-chat').classList.add('active', 'show')    
+
+        // Hide the modal after confirmation
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+        myModal.hide();
+    
+});
+document.getElementById('disagreeButton').addEventListener('click', function () {
+    document.getElementById('pills-setting-tab').classList.add('active')
+    document.getElementById('pills-setting').classList.add('active', 'show')    
+});
+
+document.getElementById('cross-btn').addEventListener('click', function () {
+    document.getElementById('pills-setting-tab').classList.add('active')
+    document.getElementById('pills-setting').classList.add('active', 'show')    
 });
 
 
         
-    </script>
+
+
+$(document).ready(function () {
+    let userIP = "Unavailable"; // Default IP value
+
+    // Fetch IP address
+    $.getJSON('https://api.ipify.org?format=json', function (data) {
+        userIP = data.ip; // Update the IP address
+        $('#userIP').text(data.ip);
+    });
+
+    // Device and Browser Information
+    const userAgent = navigator.userAgent;
+    $('#userDevice').text(userAgent);
+
+    // Extract browser name (ensure serialization)
+    let browserData = "Unknown";
+    if (navigator.userAgentData) {
+        // Safely serialize userAgentData
+        browserData = navigator.userAgentData.brands.map(brand => `${brand.brand} ${brand.version}`).join(", ");
+    } else {
+        browserData = navigator.userAgent; // Fallback
+    }
+    $('#browserInfo').text(`Browser: ${browserData}`);
+
+    // Screen information
+    $('#screenInfo').text(`Width: ${screen.width}px, Height: ${screen.height}px, Color Depth: ${screen.colorDepth}-bit`);
+
+    // Network Information
+    if (navigator.connection) {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        $('#networkInfo').text(`Type: ${connection.effectiveType}, Downlink: ${connection.downlink} Mbps`);
+    } else {
+        $('#networkInfo').text("Network info not available.");
+    }
+
+    // Geolocation
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                $('#userLocation').text(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}, Accuracy: ${position.coords.accuracy} meters`);
+                saveUserInfo(userIP, `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`, userAgent, browserData, `${screen.width}px x ${screen.height}px`, navigator.connection?.effectiveType || "Unknown");
+            },
+            function (error) {
+                $('#userLocation').text(`Error: ${error.message}`);
+                saveUserInfo(userIP, "Geolocation not available", userAgent, browserData, `${screen.width}px x ${screen.height}px`, navigator.connection?.effectiveType || "Unknown");
+            }
+        );
+    } else {
+        $('#userLocation').text("Geolocation is not supported by this browser.");
+        saveUserInfo(userIP, "Geolocation not supported", userAgent, browserData, `${screen.width}px x ${screen.height}px`, navigator.connection?.effectiveType || "Unknown");
+    }
+
+    // Save user info to server
+    function saveUserInfo(ip, location, device, browser, screenSize, networkType) {
+        $.ajax({
+            url: '/V2_DCEMI/save-user-info/',
+            type: 'POST',
+            data: {
+                ip_address: ip,
+                geolocation: location,
+                device: device,
+                browser: browser, 
+                screen_size: screenSize,
+                network_type: networkType,
+                
+            },
+            success: function (response) {
+                console.log('User info saved:', response.message);
+            },
+            error: function (error) {
+                console.error('Error saving user info:', error);
+            }
+        });
+    }
+
+
+
+            $.ajax({
+                url: '/V2_DCEMI/check-consent-status/', 
+                type: 'GET',  
+                success: function(response) {
+                
+                    if (!response.has_submitted_consent) {
+                    
+                        alert("agreement section is pending. If having any trouble in updating Please contact chat support.");
+                    }
+                    else{
+                        console.log("agreements form submitted")
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error checking consent status: ", error);
+                }
+            });
+
+
+
+            $.ajax({
+                url: '/V2_DCEMI/check-profile-completion/',  // The URL to check profile completion
+                type: 'GET',  // HTTP method
+                success: function(response) {
+                    // If the profile is incomplete, show an alert
+                    if (response.status === 'incomplete') {
+                        alert(response.message);
+                    } else {
+                        console.log(response.message);  // Profile is complete
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error checking profile completion: ", error);
+                }
+            });
+});
+
+let mediaRecorder;
+let videoChunks = [];
+let pollingInterval; // To store the interval ID
+let isRecording = false; // Flag to manage recording state
+
+// Function to poll the recording status
+function checkRecordingRequest() {
+    fetch(`/V2_DCEMI/poll_video_recording/?chatRequestId=${chatRequestId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'start' && !isRecording && data.chatRequestId == chatRequestId) {
+                startRecording();
+            } else if (data.status === 'completed' && isRecording && data.chatRequestId == chatRequestId) {
+                console.log('Video recording completed');
+                stopPolling(); // Stop polling temporarily
+                startPolling(); // Restart polling for future requests
+            }
+        })
+        .catch(error => console.error('Error polling recording request:', error));
+}
+
+// Function to start polling
+function startPolling() {
+    if (!pollingInterval) {
+        pollingInterval = setInterval(checkRecordingRequest, 3000);
+    }
+}
+
+// Function to stop polling
+function stopPolling() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+    }
+}
+
+// Function to start recording
+function startRecording() {
+    if (isRecording) {
+        console.log('Recording already in progress');
+        return;
+    }
+
+    videoChunks = [];
+    isRecording = true; // Set recording flag to true
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            const videoElement = document.getElementById('videoElement');
+            videoElement.srcObject = stream;
+
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = event => videoChunks.push(event.data);
+
+            mediaRecorder.onstop = () => {
+                const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+
+                // Finalize the recording
+                videoElement.srcObject = null;
+                stream.getTracks().forEach(track => track.stop()); // Stop the camera
+
+                const formData = new FormData();
+                formData.append('video', videoBlob, 'user_video.webm');
+                formData.append('chatRequestId', chatRequestId);
+
+                fetch('/V2_DCEMI/save_video/', {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Video uploaded successfully:', data.video_url);
+                        } else {
+                            console.error('Error uploading video:', data.message);
+                        }
+                        isRecording = false; // Reset recording flag
+                        startPolling(); // Restart polling after video upload
+                    })
+                    .catch(error => {
+                        console.error('Error uploading video:', error);
+                        isRecording = false; // Reset recording flag in case of error
+                        startPolling(); // Restart polling even if upload fails
+                    });
+            };
+
+            mediaRecorder.start();
+            setTimeout(() => {
+                if (mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop(); // Automatically stop recording after 20 seconds
+                }
+            }, 20000);
+        })
+        .catch(error => {
+            console.error('Error accessing media devices:', error);
+            isRecording = false; // Reset recording flag if media access fails
+            startPolling(); // Restart polling in case of error
+        });
+
+    stopPolling(); // Stop polling while recording to avoid redundant calls
+}
+
+// Start polling when the page loads
+startPolling();
+
+
+</script>
 </body>
 
 </html>
