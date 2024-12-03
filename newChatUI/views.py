@@ -176,11 +176,14 @@ def signup_view(request):
             course_name = request.POST.get("course_name")  
             college_name = request.POST.get("college_name")  
             company_name = request.POST.get("company_name")  
+            pan_number = request.POST.get("pan_number")  
+
             
-            profile_picture = request.FILES.get("profile_picture")
+            profile_picture = request.FILES.get("captured-image-file")
             aadhar_front = request.FILES.get("aadhar_front")
             aadhar_back =  request.FILES.get("aadhar_back")
             pan_card = request.FILES.get("pan_card")
+            
              
             
             
@@ -208,6 +211,7 @@ def signup_view(request):
                     company_name=company_name,
                     ip_address=ip_address,
                     date_of_birth=date_of_birth,
+                    pan_number=pan_number,
                     profile_picture=profile_picture,
                     
                 )

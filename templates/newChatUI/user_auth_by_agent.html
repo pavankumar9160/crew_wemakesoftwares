@@ -259,7 +259,7 @@ function toggleStatus(checkbox, userId) {
     }
 
     // Send the new status to the server
-    fetch(`/toggle-status/${userId}/`, {
+    fetch(`/V2_DCEMI/toggle-status/${userId}/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

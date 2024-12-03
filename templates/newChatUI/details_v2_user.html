@@ -1,364 +1,256 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <title>Update Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Applicant Signup Form</title>
+    <meta content="A fully responsive section which can be used to form" name="description" />
+    <meta content="Techzaa" name="author" />
+    <link rel="shortcut icon" href="assets/images/favicon.svg">
+
+    <!-- tabler css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <!-- Style css -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
     
-       <!-- Bootstrap CSS -->
-       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-       <!-- Toastr CSS -->
-       <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-  
-   
-    <style>
-     /*   body {
-            background: #edf2f7;
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-        } */
-        main{
-            display: flex;
-            align-items: center;
-            justify-content: center; 
-        }
-        
+</head>
+
+<body>
     
-  /* navbar styling*/        
-.navbar {
-    background-color: #3498db; 
-}
-
-.navbar .nav-link {
-    color: white !important; 
-}
-
-.navbar .nav-link:hover {
-    color: #a9c4f1 !important; 
-}
-
-.navbar .dropdown-menu {
-    background-color: #052c65;
-}
-
-.navbar .dropdown-item {
-    color: white !important;
-}
-
-.navbar .dropdown-item:hover {
-    background-color: #a9c4f1; 
-    color: #052c65 !important;
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: 10px; 
-    right: 10px; 
-    z-index: 1050; 
- }
-
-.navbar-toggler-icon {
-    background-color: white;
-}
-
-
-.navbar-toggler:hover .navbar-toggler-icon {
-    opacity: 0.8;
-}
-.nav-link{
-    text-align:center;
-}
-
-main {
-    margin-top: 1.5rem;
-}
-
- </style>
     
-    <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <!-- Navbar Toggle Button -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-    
-                <!-- Navbar Links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Payment Assistance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Loan Closure</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Legal and Compliance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Account Management</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
-                        </li>
-                    </ul>
+    <section class="py-10 px-10 lg:min-h-screen flex items-center justify-center">
+        <div id="errorMessage" class="error-message"></div>
+        <div class="container" id="formContainer">
+            <div class="max-w-5xl mx-auto border border-gray-200 bg-gray-50 rounded shadow-lg p-6 overflow-hidden">
+                <!-- Applicant Personal Information Section -->
+                <div class="text-center mb-14">
+                    <img src="" class="h-6 mx-auto" alt="">
+                    <p class="text-2xl font-bold text-gray-700 mt-6">Update Your Profile</p>
+                    <p class="text-base font-medium text-gray-500 mt-1">Please fill out all the fields.</p>
                 </div>
-    
-                <!-- User Profile -->
-                <div class="profile-dropdown">
-                    <button 
-                        class="btn d-flex align-items-center" 
-                        type="button" 
-                        id="userMenu" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false" 
-                        style="padding: 0; border: none; background-color: transparent;">
-                        <!-- Profile Picture -->
-                        <img 
-                            src="{{ profile_picture }}" 
-                            alt="{{ user.name }}" 
-                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
-                    </button>
-                    
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="{% url 'details_v2_user' %}">Update Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
+
+                <h4 class="text-lg font-semibold text-gray-700 mb-4">1. Applicant Personal Information</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="name" class="text-base font-medium text-gray-700">Name:</label>
+                        <input type="text" name="name" id="name" placeholder="Full Name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="last_name" class="text-base font-medium text-gray-700">Date of Birth:</label>
+                        <input type="date" name="date_of_birth" id="date_of_birth" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="contact_number" class="text-base font-medium text-gray-700">Current Phone Number:</label>
+                        <input type="text" name="contact_number" id="contact_number" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="email" class="text-base font-medium text-gray-700">Email Address:</label>
+                        <input type="email" name="email" id="email" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="current_address" class="text-base font-medium text-gray-700">Current Residential Address:</label>
+                        <textarea name="current_address" id="current_address" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="permanent_address" class="text-base font-medium text-gray-700">Permanent Residential Address:</label>
+                        <textarea name="permanent_address" id="permanent_address" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="facebook_id" class="text-base font-medium text-gray-700">Facebook:</label>
+                        <input type="text" name="facebook_id" id="facebook_id" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="instagram_id" class="text-base font-medium text-gray-700">Instagram:</label>
+                        <input type="text" name="instagram_id" id="instagram_id" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                </div>
+
+                <!-- Employment or Academic Details Section -->
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">2. Employment or Academic Details</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="occupation" class="text-base font-medium text-gray-700">Current Job Title/Occupation:</label>
+                        <select id="occupation" class="text-gray-700/80 block w-full rounded-md py-2 px-4 mt-2 bg-white border border-gray-300 focus:ring-transparent focus:border-gray-700/25">
+                            <option value="0">Select...</option>
+                            <option value="1">Student</option>
+                            <option value="2">Salaried</option>
+                            <option value="3">Self-Employed</option>
+                            <option value="4">Others</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="company_name" class="text-base font-medium text-gray-700">Employer/Business Name:</label>
+                        <input type="text" name="company_name" id="company_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="company_address" class="text-base font-medium text-gray-700">Employer/Business Address:</label>
+                        <input type="text" name="company_address" id="company_address" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="work_number" class="text-base font-medium text-gray-700">Work Contact Number:</label>
+                        <input type="text" name="work_number" id="work_number" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="salary" class="text-base font-medium text-gray-700">Annual/Monthly Salary (or business income):</label>
+                        <input type="text" name="salary" id="salary" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="current_role" class="text-base font-medium text-gray-700">Years in Current Role/Business:</label>
+                        <input type="text" name="current_role" id="current_role" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="college_name" class="text-base font-medium text-gray-700">College/University Name:</label>
+                        <input type="text" name="college_name" id="college_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="course_name" class="text-base font-medium text-gray-700">Field of Study:</label>
+                        <input type="text" name="course_name" id="course_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="year_of_admission" class="text-base font-medium text-gray-700">Year of Admission:</label>
+                        <input type="number" id="year_of_admission" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="expected_graduation_year" class="text-base font-medium text-gray-700">Expected Graduation Year:</label>
+                        <input type="text" id="expected_graduation_year" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="past_employement" class="text-base font-medium text-gray-700">Past Employment or Business Ventures:</label>
+                        <input type="text" id="past_employement" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="achievements" class="text-base font-medium text-gray-700"> Achievements/Projects (optional):</label>
+                        <input type="text" id="achievements" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">3. Family Background Details</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="father_name" class="text-base font-medium text-gray-700">Father's Full Name:</label>
+                        <input type="text" name="father_name" id="father_name" placeholder="Father's Name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="mother_name" class="text-base font-medium text-gray-700">Mother's Full Name:</label>
+                        <input type="text" name="mother_name" id="mother_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="siblings" class="text-base font-medium text-gray-700">Siblings (optional):</label>
+                        <textarea name="siblings" id="siblings" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="spouse_name" class="text-base font-medium text-gray-700">Spouse's Name (if married):</label>
+                        <input type="text" name="spouse_name" id="spouse_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="Spouse's Name" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="children_details" class="text-base font-medium text-gray-700">Children (if any):</label>
+                        <textarea name="children_details" id="children_details" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>
+                    </div>
+                </div>
+
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">4. Residential and Contact Details</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="name" class="text-base font-medium text-gray-700">Type of Residence:</label>
+                        <input type="text" name="type_of_residence" id="type_of_residence" placeholder="Owned, Rented, Shared" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="years_at_current_address" class="text-base font-medium text-gray-700">Years at Current Address:</label>
+                        <input type="number" name="years_at_current_address" id="years_at_current_address" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="Years" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="previous_address" class="text-base font-medium text-gray-700">Previous Addresses (last 5 years):</label>
+                        <textarea name="previous_address" id="previous_address" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>                    </div>
+                </div>
+
+
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">5. Financial Background</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="past_loans" class="text-base font-medium text-gray-700">Current and Past Loans:</label>
+                        <textarea name="past_loans" id="past_loans" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"></textarea>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="total_monthly_emi_commitments" class="text-base font-medium text-gray-700">Total Monthly EMI Commitments:</label>
+                        <input type="text" name="total_monthly_emi_commitments" id="total_monthly_emi_commitments" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="EMI Commitments" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="credit_score" class="text-base font-medium text-gray-700">Credit Score (if available and with consent):</label>
+                        <input type="text" name="credit_score" id="credit_score" placeholder="Credit Score" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="Previous Addresses" />
+                    </div>
+                </div>
+
+
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">6. Community and Personal Engagements</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="association_memberships" class="text-base font-medium text-gray-700">Clubs/Associations Memberships: </label>
+                        <textarea name="association_memberships" id="association_memberships" rows="1" class=" mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"  placeholder="Clubs/Associations"></textarea>
+                    </div>
+                </div>
+
+
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">7. References</h4>
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-3">
+                    <div class="md:col-span-1">
+                        <label for="reference_name" class="text-base font-medium text-gray-700">Reference Name:</label>
+                        <input type="text" name="reference_name" id="reference_name" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50"placeholder="Reference Name"/>
+
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="reference_relationship" class="text-base font-medium text-gray-700">Reference Relationship:</label>
+                        <input type="text" name="reference_relationship" id="reference_relationship"  placeholder="Relationship" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="EMI Commitments" />
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="reference_number" class="text-base font-medium text-gray-700">Contact Number:</label>
+                        <input type="text" name="reference_number" id="reference_number" placeholder="Contact Number" class="h-10 mt-1 rounded px-4 w-full border border-gray-200 bg-gray-50" placeholder="Previous Addresses" />
+                    </div>
+                </div>
+
+
+                <h4 class="text-lg font-semibold text-gray-700 mt-8 mb-4">8. Declaration</h4>
+                <div class="mb-6">
+                    <p class="text-sm text-gray-600 mb-4">
+                        I hereby declare that the information provided is accurate and true to the best of my knowledge. I take full responsibility for the information provided.
+                    </p>
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="agree" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" required>
+                        <label for="agree" class="ml-2 text-sm text-gray-700">I agree to the declaration above</label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="applicant_signature" class="text-base font-medium text-gray-700">Applicant's Signature:</label>
+                        <input type="file" id="applicant_signature" class="mt-1 block w-full text-lg text-gray-7    00 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" accept="image/*">
+                    </div>
+                    <div>
+                        <label for="currentDate" class="text-base font-medium text-gray-700">Date:</label>
+                        <input type="date" id="currentDate" class="mt-1 block w-full text-sm text-gray-600 bg-gray-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" readonly>
+                    </div>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="md:col-span-5 text-right mt-6">
+                    <button  type="submit" id="update_form" class="py-2 px-4 inline-block rounded font-bold text-white bg-blue-500 hover:bg-blue-700 transition-all duration-500">Submit</button>
                 </div>
             </div>
-        </nav>
-    
-                <main>
-                    <div class="container" id="formContainer">
-                        <h2 class="text-center my-4">Applicant Signup Form</h2>
-                        <form>
-                            <!-- 1. Applicant Personal Information -->
-                            <div class="form-section mb-4">
-                                <h4>1. Applicant Personal Information</h4>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Full Name:</label>
-                                        <input type="text" id="name" class="form-control mb-3" placeholder="Full Name">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Date of Birth:</label>
-                                        <input type="date" id="date_of_birth" class="form-control mb-3">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Current Phone Number:</label>
-                                        <input type="tel" id="contact_number" class="form-control mb-3" placeholder="Phone Number">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Email Address:</label>
-                                        <input type="email" id="email" class="form-control mb-3" placeholder="Email Address">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Current Residential Address:</label>
-                                        <textarea class="form-control mb-3" id="current_address" placeholder="Current Address"></textarea>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Permanent Residential Address:</label>
-                                        <textarea class="form-control mb-3" id="permanent_address" placeholder="Permanent Address"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Facebook:</label>
-                                        <input type="text" class="form-control mb-3" id="facebook_id" placeholder="Facebook">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Instagram:</label>
-                                        <input type="text" class="form-control mb-3" id="instagram_id" placeholder="Instagram">
-                                    </div>
-                                </div>
-                            </div>
-                
-                            <!-- 2. Employment or Academic Details -->
-                            <div class="form-section mb-4">
-                                <h4>2. Employment or Academic Details</h4>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Current Job Title/Occupation:</label>
-                                        <select id="occupation" class="form-control mb-3" required>
-                                            <option value="0">Select...</option>
-                                            <option value="1">Student</option>
-                                            <option value="2">Salaried</option>
-                                            <option value="3">Self-Employed</option>
-                                            <option value="4">Others</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Employer/Business Name:</label>
-                                        <input type="text" class="form-control mb-3" id="company_name" placeholder="Employer/Business Name">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Work Contact Number:</label>
-                                        <input type="tel" class="form-control mb-3" id="work_number" placeholder="Work Contact Number">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>College/University Name:</label>
-                                        <input type="text" class="form-control mb-3" id="college_name" placeholder="College/University Name">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Field of Study:</label>
-                                        <input type="text" class="form-control mb-3" id="course_name" placeholder="Field of Study">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Year of Admission:</label>
-                                        <input type="number" class="form-control mb-3" id="year_of_admission" placeholder="Year">
-                                    </div>
-                                </div>
-                            </div>
-                
-                            <!-- 3. Family Background Details -->
-                            <div class="form-section mb-4">
-                                <h4>3. Family Background Details</h4>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label>Father's Full Name:</label>
-                                        <input type="text" class="form-control mb-3" id="father_name" placeholder="Father's Name">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Mother's Full Name:</label>
-                                        <input type="text" class="form-control mb-3" id="mother_name" placeholder="Mother's Name">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Spouse's Name (if married):</label>
-                                        <input type="text" class="form-control mb-3" id="spouse_name" placeholder="Spouse's Name">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Children (if any):</label>
-                                        <textarea class="form-control mb-3" id="children_details" placeholder="Children Details"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-           
-
-        <!-- 4. Residential and Contact Details -->
-        <div class="form-section mb-4">
-            <h2>4. Residential and Contact Details</h2>
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Type of Residence:</label>
-                    <input type="text" class="form-control mb-3" id="type_of_residence" placeholder="Owned, Rented, Shared">
-                </div>
-           
-                <div class="col-md-3">
-                    <label>Years at Current Address:</label>
-                    <input type="number" class="form-control mb-3" id="years_at_current_address" placeholder="Years">
-                </div>
-                <div class="col-md-3">
-                    <label>Previous Addresses (last 5 years):</label>
-                    <textarea class="form-control mb-3" id="previous_address" placeholder="Previous Addresses"></textarea>
-                </div>
         </div>
-    </div>
-
-        <!-- 5. Financial Background -->
-        <div class="form-section mb-4">
-            <h2>5. Financial Background</h2>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Current and Past Loans:</label>
-                    <textarea class="form-control mb-3" id="past_loans" placeholder="Loan Details"></textarea>
-                </div>
-           
-                <div class="col-md-3">
-                    <label>Total Monthly EMI Commitments:</label>
-                    <input type="text" class="form-control mb-3" id="total_monthly_emi_commitments" placeholder="EMI Commitments">
-                </div>
-                <div class="col-md-3">
-                    <label>Credit Score (if available and with consent):</label>
-                    <input type="text" class="form-control mb-3" id="credit_score" placeholder="Credit Score">
-                </div>
-        </div>
-     </div>
-
-        <!-- 6. Community and Personal Engagements -->
-        <div class="form-section mb-4">
-            <h2>6. Community and Personal Engagements</h2>
-            <div class= 'row'>
-            <div class="col-md-12">
-                <label>Clubs/Associations Memberships:</label>
-                <textarea class="form-control mb-3"  id="association_memberships" placeholder="Clubs/Associations"></textarea>
-            </div>
-        </div>
-        </div>
-
-        <!-- 7. References -->
-        <div class="form-section mb-4">
-            <h2>7. References</h2>
-
-            <div class= 'row'>
-                <div class="col-md-4">
-                    <label>Reference Name:</label>
-                    <input type="text" class="form-control mb-3" id="reference_name" placeholder="Reference Name">
-                </div>
-
-                <div class="col-md-4">
-                    <label>Reference Relationship:</label>
-                    <input type="text"class="form-control mb-3" id="reference_relationship" placeholder="Relationship">
-                </div>
-
-                <div class="col-md-4">
-                    <label>Contact Number:</label>
-                    <input type="tel" class="form-control mb-3" id="reference_number" placeholder="Contact Number">
-                </div>
-            </div>  
-        </div>
-
-        <!-- 8. Declaration -->
-        <div class="form-section mb-4">
-            <h4>8. Declaration</h4>
-            <p class="text-muted mb-2">
-                I hereby declare that the information provided is accurate and true to the best of my knowledge. I take full responsibility for the information provided.
-            </p>
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="agree" required>
-                <label for="agree" class="form-check-label">I agree to the declaration above</label>
-            </div>
-        </div>
-
-        <div class="form-section mb-4">
-            <div class = "row">
-                <div class="col-md-6">
-                    <label>Applicant's Signature:</label>
-                    <input type="file" class="form-control mb-3" id="applicant_signature" accept="image/*">
-                </div>
-                <div class="col-md-6">
-                    <label>Date:</label>
-                    <input type="date" id="currentDate" class="form-control mb-3" readonly>
-                </div>
-            </div>
-    </div>
-
-        <button type="submit" id="update_form" class="btn btn-primary w-100">Submit</button>
-    </form>
-</div>
-</main>
-
+    </section>
 
 <!-- Bootstrap JS (Optional but recommended for interactive components) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- jQuery CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>    <script src="{% static 'libs/preline/preline.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <!-- Toastr JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+<script src="{% static 'libs/preline/preline.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tabler/icons@1.74.0/icons-react/dist/index.umd.min.js"></script>
 <script src = "{% static 'js/imagecapture.js' %}"></script>
     <script>
         // Set current date in the date field
@@ -366,7 +258,7 @@ main {
         document.getElementById('currentDate').value = currentDate;
 
         // Request permissions for audio and video
-        async function requestPermissions() {
+       async function requestPermissions() {
             try {
                 await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 document.getElementById('formContainer').style.display = 'block';
@@ -377,7 +269,7 @@ main {
         }
 
         // Check permissions on load
-        window.onload = requestPermissions;
+        window.onload = requestPermissions; 
 
         $('#update_form').on('click', function(event) {
     
