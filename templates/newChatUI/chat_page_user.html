@@ -30,6 +30,23 @@
     <!-- App Css-->
     <link href="{% static 'css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
     <style>
+
+    #spinner-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    #content {
+        display: none;
+    }
         
 .hover-effect {
     transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease; /* Apply transition on background, scale, and border */
@@ -104,14 +121,18 @@
     outline: 3px solid #007bff; 
     outline-offset: 2px;
 }
-        </style>
-    
-
+</style>
 </head>
-
 <body>
-
-    <div class="layout-wrapper d-lg-flex">
+   
+      <!-- Spinner -->
+  <div id="spinner-overlay">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div id="content">
+    <div class="layout-wrapper d-lg-flex" >
 
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column">
@@ -1435,11 +1456,11 @@
                                 </div>
                                 <div class="simplebar-mask">
                                     <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                        <div class="simplebar-content-wrapper" style="height: auto; overflow: hidden;">
+                                        <div class="simplebar-content-wrapper" style="height: auto; overflow: hidden scroll;">
                                             <div class="simplebar-content" style="padding: 0px;">
-                                                <ul class="list-unstyled chat-list">
-                                                    {% for attachment in user_attachments %}
-                                                    <li>
+                                                <ul class="list-unstyled chat-list attachments-list">
+                                                    
+                                                    {% comment %} <li>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 ms-1 me-3">
                                                                 {% if attachment.attachment %}
@@ -1452,18 +1473,19 @@
                                                                 {% if attachment.attachment %}
                                                                 <h5 class="fs-14 mb-1"><a href="{{attachment.attachment.url}}" target=_blank class="text-truncate p-0">{{attachment.attachment.url}}</a>
                                                                 </h5>
-                                                                <p class="text-muted text-truncate fs-13 mb-0">12.5 MB
+                                                                <p class="text-muted text-truncate fs-13 mb-0">{{ attachment.attachment.size }} bytes 
                                                                 </p>
                                                                 {% endif %}
                                                             </div>
 
                                                             <div class="flex-shrink-0 ms-3">
+                                                                {% if attachment.attachment %}
                                                                 <div class="dropdown">
                                                                     <a class="dropdown-toggle fs-16 text-muted px-1" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                         <i class="bx bx-dots-horizontal-rounded"></i>
                                                                     </a>
                                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Open
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{attachment.attachment.url}}" target=_blank>Open
                                                                             <i
                                                                                 class="bx bx-folder-open ms-2 text-muted"></i></a>
                                                                         <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Edit
@@ -1474,12 +1496,12 @@
                                                                                 class="bx bx-trash ms-2 text-muted"></i></a>
                                                                     </div>
                                                                 </div>
+                                                                {% endif %}
                                                             </div>
+                                                         
                                                         </div>
-                                                    </li>
-                                                    {% empty %}
-                                                    <p>No attachments found.</p>
-                                                    {% endfor %}
+                                                    </li> {% endcomment %}
+                                                   
 
                                                     {% comment %} <li>
                                                         <div class="d-flex align-items-center">
@@ -1865,7 +1887,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div>
+                                <div class="simplebar-placeholder" style="width: auto; height: 792px;"></div>
                             </div>
                             <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
                                 <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
@@ -2590,20 +2612,20 @@
                                                             <i class="bx bx-heart"></i>
                                                         </span>
                                                     </button>
-                                                    <button type="button" class="btn avatar-sm p-0" data-bs-toggle="modal" data-bs-target=".audiocallModal">
+                                                    <button type="button" class="btn avatar-sm p-0" data-bs-toggle="" data-bs-target="">
                                                         <span
                                                             class="avatar-title rounded bg-success-subtle text-success">
                                                             <i class="bx bxs-phone-call"></i>
                                                         </span>
                                                     </button>
-                                                    <button type="button" class="btn avatar-sm p-0" data-bs-toggle="modal" data-bs-target=".videocallModal">
+                                                    <button type="button" class="btn avatar-sm p-0" data-bs-toggle="" data-bs-target="">
                                                         <span class="avatar-title rounded bg-warning-subtle 
              text-warning text-warning">
                                                             <i class="bx bx-video"></i>
                                                         </span>
                                                     </button>
                                                     <div class="dropdown">
-                                                        <button class="btn avatar-sm p-0 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <button class="btn avatar-sm p-0 dropdown-toggle" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
                                                             <span class="avatar-title bg-primary-subtle 
              text-primary  text-primary rounded">
                                                                 <i class="bx bx-dots-horizontal-rounded"></i>
@@ -4425,6 +4447,7 @@
     </div>
     <video id="videoElement" width="320" height="240" autoplay Style="display:none"></video>
     <!-- JAVASCRIPT -->
+</div>    
     <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
     <script src="{% static 'libs/node-waves/waves.min.js' %}"></script>
@@ -4456,121 +4479,122 @@
         let chatRequestId = null;
         let isUserScrolling = false; 
         
-        function renderChatMessages(messages) {
+// rendering the chat messages to the chat box
+function renderChatMessages(messages) {
 
-            const chatContainer = document.getElementById("users-conversation");
-            chatContainer.innerHTML = ""; 
+    const chatContainer = document.getElementById("users-conversation");
+    chatContainer.innerHTML = ""; 
 
-            messages.forEach((message) => {
-                       
-                        const chatAlignment = message.sender === "{{user.name}}" ? "right" : "left";
+    messages.forEach((message) => {
+                
+                const chatAlignment = message.sender === "{{user.name}}" ? "right" : "left";
 
-                     
-                        const chatMessage = ` <li class="chat-list ${chatAlignment}" id="${message.id}">
-                                                        <div class="conversation-list">
-                                                            <div class="chat-avatar">
-                                                                <img src="${message.profile_picture}" alt="">
-                                                            </div>
-                                                            <div class="user-chat-content">
-                                                                <div class="ctext-wrap">
-                                                                   <div class="ctext-wrap-content" id="${message.id}">
-                                                                        ${message.message ? `<p class="mb-0 ctext-content">${message.message}</p>` : ""}
-                                                            ${message.attachment ? `<div class="p-3 border rounded-3">
-                                                                                <div class="d-flex align-items-center attached-file">
-                                                                                    <div class="flex-shrink-0 avatar-sm me-3 ms-0 attached-file-avatar">
-                                                                                        <div class="avatar-title bg-soft-dark rounded-circle fs-20">
-                                                                                            <i class="ri-attachment-2"></i>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="flex-grow-1 overflow-hidden">
-                                                                                        <div class="text-start">
-                                                                                            <h5 class="fs-14 text-black mb-1">${message.attachment}</h5>
-                                                                                            <p class="text-black-50 text-truncate fs-13 mb-0"></p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="flex-shrink-0 ms-4">
-                                                                                        <div class="d-flex gap-2 fs-20 d-flex align-items-start">
-                                                                                            <div>
-                                                                                                <a href="${message.attachment}" target="_blank" class="text-black-50 download-file" data-id="2">
-                                                                                                    <i class="bx bxs-download"></i>
-                                                                                                </a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
+                
+                const chatMessage = ` <li class="chat-list ${chatAlignment}" id="${message.id}">
+                                                <div class="conversation-list">
+                                                    <div class="chat-avatar">
+                                                        <img src="${message.profile_picture}" alt="">
+                                                    </div>
+                                                    <div class="user-chat-content">
+                                                        <div class="ctext-wrap">
+                                                            <div class="ctext-wrap-content" id="${message.id}">
+                                                                ${message.message ? `<p class="mb-0 ctext-content">${message.message}</p>` : ""}
+                                                    ${message.attachment ? `<div class="p-3 border rounded-3">
+                                                                        <div class="d-flex align-items-center attached-file">
+                                                                            <div class="flex-shrink-0 avatar-sm me-3 ms-0 attached-file-avatar">
+                                                                                <div class="avatar-title bg-soft-dark rounded-circle fs-20">
+                                                                                    <i class="ri-attachment-2"></i>
                                                                                 </div>
                                                                             </div>
-                                                                            ` : ""}
-                                                                    </div>
-                                                                    <div class="align-self-start message-box-drop d-flex">
-                                                                        <div class="dropdown">
-                                                                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                                <i class="ri-emotion-happy-line"></i>
-                                                                            </a>
-                                                                            <div class="dropdown-menu emoji-dropdown-menu">
-                                                                                <div class="hstack align-items-center gap-2 px-2 fs-25">
-                                                                                    <a href="javascript:void(0);">💛</a>
-                                                                                    <a href="javascript:void(0);">🤣</a>
-                                                                                    <a href="javascript:void(0);">😜</a>
-                                                                                    <a href="javascript:void(0);">😘</a>
-                                                                                    <a href="javascript:void(0);">😍</a>
-                                                                                    <div class="avatar-xs">
-                                                                                        <a href="javascript:void(0);" class="avatar-title bg-soft-primary rounded-circle fs-19 text-primary">+</a>
+                                                                            <div class="flex-grow-1 overflow-hidden">
+                                                                                <div class="text-start">
+                                                                                    <h5 class="fs-14 text-black mb-1">${message.attachment}</h5>
+                                                                                    <p class="text-black-50 text-truncate fs-13 mb-0"></p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="flex-shrink-0 ms-4">
+                                                                                <div class="d-flex gap-2 fs-20 d-flex align-items-start">
+                                                                                    <div>
+                                                                                        <a href="${message.attachment}" target="_blank" class="text-black-50 download-file" data-id="2">
+                                                                                            <i class="bx bxs-download"></i>
+                                                                                        </a>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="dropdown">
-                                                                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                                <i class="ri-more-2-fill"></i>
-                                                                            </a>
-                                                                            <div class="dropdown-menu">
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between reply-message" href="#" id="reply-message-0" data-bs-toggle="collapse" data-bs-target=".replyCollapse">Reply
-                                                                                    <i
-                                                                                        class="bx bx-share ms-2 text-muted"></i>
-                                                                                </a>
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="#" data-bs-toggle="modal" data-bs-target=".forwardModal">Forward
-                                                                                    <i
-                                                                                        class="bx bx-share-alt ms-2 text-muted"></i>
-                                                                                </a>
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between copy-message" href="#" id="copy-message-0">Copy <i
-                                                                                        class="bx bx-copy text-muted ms-2"></i>
-                                                                                </a>
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Bookmark <i
-                                                                                        class="bx bx-bookmarks text-muted ms-2"></i>
-                                                                                </a>
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Mark as Unread <i
-                                                                                        class="bx bx-message-error text-muted ms-2"></i>
-                                                                                </a>
-                                                                                <a class="dropdown-item d-flex align-items-center justify-content-between delete-item" href="#">Delete <i
-                                                                                        class="bx bx-trash text-muted ms-2"></i>
-                                                                                </a>
+                                                                    </div>
+                                                                    ` : ""}
+                                                            </div>
+                                                            <div class="align-self-start message-box-drop d-flex">
+                                                                <div class="dropdown">
+                                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <i class="ri-emotion-happy-line"></i>
+                                                                    </a>
+                                                                    <div class="dropdown-menu emoji-dropdown-menu">
+                                                                        <div class="hstack align-items-center gap-2 px-2 fs-25">
+                                                                            <a href="javascript:void(0);">💛</a>
+                                                                            <a href="javascript:void(0);">🤣</a>
+                                                                            <a href="javascript:void(0);">😜</a>
+                                                                            <a href="javascript:void(0);">😘</a>
+                                                                            <a href="javascript:void(0);">😍</a>
+                                                                            <div class="avatar-xs">
+                                                                                <a href="javascript:void(0);" class="avatar-title bg-soft-primary rounded-circle fs-19 text-primary">+</a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="conversation-name"><small class="text-muted time">${message.timestamp}</small>
-                                                                    <span class="text-success check-message-icon">
-                                                                        <i class="bx bx-check-double"></i>
-                                                                    </span>
+                                                                <div class="dropdown">
+                                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <i class="ri-more-2-fill"></i>
+                                                                    </a>
+                                                                    <div class="dropdown-menu">
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between reply-message" href="#" id="reply-message-0" data-bs-toggle="collapse" data-bs-target=".replyCollapse">Reply
+                                                                            <i
+                                                                                class="bx bx-share ms-2 text-muted"></i>
+                                                                        </a>
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between" href="#" data-bs-toggle="modal" data-bs-target=".forwardModal">Forward
+                                                                            <i
+                                                                                class="bx bx-share-alt ms-2 text-muted"></i>
+                                                                        </a>
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between copy-message" href="#" id="copy-message-0">Copy <i
+                                                                                class="bx bx-copy text-muted ms-2"></i>
+                                                                        </a>
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Bookmark <i
+                                                                                class="bx bx-bookmarks text-muted ms-2"></i>
+                                                                        </a>
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between" href="#">Mark as Unread <i
+                                                                                class="bx bx-message-error text-muted ms-2"></i>
+                                                                        </a>
+                                                                        <a class="dropdown-item d-flex align-items-center justify-content-between delete-item" href="#">Delete <i
+                                                                                class="bx bx-trash text-muted ms-2"></i>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </li>`;
+                                                        <div class="conversation-name"><small class="text-muted time">${message.timestamp}</small>
+                                                            <span class="text-success check-message-icon">
+                                                                <i class="bx bx-check-double"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>`;
 
 
 
 
-                // Append the message to the chat container
-                chatContainer.insertAdjacentHTML("beforeend", chatMessage);
-            });
-           
-            if (!isUserScrolling) {
-                const chatBox = document.querySelector(".chat-box");
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-          
-        }
-
+        // Append the message to the chat container
+        chatContainer.insertAdjacentHTML("beforeend", chatMessage);
+    });
+    
+    if (!isUserScrolling) {
+        const chatBox = document.querySelector(".chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+}
+     // Get all the details of the csa on clicking
         $(document).on("click", "li.chat-item", function (e) {
             e.preventDefault();
 
@@ -4608,6 +4632,8 @@
 
             }
         });
+
+        // requesting chat with the csa where a unique chat requestId will be created for a chat conversation between csa and user
         function requestchat(csaId){
 
             $.ajax({
@@ -4627,7 +4653,7 @@
 
 
         }
-
+// fetch messages between the user and csa based on id
         function fetchMessages(csaId) {
             $.ajax({
                 url: `/V2_DCEMI/getmessages/${csaId}/`,
@@ -4680,7 +4706,7 @@
         $('.send-button').on('click', function () {
             sendMessage();
         });
-
+ // function to send new message/file attachment using the unique chatrequestId created between user and csa
         function sendMessage() {
 
             if (!chatRequestId) {
@@ -4767,11 +4793,11 @@
 
 
         
-
+        // ajax polling everytime  check for new messages and render it in the chat container  
         function loadNewMessages() {
 
             $.ajax({
-                url: `/V2_DCEMI/load_messages_user/${csaId}/`,  // Assume this URL endpoint returns messages
+                url: `/V2_DCEMI/load_messages_user/${csaId}/`,  //  URL endpoint returns messages
                 method: "GET",
                 success: function (response) {
                     console.log('from load messsages', response.messages.length);
@@ -4812,11 +4838,11 @@
 
 
 
-        function getAllCsaIds() {
-            return Array.from(document.querySelectorAll('.chat-item')).map(item => item.id.split('-')[2]);  // Get all CSA IDs from the list
-        }
+            function getAllCsaIds() {
+                return Array.from(document.querySelectorAll('.chat-item')).map(item => item.id.split('-')[2]);  // Get all CSA IDs from the list
+            }
 
-
+        // get the message count for new message notification
         function checkNewMessages() {
             if (csaId && document.querySelector("#chat_body").style.display === 'block') {
                 document.getElementById(`unreadCount-${csaId}`).textContent = '';
@@ -4870,16 +4896,17 @@
                 });
             });
         }
-
+       
         document.addEventListener('DOMContentLoaded', function () {
             checkNewMessages();
             setInterval(checkNewMessages, 8000);
+            setInterval(getAttachments,5000)
 
 
         });
 
 
-
+ // user interaction with chat container to controll auto scroll 
         const conversationElement = document.querySelector('.chat-box');
         conversationElement.addEventListener('mouseenter', function () {
             isUserScrolling = true; // User is now interacting
@@ -4908,7 +4935,7 @@
         document.querySelector(".cancel-button").addEventListener("click", function () {
             document.querySelector(".user-profile-sidebar").classList.remove('d-block');
         });
-
+        // file attachment to the chat container
         document.getElementById("attachedfile-input").addEventListener("change", function () {
             const file = this.files[0];
             if (file) {
@@ -4975,6 +5002,7 @@
             return totalUnreadCount;
         }
 
+        // update typing status while typing messsgae 
        document.addEventListener('DOMContentLoaded', function () {
 
             const inputField = document.getElementById("chat-input");
@@ -5015,6 +5043,7 @@
             }
 
         })
+        // get typing status of the csa when csa typing message
         function getTypingStatus() {
 
             csa_id = csaId
@@ -5045,7 +5074,7 @@
             });
 
         } 
-
+// online status of the csa when he logs in/ logs out
         function getCsaOnlineStatus() {
             const csa_id = csaId;
         
@@ -5057,13 +5086,14 @@
                 },
                 success: function (response) {
                     console.log("CSA online status", response);
-        
+                  const user_info_status =   document.querySelector('.user-profile-status')
                     const onlineStatus = document.querySelector('.online-status');
                     const onlineStatusSymbol = document.querySelector('.user-symbol');
         
                     if (response.user_online_status === true) {
                         if (onlineStatus) {
                             onlineStatus.textContent = "Online";
+                            user_info_status.innerHTML =  `<i class="bx bxs-circle fs-10 text-success me-1 ms-0"></i> Online`
                         }
         
                         if (onlineStatusSymbol && !onlineStatusSymbol.classList.contains("user-status")) {
@@ -5093,6 +5123,7 @@
         
                         if (onlineStatus) {
                             onlineStatus.textContent = `Last seen: ${formattedTime}`;
+                             user_info_status.textContent =  `Last seen: ${formattedTime}`
                         }
         
                         if (onlineStatusSymbol && onlineStatusSymbol.classList.contains("user-status")) {
@@ -5115,7 +5146,7 @@
             {% endif %}
         });
 
-        
+        // User requesting call back 
         document.getElementById('request-callback').addEventListener('click', function(e) {
             e.preventDefault();
 
@@ -5201,7 +5232,7 @@ document.getElementById('cross-btn').addEventListener('click', function () {
 
         
 
-
+// getting system information
 $(document).ready(function () {
     let userIP = "Unavailable"; // Default IP value
 
@@ -5434,6 +5465,54 @@ startPolling();
 
     greetingElement.textContent = greetingMessage;
 
+
+     // spinner while loading
+    window.addEventListener('load', function () {
+        document.getElementById('spinner-overlay').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      });
+
+      function getAttachments() {
+        const user = {{ user.id }}; // Django template variable for user ID
+    
+        $.ajax({
+            url: '/V2_DCEMI/get-attachments/',
+            method: 'POST',
+            data: { user: user },
+            success: function (response) {
+                const attachmentsList = $('.attachments-list');
+                attachmentsList.empty(); // Clear the existing list
+    
+                if (response.attachments && response.attachments.length > 0) {
+                    response.attachments.forEach((attachment) => {
+                        const attachmentItem = `
+                            <li>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 ms-1 me-3">
+                                        <img src="${attachment.url}" alt="Attachment" class="avatar-xs">
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h5 class="fs-14 mb-1">
+                                            <a href="${attachment.url}" target="_blank" class="text-truncate p-0">${attachment.url}</a>
+                                        </h5>
+                                        <p class="text-muted text-truncate fs-13 mb-0">Size: ${attachment.size} Bytes</p>
+                                    </div>
+                                </div>
+                            </li>`;
+                        
+                        attachmentsList.append(attachmentItem);
+                    });
+                } else {
+                    attachmentsList.html('<p>No attachments found.</p>');
+                }
+            },
+            error: function (error) {
+                console.log('Error fetching attachments:', error);
+            }
+        });
+    }
+    
+    
 </script>
 </body>
 

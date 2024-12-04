@@ -13,7 +13,7 @@ def signup_page(request):
         if request.user.is_csa:
             return redirect('/V2_DCEMI/agent_home/')  
         else:
-            return redirect('/V2_DCEMI/dashboard_user/')
+            return redirect('/V2_DCEMI/chat_page_user/')
 
     return render(request,'newChatUI/signup_user.html')
 
@@ -457,6 +457,7 @@ def get_users_info_and_messages(request):
                 user_info = {
                     'id': user.id,
                     'name': user.name,
+                    'email': user.email,
                     'contact_number': user.contact_number,
                     'profile_picture': user.profile_picture.url if user.profile_picture else None,  # Get the URL of the image
                 }
@@ -1516,4 +1517,34 @@ def get_videos(request):
         } for video in videos
     ]
 
-    return JsonResponse({'status': 'success', 'videos': video_list})    
+    return JsonResponse({'status': 'success', 'videos': video_list})  
+  
+from django.conf import settings
+from django.http import JsonResponse
+
+import os
+@csrf_exempt
+@login_required
+def get_attachments(request):
+    user_id = request.POST.get('user')  
+
+    if not user_id:
+        return JsonResponse({'error': 'user_id is required'}, status=400)
+
+    try:
+        # Fetch all attachments for the given sender_id
+        attachments = Message.objects.filter(sender_id=user_id).exclude(attachment="")
+        
+        # Collect attachments with file size
+        attachments_data = []
+        for attachment in attachments:
+            file_path = os.path.join(settings.MEDIA_ROOT, attachment.attachment.name)
+            file_size = os.path.getsize(file_path) if os.path.exists(file_path) else 0  # File size in bytes
+            attachments_data.append({
+                'url': f"{settings.MEDIA_URL}{attachment.attachment.name}",
+                'size': file_size
+            })
+
+        return JsonResponse({'attachments': attachments_data}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

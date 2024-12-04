@@ -87,115 +87,180 @@
         .card-button.raise:hover {
             background-color: #d35400;
         }
-        /* Navbar styling */
-  /* navbar styling*/        
+     
+/* Navbar Styling */
 .navbar {
-    background-color: #3498db; 
+    background: #483d8b;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1.5rem;
+    
 }
 
+/* Navbar Links */
 .navbar .nav-link {
-    color: white !important; 
+    color: white !important;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease-in-out;
+    border-radius: 4px;
 }
 
 .navbar .nav-link:hover {
-    color: #a9c4f1 !important; 
+    color: red !important;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Dropdown Menu */
 .navbar .dropdown-menu {
-    background-color: #052c65;
+    background: #052c65;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .navbar .dropdown-item {
     color: white !important;
+    font-weight: 500;
 }
 
 .navbar .dropdown-item:hover {
-    background-color: #a9c4f1; 
+    background-color: #a9c4f1;
     color: #052c65 !important;
+    border-radius: 4px;
 }
 
+/* Profile Dropdown */
 .profile-dropdown {
-    position: absolute;
-    top: 10px; 
-    right: 10px; 
-    z-index: 1050; 
- }
-
-.navbar-toggler-icon {
-    background-color: white;
+    position: relative;
 }
 
+.profile-dropdown button {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-dropdown img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-dropdown img:hover {
+    transform: scale(1.1);
+}
+
+/* Toggler Icon */
+.navbar-toggler-icon {
+    background: white;
+    border-radius: 4px;
+    padding: 0.2rem;
+    width: 24px;
+    height: 24px;
+}
 
 .navbar-toggler:hover .navbar-toggler-icon {
     opacity: 0.8;
+    transform: rotate(90deg);
+    transition: all 0.3s ease;
 }
-.nav-link{
-    text-align:center;
+.profile-dropdown{
+    position: absolute;
+    top:10px;
+    right:30px;
+    z-index-1000;
 }
 
+
+/* Center Align Navbar Links */
+.navbar-nav .nav-link {
+    text-align: center;
+}
+
+
 main {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
+}
+#spinner-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#content {
+    display: none;
 }
 
  </style>
     
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <!-- Navbar Toggle Button -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-    
-                <!-- Navbar Links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Payment Assistance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Loan Closure</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Legal and Compliance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Account Management</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
-                        </li>
-                    </ul>
-                </div>
-    
-                <!-- User Profile -->
-                <div class="profile-dropdown">
-                    <button 
-                        class="btn d-flex align-items-center" 
-                        type="button" 
-                        id="userMenu" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false" 
-                        style="padding: 0; border: none; background-color: transparent;">
-                        <!-- Profile Picture -->
-                        <img 
-                            src="{{ profile_picture }}" 
-                            alt="{{ user.name }}" 
-                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
-                    </button>
-                    
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="{% url 'details_v2_user' %}">Update Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
-                </div>
+
+        <div id="spinner-overlay">
+            <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
             </div>
-        </nav>
+        </div>
+            <!-- Navbar -->
+        <div id ="content">    
+            <nav class="navbar navbar-expand-lg" >
+                <div class="container-fluid">
+                    <!-- Navbar Toggle Button -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
         
+                    <!-- Navbar Links -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'agreements_user' %}">Agreements</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Payment Assistance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Loan Closure</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Legal and Compliance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Account Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
+                            </li>
+                        </ul>
+                    </div>
+        
+                    <!-- User Profile -->
+                    <div class="profile-dropdown">
+                        <button type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ profile_picture }}" alt="{{ user.name }}">
+                        </button>
+        
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="{% url 'details_v2_user' %}">Update Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+             
     <main>
     <div class="container">
         <div class="card">
@@ -285,6 +350,8 @@ main {
         </div>
     </div>
 </main>
+
+</div>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- jQuery CDN -->
@@ -296,7 +363,10 @@ main {
 
 
 
-        
+        window.addEventListener('load', function () {
+            document.getElementById('spinner-overlay').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+          });
 
     // Function to request chat (Normal User)
     function requestChat() {

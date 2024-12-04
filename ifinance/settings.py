@@ -86,7 +86,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Absolute path to the media folde
 # settings.py
 
 # settings.py
-LOGIN_URL = '/login_page/'  # Replace with your login page URL
+LOGIN_URL = '/V2_DCEMI/login_page/'  # Replace with your login page URL
 
 
 import os
