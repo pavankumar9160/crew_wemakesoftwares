@@ -4708,6 +4708,7 @@ function sendMessage() {
         fileUploadField.innerHTML = ""; 
         fileUploadField.classList.remove("show");
     }
+    fileInput.value = "";
 
     const currentMessageCount = localStorage.getItem(`user-${user_id}-message-count`) || 0;
     const newMessageCount = parseInt(currentMessageCount) + 1;
@@ -4968,6 +4969,8 @@ document.getElementById("attachedfile-input").addEventListener("change", functio
 
 
         document.getElementById("remove-attechedFile").addEventListener('click', function () {
+            const fileInput = document.getElementById("attachedfile-input");
+                    fileInput.value="";
             fileUploadfield.classList.remove("show");
             this.closest('.attchedfile_pre').remove(); 
         });
@@ -5183,6 +5186,14 @@ document.getElementById("playVideoButton").addEventListener("click", function ()
 document.addEventListener("DOMContentLoaded", () => {
     const chatInput = document.getElementById("chat-input"); 
     const sendButton = document.querySelector(".send-button"); 
+    const fileInput = document.getElementById('attachedfile-input');
+
+    fileInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault(); 
+            sendMessage(); 
+        }
+    });
 
     chatInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -5190,6 +5201,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sendMessage(); 
         }
     });
+  
 
     const chatForm = document.getElementById("chatinput-form");
     chatForm.addEventListener("submit", (event) => {

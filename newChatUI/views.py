@@ -303,17 +303,16 @@ def chat_page_user(request):
 def request_chat(request, csaId):
     
     user = request.user
-    
+    print("newuser",user)
     # Check if there is an existing chat request for the user that is not accepted yet
-    existing_chat_request = ChatRequest.objects.filter(user=user,csa=csaId,accepted=False).first()
+    existing_chat_request = ChatRequest.objects.filter(user=user, csa_id=csaId, accepted=False).first()
 
     if existing_chat_request:
         # If there is an existing unaccepted chat request, use it
         chat_request = existing_chat_request
     else:
-        csa = User.objects.filter(id=csaId,is_csa=True)
-        # If no unaccepted chat request, create a new one
-        chat_request = ChatRequest.objects.create(user=user,csa=csa.id, accepted=False)
+        csa = get_object_or_404(User, id=csaId, is_csa=True)       
+        chat_request = ChatRequest.objects.create(user=user, csa=csa, accepted=False)
         chat_request.save()
     return JsonResponse({
                 'status': 'success',
@@ -422,7 +421,7 @@ def view_messages(request, chatRequestId):
                 'sender': msg.sender.name,
                 'message': msg.message if msg.message else None,
                 'attachment': msg.attachment.url if msg.attachment else None,
-                'timestamp': msg.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp':localtime(msg.timestamp).strftime('%Y-%m-%d %H:%M:%S'),
                 'profile_picture': msg.sender.profile_picture.url if msg.sender.profile_picture else None,
             })
 
@@ -513,6 +512,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from myapp.models import ChatRequest, Message
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import localtime
 
 
 def agent_chat_page(request):
@@ -560,7 +560,7 @@ def chat_page_agent(request,user_id):
                 'is_csa': message.sender.is_csa,
                 'sender': message.sender.name,
                 'message': message.message,
-                'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'timestamp': localtime(message.timestamp).strftime("%Y-%m-%d %H:%M:%S"),
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,
             })
 
@@ -595,7 +595,7 @@ def load_new_messages_user(request,csaId):
             messages.append({
                 'sender': message.sender.name,
                 'message':  message.message if message.message else None,
-                'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'timestamp': localtime(message.timestamp).strftime("%Y-%m-%d %H:%M:%S"),
                 'is_csa': message.sender.is_csa,
                 'attachment': message.attachment.url if message.attachment else None,
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image 
@@ -642,7 +642,7 @@ def load_new_messages_agent(request,user_id):
             messages.append({
                 'sender': message.sender.name,
                 'message':  message.message if message.message else None,
-                'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'timestamp': localtime(message.timestamp).strftime("%Y-%m-%d %H:%M:%S"),
                 'is_csa': message.sender.is_csa,
                 'attachment': message.attachment.url if message.attachment else None,
                 'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None,  # Get the URL of the image 
@@ -681,7 +681,7 @@ def get_user_chat_history(request,chatRequestId):
             messages.append({
                 'sender': message.sender.name,
                 'message':  message.message if message.message else None,
-                'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'timestamp': localtime(message.timestamp).strftime("%Y-%m-%d %H:%M:%S"),
                 'is_csa': message.sender.is_csa,
                 'attachment': message.attachment.url if message.attachment else None,
                 
