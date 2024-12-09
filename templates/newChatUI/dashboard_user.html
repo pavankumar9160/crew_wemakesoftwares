@@ -295,6 +295,9 @@ main {
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'help_supp_user' %}">Help & Support</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'chat_page_user' %}#pills-chat" id="nav-chat-link">Live Chat</a>
+                        </li>
                     </ul>
                 </div>
     
@@ -445,6 +448,17 @@ main {
         window.addEventListener('load', function () {
             document.getElementById('spinner-overlay').style.display = 'none';
             document.getElementById('content').style.display = 'block';
+          });
+
+
+          document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+          });
+    
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'Shift' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
+              e.preventDefault();
+            }
           });
         
     </script>

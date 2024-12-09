@@ -1287,11 +1287,12 @@ def save_video(request):
             video.video = video_file
             video.status = 'completed'
             video.save()
+            video_url = video.video.url
 
             return JsonResponse({
                 'status': 'success',
                 'message': 'Video saved successfully!',
-                'video_url': video_file
+                'video_url': video_url
             })
         except Video.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Video entry not found'})
@@ -1311,7 +1312,7 @@ def start_video_recording(request):
         # Check if a recording is already in progress
         existing_video = Video.objects.filter(chat_request_id=chat_request_id, status='start').first()
         if existing_video:
-            return JsonResponse({'status': 'error', 'message': 'Recording already in progress for this chatRequestId'})
+            return JsonResponse({'status': 'error', 'message': 'Recording already in progress for this chatRequestId','video_id': existing_video.id})
 
         # Create a new video entry
         video = Video.objects.create(
@@ -1321,7 +1322,7 @@ def start_video_recording(request):
             user=request.user,
         )
 
-        return JsonResponse({'status': 'success', 'message': 'Recording started', 'chatRequestId': chat_request_id})
+        return JsonResponse({'status': 'success', 'message': 'Recording started', 'chatRequestId': chat_request_id, 'video_id':video.id})
 
 @csrf_exempt
 def poll_video_recording(request):
@@ -1339,6 +1340,22 @@ def poll_video_recording(request):
         return JsonResponse({'status': 'completed', 'chatRequestId': video.chat_request_id})
     else:
         return JsonResponse({'status': 'waiting'})
+    
+    
+@csrf_exempt
+@login_required    
+def check_video_status(request, video_id):
+    """Check the status of the video recording."""
+    try:
+        video = Video.objects.get(id=video_id)
+        return JsonResponse({
+            'status': 'success',
+            'video_status': video.status,
+            'message': 'Video status retrieved successfully',
+        })
+    except Video.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Video not found'})
+    
 
 @csrf_exempt
 def get_csa_online_status(request):
@@ -1548,3 +1565,45 @@ def get_attachments(request):
         return JsonResponse({'attachments': attachments_data}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+def get_user_details(request):
+    user_id = request.GET.get('user_id')  # Get the user_id from the request
+    try:
+        user = User.objects.get(id=user_id)
+        user_data = {
+            'name': user.name,
+            'email': user.email,
+            'contact_number': user.contact_number,
+            'occupation': dict(User.OCCUPATION_CHOICES).get(user.occupation, 'Not Specified'),
+            'profile_picture': user.profile_picture.url if user.profile_picture else '',
+            'course_name': user.course_name,
+            'college_name': user.college_name,
+            'company_name':user.company_name,
+            'dc_code':user.dc_code,
+            'ip_address':user.ip_address,
+            'current_residential_address':user.current_residential_address,
+            'facebook_id':user.facebook_id,
+            'instagram_id':user.instagram_id,
+            'father_name':user.father_name,
+            'father_occupation':user.father_occupation,
+            'mother_name':user.mother_name,
+            'company_address':user.company_address,
+            'work_contact_number':user.work_contact_number,
+            'salary':user.salary,
+            'year_in_current_role':user.years_in_current_role,
+            'year_of_admission': user.year_of_admission,
+            'expected_graduation_year':user.expected_graduation_year,
+            'past_employement':user.past_employement,
+            'siblings':user.siblings,
+            'spouse_name':user.spouse_name,
+            'children_details':user.children_details,
+            
+            
+            # Add other fields here as needed
+        }
+        return JsonResponse({'user': user_data})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)

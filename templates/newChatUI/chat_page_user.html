@@ -5,7 +5,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Chat | Vhato - Responsive Bootstrap 5 Chat App</title>
+    <title>V2finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Vhato - Responsive Chat App Template in HTML. A fully featured HTML chat messenger template in Bootstrap 5" name="description" />
     <meta name="keywords" content="Vhato chat template, chat, web chat template, chat status, chat template, communication, discussion, group chat, message, messenger template, status" />
@@ -138,7 +138,7 @@
         <div class="side-menu flex-lg-column">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="" class="logo logo-dark">
+                <a href="{% url 'dashboard_user' %}" class="logo logo-dark">
                     <span class="logo-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
                             <path fill="none" d="M0 0h24v24H0z" />
@@ -148,7 +148,7 @@
                     </span>
                 </a>
 
-                <a href="" class="logo logo-light">
+                <a href="{% url 'dashboard_user' %}" class="logo logo-light">
                     <span class="logo-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
                             <path fill="none" d="M0 0h24v24H0z" />
@@ -1917,14 +1917,14 @@
                                                 <h5 class="text-white mb-0"></h5>
                                             </div>
                                             <div class="flex-shrink-0">
-                                                 <div class="avatar-xs p-0 rounded-circle profile-photo-edit" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" aria-label="Change Background" data-bs-original-title="Change Background">
+                                                 {% comment %} <div class="avatar-xs p-0 rounded-circle profile-photo-edit" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" aria-label="Change Background" data-bs-original-title="Change Background">
                                                     <input id="profile-foreground-img-file-input" type="file" class="profile-foreground-img-file-input">
                                                     <label for="profile-foreground-img-file-input" class="profile-photo-edit avatar-xs">
                                                         <span class="avatar-title rounded-circle bg-light text-body">
                                                             <i class="bx bxs-pencil"></i>
                                                         </span>
                                                     </label>
-                                                </div>
+                                                </div> {% endcomment %}
                                             </div>
                                         </div>
                                     </div>
@@ -1935,14 +1935,14 @@
                         <div class="text-center p-3 p-lg-4 border-bottom pt-2 pt-lg-2 mt-n5 position-relative">
                             <div class="mb-3 profile-user">
                                 <img src="{{ user.profile_picture.url }}" class="rounded-circle avatar-lg img-thumbnail user-profile-image" alt="user-profile-image">
-                                <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
+                                {% comment %} <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
                                     <input id="profile-img-file-input" type="file" class="profile-img-file-input">
                                     <label for="profile-img-file-input" class="profile-photo-edit avatar-xs">
                                         <span class="avatar-title rounded-circle bg-light text-body">
                                             <i class="bx bxs-camera"></i>
                                         </span>
                                     </label>
-                                </div>
+                                </div> {% endcomment %}
                             </div>
 
                             <h5 class="fs-16 mb-1 text-truncate"></h5>
@@ -2154,7 +2154,7 @@
                                     <ul class="list-inline user-chat-nav text-end mb-0">
                                         <li class="list-inline-item">
                                             <div class="dropdown">
-                                                <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" fdprocessedid="pwik4u">
+                                                <button class="btn nav-btn" type="button" data-bs-toggle="" id="searchButton" aria-expanded="false" fdprocessedid="pwik4u">
                                                     <i class="bx bx-search"></i>
                                                 </button>
                                                 <div class="dropdown-menu p-0 dropdown-menu-end dropdown-menu-lg">
@@ -2166,7 +2166,7 @@
                                         </li>
 
                                         <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                                            <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target=".audiocallModal" fdprocessedid="l7py">
+                                            <button type="button" class="btn nav-btn"  id="phonecallButton" data-bs-toggle=""  data-bs-target="" fdprocessedid="l7py">
                                                 <i class="bx bxs-phone-call"></i>
                                             </button>
                                         </li>
@@ -2178,7 +2178,7 @@
                                         </li>
 
                                         <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                                            <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target=".pinnedtabModal" fdprocessedid="i0gqku">
+                                            <button type="button" class="btn nav-btn" id ="bookmarkButton" data-bs-toggle="" data-bs-target="" fdprocessedid="i0gqku">
                                                 <i class="bx bx-bookmark"></i>
                                             </button>
                                         </li>
@@ -2191,7 +2191,7 @@
 
                                         <li class="list-inline-item">
                                             <div class="dropdown">
-                                                <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" fdprocessedid="gj1hti">
+                                                <button class="btn nav-btn" type="button" data-bs-toggle="" id ="listButton" aria-expanded="false" fdprocessedid="gj1hti">
                                                     <i class="bx bx-dots-vertical-rounded"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end">
@@ -3568,8 +3568,8 @@
                                             <img src="{% static 'images/image-file.png' %}" alt="" class="avatar-xs">
                                         </div>
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <h5 class="fs-14 text-truncate mb-1"><a href="#" class="p-0">Image-012.jpg'
-                                                    %}</a>
+                                            <h5 class="fs-14 text-truncate mb-1"><a href="#" class="p-0">Image-012.jpg
+                                                    </a>
                                             </h5>
                                             <p class="text-muted fs-13 mb-0">3.1 MB</p>
                                         </div>
@@ -4296,7 +4296,7 @@
     <!-- end  layout wrapper -->
 
     <!-- Style switcher -->
-    <div id="style-switcher">
+    {% comment %} <div id="style-switcher">
         <ul class="list-unstyled mb-0 vstack gap-2">
             <li>
                 <a data-bs-toggle="offcanvas" href="#theme-settings-offcanvas" class="settings bg-success-subtle text-success rounded"><i class="mdi mdi-cog mdi-spin"></i></a>
@@ -4306,7 +4306,7 @@
                         class="ri-shopping-bag-3-line"></i></a>
             </li>
         </ul>
-    </div>
+    </div> {% endcomment %}
     <!-- end switcher-->
 
 
@@ -4706,6 +4706,7 @@ function renderChatMessages(messages) {
         $('.send-button').on('click', function () {
             sendMessage();
         });
+
  // function to send new message/file attachment using the unique chatrequestId created between user and csa
         function sendMessage() {
 
@@ -4878,6 +4879,8 @@ function renderChatMessages(messages) {
                                     console.log("hi", unreadCount);
                                     document.getElementById(`unreadCount-${csaId}`).textContent = unreadCount;
 
+                                    
+
                                     // const totalCount = getTotalUnreadCount();
                            // document.getElementById("nav-left-unreadCount").textContent = totalCount;
                            // document.getElementById('totalMessageCount').textContent = "(" + totalCount + ")";
@@ -4898,8 +4901,8 @@ function renderChatMessages(messages) {
         }
        
         document.addEventListener('DOMContentLoaded', function () {
-            checkNewMessages();
-            setInterval(checkNewMessages, 8000);
+           
+            setInterval(checkNewMessages, 2000);
             setInterval(getAttachments,5000)
 
 
@@ -4985,6 +4988,18 @@ function renderChatMessages(messages) {
         document.querySelector("#videocallButton").addEventListener("click", function () {
             alert("your device doesn't support this functionality");
         })
+        document.querySelector("#phonecallButton").addEventListener("click", function () {
+            alert("your device doesn't support this functionality");
+        })
+        document.querySelector("#searchButton").addEventListener("click", function () {
+            alert("your device doesn't support this functionality");
+        })
+        document.querySelector("#bookmarkButton").addEventListener("click", function () {
+            alert("your device doesn't support this functionality");
+        })
+        document.querySelector("#listButton").addEventListener("click", function () {
+            alert("your device doesn't support this functionality");
+        })
 
 
         function getTotalUnreadCount() {
@@ -5002,7 +5017,7 @@ function renderChatMessages(messages) {
             return totalUnreadCount;
         }
 
-        // update typing status while typing messsgae 
+        // update typing status while typing messsage 
        document.addEventListener('DOMContentLoaded', function () {
 
             const inputField = document.getElementById("chat-input");
@@ -5139,12 +5154,22 @@ function renderChatMessages(messages) {
         
 
         document.addEventListener('DOMContentLoaded', function() {
-            {% if to_settings %}
-               
+            const hash = window.location.hash; // Get hash from URL (e.g., #pills-chat)
+        
+            if (hash) {
+                // If a hash is present, activate the corresponding tab
+                const targetTab = document.querySelector(`[href="${hash}"]`);
+                if (targetTab) {
+                    const bootstrapTab = new bootstrap.Tab(targetTab);
+                    bootstrapTab.show();
+                }
+            } else if ({{ to_settings|yesno:"true,false" }}) {
+                // If no hash, use the to_settings flag to decide on the tab
                 var settingsTab = new bootstrap.Tab(document.getElementById('pills-setting-tab'));
                 settingsTab.show();
-            {% endif %}
+            }
         });
+        
 
         // User requesting call back 
         document.getElementById('request-callback').addEventListener('click', function(e) {
@@ -5511,6 +5536,44 @@ startPolling();
             }
         });
     }
+
+    // Handle Enter key press when sending message
+    document.addEventListener("DOMContentLoaded", () => {
+        const chatInput = document.getElementById("chat-input"); 
+        const sendButton = document.querySelector(".send-button"); 
+    
+        chatInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                sendMessage(); 
+            }
+        });
+    
+        const chatForm = document.getElementById("chatinput-form");
+        chatForm.addEventListener("submit", (event) => {
+            event.preventDefault(); 
+        });
+    });
+
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+      });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'Shift' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
+          e.preventDefault();
+        }
+      });  
+      
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'prt sc') {
+          alert('Screenshots are disabled on this page!');
+          e.preventDefault();
+        }
+      });
+      
+      
+    
     
     
 </script>

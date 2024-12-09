@@ -84,6 +84,22 @@
         .toggle-button.on:hover {
             background-color: #229954;
         }
+         /* Styling for the logout button */
+         .logout-button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .logout-button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +133,8 @@
                 <div class="card-description">Manage user activation status on the authentication page.</div>
             </a>
         </div>
+        <button class="logout-button"><a href="{% url 'logout' %}" style ="text-decoration: none; color:white">Log Out</a></button>
+    </div>
     </div>
 
     <script>

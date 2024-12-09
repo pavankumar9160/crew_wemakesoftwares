@@ -569,6 +569,16 @@
             document.getElementById('spinner-overlay').style.display = 'none';
             document.getElementById('content').style.display = 'block';
           });
+
+          document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+          });
+    
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'Shift' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
+              e.preventDefault();
+            }
+          });
     </script>
 </body>
 </html>

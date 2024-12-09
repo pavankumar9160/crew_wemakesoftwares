@@ -79,6 +79,9 @@ path('get_user_current_message_count/',views.get_user_current_message_count,name
 path('get_csa_current_message_count/',views.get_csa_current_message_count,name="get_csa_current_message_count"),
 path('get-videos/',views.get_videos,name="get-videos"),
     path('get-attachments/', views.get_attachments, name='get_attachments'),
+        path('check_video_status/<int:video_id>/', views.check_video_status, name='check_video_status'),
+        path('get_user_details/',views.get_user_details,name="get_user_details"),
+
 
 
 
